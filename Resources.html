@@ -1,0 +1,139 @@
+<!-- TODO:
+    * (H) Add a new time filter to check reservations
+    * (M) Consider to show only a summary
+ -->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="monroe">
+<head>
+
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <title>Monroe Experimenters Portal</title>
+
+    <!-- Include Bootstrap -->
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+
+    <script type="text/javascript" src="Monroe.js"></script>
+
+    <!-- Monroe App -->
+
+    <script>
+        angular.module("monroe", []);
+    </script>
+
+    <script src="controllers/monroe.js"></script>
+
+    <!-- Monroe Style -->
+
+    <style>
+        #monroeSty {
+            padding-top:    25px;
+            padding-botton: 25px;
+            padding-right:  50px;
+            padding-left:   50px;
+        }
+    </style>
+
+</head>
+
+<body ng-controller="nodesCtrl" id="monroeSty">
+
+    <!-- Navigation Tabs -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="pull-left" href="https://www.monroe-project.eu/">
+                    <img src = "monroe_logo.png" height="50" hspace="20"></img>
+                </a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="StatusExperiment.html" data-toggle="tooltip" title="Status of my experiments">Status</a></li>
+                    <li><a href="NewExperiment.html" data-toggle="tooltip" title="Create a new experiment">New</a></li>
+                    <li class="active"><a href="Resources.html"data-toggle="tooltip" title="Show information about Monroe resources">Resources</a></li>
+                    <li><a href="Help.html" data-toggle="tooltip" title="Learn about the experimenters portal">Help</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+               </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Resources Tab -->
+
+    <div class="panel panel-default">
+    <div class="panel-heading">
+
+    <h3>
+        List of Resources &nbsp;
+        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#filters">Show Filters</button>
+    </h3>
+
+    <!-- Filters -->
+
+    <div id="filters" class="collapse">
+    <div class="row">
+
+        <div class="col-md-2">
+        <div class="form-group">
+            <label for="sel1">Country:</label>
+            <select class="form-control" id="countryFilter">
+                <option>Norway</option>
+                <option>Sweden</option>
+                <option>Italy</option>
+                <option>Spain</option>
+                <option>All of them</option>
+            </select>
+        </div>
+        </div>
+
+        <div class="col-md-2">
+        <div class="form-group">
+            <label for="sel1">Type of node:</label>
+            <select class="form-control" id="typeFilter">
+                <option>Urban</option>
+                <option>Rural</option>
+                <option>Bus</option>
+                <option>All of them</option>
+            </select>
+        </div>
+        </div>
+
+    </div>
+    </div>
+
+    </div>
+
+    <div class="panel-body">
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Node</th>
+                <th>Location</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="node in data.nodes">
+                <td>{{node.displayName}}</td>
+                <td>{{node.site}}</td>
+                <td>{{node.status}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    </div>
+    </div>
+
+    <!-- New Experiment Tab -->
+
+</body>
