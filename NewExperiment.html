@@ -1,0 +1,174 @@
+<!-- TODO:
+    * (M) Check the availablity of nodes for the specified time period
+    * (L) Review positive and negative filters
+ -->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="monroe">
+<head>
+
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <title>Monroe Experimenters Portal</title>
+
+    <!-- Include Bootstrap -->
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+
+    <script type="text/javascript" src="Monroe.js"></script>
+
+    <!-- Monroe App -->
+
+    <script>
+        angular.module("monroe", []);
+    </script>
+
+    <script src="controllers/monroe.js"></script>
+
+    <!-- Monroe Style -->
+
+    <style>
+        #monroeSty {
+            padding-top:    25px;
+            padding-botton: 25px;
+            padding-right:  50px;
+            padding-left:   50px;
+        }
+    </style>
+
+</head>
+
+<body ng-controller="statusExperimentCtrl" id="monroeSty">
+
+    <!-- Navigation Tabs -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="pull-left" href="https://www.monroe-project.eu/">
+                    <img src = "monroe_logo.png" height="50" hspace="20"></img>
+                </a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="StatusExperiment.html" data-toggle="tooltip" title="Status of my experiments">Status</a></li>
+                    <li class="active"><a href="NewExperiment.html" data-toggle="tooltip" title="Create a new experiment">New</a></li>
+                    <li><a href="Resources.html"data-toggle="tooltip" title="Show information about Monroe resources">Resources</a></li>
+                    <li><a href="Help.html" data-toggle="tooltip" title="Learn about the experimenters portal">Help</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+               </ul>
+            </div>
+        </div>
+    </nav>
+
+<!-- New Experiments Tab -->
+
+<form class="form-horizontal" role="form">
+
+<div class="panel panel-default">
+<div class="panel-heading"><h3>New Experiment</h3></div>
+<div class="panel-body">
+
+    <div class="form-group">
+        <label class="control-label col-md-1" for="experimentName">Name:</label>
+        <div class="col-md-11">
+            <input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-1" for="project">Script:</label>
+        <div class="col-md-11">
+            <input type="password" class="form-control" id="project" placeholder="Docker pull URL" ng-model="experiment.url">
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+    <div class="panel-heading">Experiment Size</div>
+    <div class="panel-body">
+
+    <div class="form-group">
+        <label class="control-label col-md-1" for="experimentName">Nodes:</label>
+        <div class="col-md-11">
+            <input type="text" class="form-control" id="experimentName" placeholder="Number of nodes" ng-model="experiment.nodes">
+        </div>
+    </div>
+
+    <!-- Filters -->
+
+    <div class="form-group">
+
+    <label class="control-label col-md-1" for="experimentName">Filters:</label>
+
+    <div class="col-md-2">
+        <label for="sel1">Country:</label>
+        <select class="form-control" id=countryFilter" ng-model="experiment.filter.country">
+            <option>Norway</option>
+            <option>Sweden</option>
+            <option>Italy</option>
+            <option>Spain</option>
+            <option>All of them</option>
+        </select>
+    </div>
+
+    <div class="col-md-offset-1 col-md-2">
+        <label for="sel1">Type of node:</label>
+        <select class="form-control" id="typeFilter" ng-model="experiment.filter.type">
+            <option>Urban</option>
+            <option>Rural</option>
+            <option>Bus</option>
+            <option>All of them</option>
+        </select>
+    </div>
+
+    </div>
+    </div>
+    </div>
+
+    <div class="panel panel-info">
+    <div class="panel-heading">Experiment Duration</div>
+    <div class="panel-body">
+
+    <div class="form-group">
+        <label class="control-label col-md-1" for="project">Start:</label>
+        <div class="col-md-10">
+            <input type="password" class="form-control" id="project" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.start">
+        </div>
+        <a href="#"><span class="col-md-1 glyphicon glyphicon-calendar"></span></a>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-1" for="project">Stop:</label>
+        <div class="col-md-10">
+            <input type="password" class="form-control" id="project" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.stop">
+        </div>
+        <a href="#"><span class="col-md-1 glyphicon glyphicon-calendar"></span></a>
+    </div>
+
+    <div class="form-group">
+        <div class="checkbox-inline col-md-offset-1">
+            <label><input type="checkbox">Start as soon as possible</label>
+        </div>
+    </div>
+
+    </div>
+    </div> <!-- Date group panel -->
+
+    <div class="panel-footer">
+        <div class="col-md-offset-1">
+            <button type="submit" class="btn btn-default" ng-click="newExperiment(experiment)">Submit Experiment</button>
+        </div>
+    </div>
+
+</form>
+
+</div> <!-- Panel Body -->
+</div> <!-- Panel -->
+
+</body>
