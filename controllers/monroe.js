@@ -28,9 +28,9 @@ angular.module("monroe")
     /*
      * Create a new experiment
      */
-    $scope.newExperiment = function(experimentDetails) {
+    $scope.newExperiment = function(experiment) {
 
-        $http.post(newExperimentUrl, experimentDetails)
+        $http.post(newExperimentUrl, experiment)
             .success(function(data) {
                 $scope.data.orderId = data.id;
             })
@@ -38,7 +38,8 @@ angular.module("monroe")
                 $scope.data.orderError = error;
             })
             .finally(function() {
-                $location.path("/complete");
+                // $location.path("/complete");
+                console.log("Experiment submitted");
             });
 
     }
