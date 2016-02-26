@@ -34,7 +34,7 @@ angular.module("monroe")
 
         console.log("Submitting experiment ...");
 
-        my_experiment.nodetype = "mobile";
+        my_experiment.nodetypes = "static";
 
         console.log(my_experiment);
 
