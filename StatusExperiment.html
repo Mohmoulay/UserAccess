@@ -20,8 +20,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
 
-    <script type="text/javascript" src="Monroe.js"></script>
-
     <!-- Monroe App -->
 
     <script>
@@ -50,7 +48,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="pull-left" href="https://www.monroe-project.eu/">
-                    <img src = "monroe_logo.png" height="50" hspace="20"></img>
+                    <img src = "media/monroe_logo.png" height="50" hspace="20"></img>
                 </a>
             </div>
             <div>
@@ -81,22 +79,22 @@
     <table class="table table-hover">
         <thead>
             <tr>
+                <th>id</th>
                 <th>Name</th>
                 <th>Start</th>
                 <th>Stop</th>
-                <th>Nodes</th>
-                <th>Status</th>
+                <th>Type</th>
             </tr>
         </thead>
 
         <tbody ng-repeat="item in data.experiments" ng-click="viewExperiment();">
 
             <tr>
+                <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
                 <td>{{item.start}}</td>
                 <td>{{item.stop}}</td>
-                <td>{{item.nodes}}</td>
-                <td>{{item.status}}</td>
+                <td>{{item.type}}</td>
             </tr>
 
         </tbody>
@@ -134,7 +132,7 @@
             <li class="list-group-item"><strong>Name:</strong> {{experimentSelected.name}}</li>
             <li class="list-group-item"><strong>Start:</strong> {{experimentSelected.start}}</li>
             <li class="list-group-item"><strong>Stop:</strong> {{experimentSelected.stop}}</li>
-            <li class="list-group-item"><strong>Status:</strong> {{experimentSelected.status}}</li>
+            <li class="list-group-item"><strong>Type:</strong> {{experimentSelected.type}}</li>
             <li class="list-group-item"><strong>Nodes</strong>
 
                 <table class="table table-condensed">
@@ -143,22 +141,22 @@
                     <tbody>
                         <tr>
                         <td class="col-md-1">Total: </td>
-                        <td class="col-md-1"><span class="label label-default label-as-badge">{{experimentSelected.nodes}}</span></td>
+                        <td class="col-md-1"><span class="label label-default label-as-badge">XXX</span></td>
                         <td class="col-md-10"></td>
                         </tr>
                         <tr>
                         <td class="col-md-1">Finished: </td>
-                        <td class="col-md-1"><span class="label label-success label-as-badge">{{experimentSelected.finished}}</span></td>
+                        <td class="col-md-1"><span class="label label-success label-as-badge">XXX</span></td>
                         <td class="col-md-10"></td>
                         </tr>
                         <tr>
                         <td class="col-md-1">Interrupted: </td>
-                        <td class="col-md-1"><span class="label label-warning label-as-badge">{{experimentSelected.interrupted}}</span></td>
+                        <td class="col-md-1"><span class="label label-warning label-as-badge">XXX</span></td>
                         <td class="col-md-10"></td>
                         </tr>
                         <tr>
                         <td class="col-md-1">Failed: </td>
-                        <td class="col-md-1"><span class="label label-danger label-as-badge">{{experimentSelected.failed}}</span></td>
+                        <td class="col-md-1"><span class="label label-danger label-as-badge">XXX</span></td>
                         <td class="col-md-10"></td>
                         </tr>
                     </tbody>

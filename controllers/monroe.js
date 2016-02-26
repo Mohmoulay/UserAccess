@@ -1,6 +1,6 @@
 angular.module("monroe")
-    .constant("myExperimentsUrl", "http://localhost:5500/experiments")
-    .constant("newExperimentUrl", "http://localhost:5500/experiments")
+    .constant("myExperimentsUrl", "https://52.18.248.196:9099/v1/users/2/experiments")
+    .constant("newExperimentUrl", "https://52.18.248.196:9099/v1/experiments")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
                                                  myExperimentsUrl,
                                                  newExperimentUrl) {
@@ -10,7 +10,7 @@ angular.module("monroe")
     /*
      * Get the list of my experiments
      */
-    $http.get(myExperimentsUrl)
+    $http.get(myExperimentsUrl, {withCredentials: true})
         .success(function(data) {
             $scope.data.experiments = data;
         })
@@ -30,16 +30,25 @@ angular.module("monroe")
      */
     $scope.newExperiment = function(experiment) {
 
-        $http.post(newExperimentUrl, experiment)
+        var  my_experiment = angular.copy(experiment)
+
+        console.log("Submitting experiment ...");
+
+        my_experiment.nodetype = "mobile";
+
+        console.log(my_experiment);
+
+        $http.post(newExperimentUrl, my_experiment, {withCredentials: true})
             .success(function(data) {
                 $scope.data.orderId = data.id;
+                console.log("Experiment submitted");
             })
             .error(function(error) {
                 $scope.data.orderError = error;
+                console.log(error);
             })
             .finally(function() {
                 // $location.path("/complete");
-                console.log("Experiment submitted");
             });
 
     }
@@ -47,7 +56,7 @@ angular.module("monroe")
 });
 
 angular.module("monroe")
-    .constant("nodesUrl", "http://localhost:5500/nodes")
+    .constant("nodesUrl", "https://52.18.248.196:9099/v1/resources")
     .controller("nodesCtrl", function($scope, $http, $location, nodesUrl) {
 
     $scope.data = {};
@@ -55,7 +64,7 @@ angular.module("monroe")
     /*
      * Get the list of nodes
      */
-    $http.get(nodesUrl)
+    $http.get(nodesUrl, {withCredentials: true})
         .success(function(data) {
             $scope.data.nodes = data;
         })

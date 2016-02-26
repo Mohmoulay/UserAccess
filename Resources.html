@@ -19,8 +19,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
 
-    <script type="text/javascript" src="Monroe.js"></script>
-
     <!-- Monroe App -->
 
     <script>
@@ -49,7 +47,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="pull-left" href="https://www.monroe-project.eu/">
-                    <img src = "monroe_logo.png" height="50" hspace="20"></img>
+                    <img src = "media/monroe_logo.png" height="50" hspace="20"></img>
                 </a>
             </div>
             <div>
@@ -117,16 +115,18 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Node</th>
-                <th>Location</th>
+                <th>Id</th>
+                <th>Hostname</th>
                 <th>Status</th>
+                <th>Type</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="node in data.nodes">
-                <td>{{node.displayName}}</td>
-                <td>{{node.site}}</td>
+                <td>{{node.id}}</td>
+                <td>{{node.hostname}}</td>
                 <td>{{node.status}}</td>
+                <td>{{node.type[0]}}</td>
             </tr>
         </tbody>
     </table>

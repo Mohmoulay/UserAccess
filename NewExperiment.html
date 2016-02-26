@@ -19,8 +19,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
 
-    <script type="text/javascript" src="Monroe.js"></script>
-
     <!-- Monroe App -->
 
     <script>
@@ -49,7 +47,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="pull-left" href="https://www.monroe-project.eu/">
-                    <img src = "monroe_logo.png" height="50" hspace="20"></img>
+                    <img src = "media/monroe_logo.png" height="50" hspace="20"></img>
                 </a>
             </div>
             <div>
@@ -78,14 +76,14 @@
     <div class="form-group">
         <label class="control-label col-md-1" for="experimentName">Name:</label>
         <div class="col-md-11">
-            <input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.name">
+            <input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.taskname">
         </div>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-md-1" for="project">Script:</label>
+        <label class="control-label col-md-1" for="script">Script:</label>
         <div class="col-md-11">
-            <input type="text" class="form-control" id="project" placeholder="Docker pull URL">
+            <input type="text" class="form-control" id="script" placeholder="Docker pull URL" ng-model="experiment.script">
         </div>
     </div>
 
@@ -94,9 +92,9 @@
     <div class="panel-body">
 
     <div class="form-group">
-        <label class="control-label col-md-1" for="experimentName">Nodes:</label>
+        <label class="control-label col-md-1" for="nodes">Nodes:</label>
         <div class="col-md-11">
-            <input type="text" class="form-control" id="experimentName" placeholder="Number of nodes" ng-model="experiment.nodes">
+            <input type="text" class="form-control" id="nodes" placeholder="Number of nodes" ng-model="experiment.nodes">
         </div>
     </div>
 
@@ -104,11 +102,11 @@
 
     <div class="form-group">
 
-    <label class="control-label col-md-1" for="experimentName">Filters:</label>
+    <label class="control-label col-md-1" for="filters">Filters:</label>
 
     <div class="col-md-2">
         <label for="sel1">Country:</label>
-        <select class="form-control" id=countryFilter">
+        <select class="form-control" id="countryFilter">
             <option>Norway</option>
             <option>Sweden</option>
             <option>Italy</option>
@@ -136,19 +134,23 @@
     <div class="panel-body">
 
     <div class="form-group">
-        <label class="control-label col-md-1" for="project">Start:</label>
-        <div class="col-md-10">
-            <input type="text" class="form-control" id="project" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.start">
+        <label class="control-label col-md-1" for="start">Start:</label>
+        <div class="col-md-11">
+            <div class="input-group">
+                <input type="text" class="form-control" id="start" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.start">
+                <span class="input-group-addon"><span class="col-md-1 glyphicon glyphicon-calendar"></span></span>
+            </div>
         </div>
-        <a href="#"><span class="col-md-1 glyphicon glyphicon-calendar"></span></a>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-md-1" for="project">Stop:</label>
-        <div class="col-md-10">
-            <input type="text" class="form-control" id="project" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.stop">
+        <label class="control-label col-md-1" for="stop">Stop:</label>
+        <div class="col-md-11">
+            <div class="input-group">
+                <input type="text" class="form-control" id="stop" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.stop">
+                <span class="input-group-addon"><span class="col-md-1 glyphicon glyphicon-calendar"></span></span>
+            </div>
         </div>
-        <a href="#"><span class="col-md-1 glyphicon glyphicon-calendar"></span></a>
     </div>
 
     <div class="form-group">
