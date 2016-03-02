@@ -9,7 +9,7 @@
  -->
 
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" ng-app="myApp">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="monroe">
 <head>
 
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
@@ -34,29 +34,6 @@
 
     <!-- Custom styles for this template -->
     <link href="signin.css" rel="stylesheet">
-
-<script>
-    angular.module("myApp", [])
-        .controller("indexCtrl", function($http) {
-            $http.get("https://52.18.248.196:9099/v1/backend/auth")
-                .success(function (data) {
-                    console.log(data);
-                    if (data.verified == "SUCCESS") {
-                        if (data.user.role == "user")
-                            window.location.replace("StatusExperiment.html");
-                        else if (data.user.role == "admin")
-                            window.location.replace("AdminUser.html");
-                    }
-                    else
-                        window.location.replace("NewUsers.html");
-                })
-                .error(function (error) {
-                    window.location.replace("NewUsers.html");
-                });
-            return true;
-        });
-</script>
-
 </head>
 
 <body ng-controller="indexCtrl">

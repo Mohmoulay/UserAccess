@@ -74,23 +74,22 @@ angular.module("monroe")
 });
 
 angular.module("monroe")
-    .controller("LoginCtrl", function ($scope, $http) {  
-        $scope.CheckCertificate = function() {
-            return false;
-            $http.get("https://52.18.248.196:9099/v1/backend/auth")
-                .success(function(data) {
-                    console.log(data);
-                    if ( (data.verified == "SUCCESS") && (data.user.role == "user") )
-                        console.log("¡Perfecto!");
-                    else    
-                        console.log("Error de certificado");
-                })
-                .error(function(error) {
-                    console.log("Error: " + error);
-                });
-        
-            return true;
-        }
-    });
-
+    .constant("AuthURL", "https://52.18.248.196:9099/v1/backend/auth")
+    .controller("indexCtrl", function ($http, AuthURL) {
+        $http.get(AuthURL)
+            .success(function (data) {
+                console.log(data);
+                if (data.verified == "SUCCESS") {
+                    if (data.user.role == "user")
+                        window.location.replace("StatusExperiment.html");
+                    else if (data.user.role == "admin")
+                        window.location.replace("AdminUser.html");
+                }
+                else
+                    window.location.replace("NewUsers.html");
+            })
+            .error(function (error) {
+                window.location.replace("NewUsers.html");
+            });
+});
   
