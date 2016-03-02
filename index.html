@@ -1,0 +1,69 @@
+<!-- This page:
+    * Accesses the scheduler server to verify the client certificate.
+    * If the client certificate is not present, it shows instructions on 
+    acquiring and installing one.
+    * If the client certificate is for an administrator user, it prompts the
+    user to select the correct one (admins cannot use this WEB interface).
+    * If a valid client certificate for a Monroe user is installed, then it redirects
+    the browser to the user's experiments page.
+ -->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="myApp">
+<head>
+
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Monroe Experimenters Portal</title>
+
+    <!-- Include Bootstrap -->
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+
+    <script>
+        angular.module("monroe", []);
+    </script>
+    
+    <script src="controllers/monroe.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="signin.css" rel="stylesheet">
+
+<script>
+    angular.module("myApp", [])
+        .controller("indexCtrl", function($http) {
+            $http.get("https://52.18.248.196:9099/v1/backend/auth")
+                .success(function (data) {
+                    console.log(data);
+                    if (data.verified == "SUCCESS") {
+                        if (data.user.role == "user")
+                            window.location.replace("StatusExperiment.html");
+                        else if (data.user.role == "admin")
+                            window.location.replace("AdminUser.html");
+                    }
+                    else
+                        window.location.replace("NewUsers.html");
+                })
+                .error(function (error) {
+                    window.location.replace("NewUsers.html");
+                });
+            return true;
+        });
+</script>
+
+</head>
+
+<body ng-controller="indexCtrl">
+
+
+<div class="container">
+    <h1>Verifying user credentials...</h1>
+</div>
+
+</body>
