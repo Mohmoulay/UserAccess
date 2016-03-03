@@ -55,11 +55,9 @@
                     <li><a href="StatusExperiment.html" data-toggle="tooltip" title="Status of my experiments">Status</a></li>
                     <li class="active"><a href="NewExperiment.html" data-toggle="tooltip" title="Create a new experiment">New</a></li>
                     <li><a href="Resources.html"data-toggle="tooltip" title="Show information about Monroe resources">Resources</a></li>
-                    <li><a href="Help.html" data-toggle="tooltip" title="Learn about the experimenters portal">Help</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <li><a href="Help.html" data-toggle="tooltip" title="Learn about the experimenters portal"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
                </ul>
             </div>
         </div>
@@ -70,98 +68,133 @@
 <form class="form-horizontal" role="form">
 
 <div class="panel panel-default">
-<div class="panel-heading"><h3>New Experiment</h3></div>
+<div class="panel-heading">
+    <h3>New Experiment</h3>
+</div>
 <div class="panel-body">
 
-    <div class="form-group">
-        <label class="control-label col-md-1" for="experimentName">Name:</label>
-        <div class="col-md-11">
-            <input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.name">
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-1" for="script">Script:</label>
-        <div class="col-md-11">
-            <input type="text" class="form-control" id="script" placeholder="Docker pull URL" ng-model="experiment.script">
-        </div>
-    </div>
-
+    <!-- ----------------------------------------->
     <div class="panel panel-info">
-    <div class="panel-heading">Experiment Size</div>
+    <div class="panel-heading">
+        Description
+    </div>
     <div class="panel-body">
-
-    <div class="form-group">
-        <label class="control-label col-md-1" for="nodes">Nodes:</label>
-        <div class="col-md-11">
-            <input type="text" class="form-control" id="nodes" placeholder="Number of nodes" ng-model="experiment.nodecount">
+        <div class="form-group">
+            <label class="control-label col-md-1" for="experimentName">Name:</label>
+            <div class="col-md-11">
+                <input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.name">
+            </div>
         </div>
-    </div>
 
-    <!-- Filters -->
-
-    <div class="form-group">
-
-    <label class="control-label col-md-1" for="filters">Filters:</label>
-
-    <div class="col-md-2">
-        <label for="sel1">Country:</label>
-        <select class="form-control" id="countryFilter">
-            <option>Norway</option>
-            <option>Sweden</option>
-            <option>Italy</option>
-            <option>Spain</option>
-            <option>All of them</option>
-        </select>
-    </div>
-
-    <div class="col-md-offset-1 col-md-2">
-        <label for="sel1">Type of node:</label>
-        <select class="form-control" id="typeFilter">
-            <option>Urban</option>
-            <option>Rural</option>
-            <option>Bus</option>
-            <option>All of them</option>
-        </select>
-    </div>
-
-    </div>
-    </div>
-    </div>
-
-    <div class="panel panel-info">
-    <div class="panel-heading">Experiment Duration</div>
-    <div class="panel-body">
-
-    <div class="form-group">
-        <label class="control-label col-md-1" for="start">Start:</label>
-        <div class="col-md-11">
-            <div class="input-group">
-                <input type="text" class="form-control" id="start" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.start">
-                <span class="input-group-addon"><span class="col-md-1 glyphicon glyphicon-calendar"></span></span>
+        <div class="form-group">
+            <label class="control-label col-md-1" for="script">Script:</label>
+            <div class="col-md-11">
+                <input type="text" class="form-control" id="script" placeholder="Docker pull URL" ng-model="experiment.script">
             </div>
         </div>
     </div>
+    </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-1" for="stop">Stop:</label>
-        <div class="col-md-11">
-            <div class="input-group">
-                <input type="text" class="form-control" id="stop" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.stop">
-                <span class="input-group-addon"><span class="col-md-1 glyphicon glyphicon-calendar"></span></span>
+    <!-- ----------------------------------------->
+    <div class="panel panel-info">
+    <div class="panel-heading">
+        Filters
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="control-label col-md-1" for="nodes">Nodes:</label>
+            <div class="col-md-11">
+                <input type="text" class="form-control" id="nodes" placeholder="Number of nodes" ng-model="experiment.nodecount">
             </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <div class="checkbox-inline col-md-offset-1">
-            <label><input type="checkbox">Start as soon as possible</label>
+        <div class="form-group">
+            <label class="control-label col-md-1" for="specificNodes" data-toggle="tooltip" title="Specify specific node IDs">Node IDs:</label>
+            <div class="col-md-11">
+                <input type="text" class="form-control" id="specificNodes" placeholder="List of specific nodes to use in the experiment" ng-model="experiment.specificNodes">
+            </div>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label class="control-label">Countries:</label>
+            <select multiple class="form-control">
+                <option>Norway</option>
+                <option>Sweden</option>
+                <option>Italy</option>
+                <option>Spain</option>
+            </select>
+            <div class="checkbox"><label><input type="checkbox" ng-model="experiment.nodeTypeUrban">Any</label></div>
+        </div>
+        
+        <div class="form-group col-md-2"></div>
+        
+        <div class="form-group col-md-3">
+            <label class="control-label">Node types:</label>
+            <select multiple class="form-control">
+                <option>Static</option>
+                <option>Mobile</option>
+            </select>
+            <div class="checkbox"><label><input type="checkbox" ng-model="experiment.nodeTypeUrban">Any</label></div>
         </div>
     </div>
-
     </div>
-    </div> <!-- Date group panel -->
 
+    <!-- ----------------------------------------->
+    <div class="panel panel-info">
+    <div class="panel-heading">
+        Data quotas
+    </div>
+    <div class="panel-body">
+        <div class="input-group col-md-12">
+            <label class="col-md-3"><input type="checkbox" ng-model="experiment.useOperator1"> Operator 1</label><label class="col-md-1"></label>
+            <label class="col-md-3"><input type="checkbox" ng-model="experiment.useOperator2"> Operator 2</label><label class="col-md-1"></label>
+            <label class="col-md-3"><input type="checkbox" ng-model="experiment.useOperator3"> Operator 3</label><label class="col-md-1"></label>
+        </div>
+        
+        <div class="input-group col-md-12">
+            <label class="col-md-2" ng-hide="!experiment.useOperator1">Data quota:</label><input class="col-md-1" ng-hide="!experiment.useOperator1" type="text" id="useOperator1" placeholder="(bytes)" ng-model="experiment.operatorQuota1"><label class="col-md-1"></label>
+            <label class="col-md-2" ng-hide="!experiment.useOperator2">Data quota:</label><input class="col-md-1" ng-hide="!experiment.useOperator2" type="text" id="useOperator2" placeholder="(bytes)" ng-model="experiment.operatorQuota2"><label class="col-md-1"></label>
+            <label class="col-md-2" ng-hide="!experiment.useOperator3">Data quota:</label><input class="col-md-1" ng-hide="!experiment.useOperator3" type="text" id="useOperator3" placeholder="(bytes)" ng-model="experiment.operatorQuota3"><label class="col-md-1"></label>
+        </div>
+    </div>
+    </div>
+
+    <!-- ----------------------------------------->
+    <div class="panel panel-info">
+    <div class="panel-heading">
+        Scheduling options
+    </div>
+    <div class="panel-body">    
+        <div class="form-group col-md-12">
+            <label class="control-label col-md-1" for="experimentName">Duration:</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="experimentName" placeholder="(seconds)" ng-model="experiment.name"></div>
+            <label class="control-label col-md-1" for="experimentName">seconds</label>
+        </div>
+        
+        <div class="col-md-12">
+            <label><input type="checkbox" ng-model="experiment.recurrence"> Recurrence</label>
+        </div>
+        <div class="form-group col-md-12" ng-hide=!experiment.recurrence>
+            <label class="control-label col-md-1" for="experimentName">Every:</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="experimentName" placeholder="(seconds)" ng-model="experiment.name"></div>
+            <label class="control-label col-md-1" for="experimentName">seconds</label>
+        </div>
+        <div class="form-group col-md-12" ng-hide=!experiment.recurrence>
+            <label class="control-label col-md-1" for="experimentName">Until:</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="experimentName" placeholder="yyyy-mm-dd hh:mm" ng-model="experiment.name"></div>
+            <label class="control-label col-md-1" for="experimentName">(parsed date)</label>
+        </div>
+
+        <div class="form-group col-md-12">
+            <label class="control-label col-md-1" for="start">Start:</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="start" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.start"></div>
+            <div class="col-md-2"><button type="submit" class="btn btn-default" ng-click="newExperiment(experiment)">Check availability</button></div>
+            <label class="control-label col-md-7" for="experimentName" style="text-align:left">(parsed date)</label>
+        </div>
+    </div>
+    </div>
+
+    <!-- ----------------------------------------->
     <div class="panel-footer">
         <div class="col-md-offset-1">
             <button type="submit" class="btn btn-default" ng-click="newExperiment(experiment)">Submit Experiment</button>
