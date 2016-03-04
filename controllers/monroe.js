@@ -100,7 +100,7 @@ angular.module("monroe")
                                                  newExperimentURL,
                                                  checkScheduleURL) {
     $scope.experiment = new Object();
-    //$scope.experiment.nodeType.options[1].selected = true;
+    $scope.experiment.nodeType = "static";
     $scope.experiment.useInterface1 = false;
     $scope.experiment.useInterface2 = false;
     $scope.experiment.useInterface3 = false;
@@ -132,6 +132,8 @@ angular.module("monroe")
     	    	experiment.startParsed = "Impossible to consult the scheduler.";
     	    	console.log("Schedule imposible: " + error);
     	    })
+    	    
+    	console.log("Country filter: ", experiment.countryFilter.join());
     }
     
     /******* Track parmeters *******/
@@ -141,7 +143,7 @@ angular.module("monroe")
         console.log("Hit! InterfacesCount: ", experiment.interfacesCount, " - use1: ", experiment.useInterface1, " - use2: ", experiment.useInterface2, " - use3: ", experiment.useInterface3);
     }
     
-    /******* Create new schedule *******/
+    /******* Verify schedule validity *******/
     verifyExperiment = function(experiment) {
     	var res = true;
     	var anumber;
