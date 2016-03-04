@@ -25,33 +25,6 @@ angular.module("monroe")
         $scope.experimentSelected = this.item;
     }
 
-    /*
-     * Create a new experiment
-     */
-    $scope.newExperiment = function(experiment) {
-
-        var  my_experiment = angular.copy(experiment)
-
-        console.log("Submitting experiment ...");
-
-        my_experiment.nodetypes = "static";
-
-        console.log(my_experiment);
-
-        $http.post(newExperimentURL, my_experiment, {withCredentials: true})
-            .success(function(data) {
-                $scope.data.orderId = data.id;
-                console.log("Experiment submitted");
-            })
-            .error(function(error) {
-                $scope.data.orderError = error;
-                console.log(error);
-            })
-            .finally(function() {
-                // $location.path("/complete");
-            });
-
-    }
 });
 
 angular.module("monroe")
@@ -101,9 +74,31 @@ angular.module("monroe")
                                                  checkScheduleURL) {
     $scope.experiment = new Object();
     $scope.experiment.nodeType = "static";
+    $scope.experiment.countryFilterAny = true;
+    $scope.experiment.countryFilter = [];
     $scope.experiment.useInterface1 = false;
     $scope.experiment.useInterface2 = false;
     $scope.experiment.useInterface3 = false;
+
+    $scope.CheckCountryFilter = function(experiment) {
+    	experiment.countryFilterAny = experiment.countryFilter == "";
+    }
+
+    $scope.SetCountryFilterAny = function(experiment) {
+    	if (experiment.countryFilterAny)
+    	    experiment.countryFilter = "";
+    }
+    
+    PrepareNodeFilters = function(experiment, request) {
+    	// Join countries in an OR:
+    	request.nodetypes = experiment.countryFilter.join('|');
+    	// Add node type with an AND (comma):
+    	if (request.nodetypes != "")
+    	    request.nodetypes += "," + experiment.nodeType;
+    	else
+    	    request.nodetypes = experiment.nodeType;
+    }
+
 
     /************* Check schedule **********/
     $scope.checkSchedule = function(experiment) {
@@ -116,7 +111,7 @@ angular.module("monroe")
     	if (isFinite(anumber))    request.duration = anumber;
     	anumber = Number(experiment.start);
     	if (isFinite(anumber))    request.start = anumber;
-    	request.nodetypes = "static";
+    	PrepareNodeFilters(experiment, request);
     	
     	console.log("Enviando: ", request);
     	$http.get(checkScheduleURL, {withCredentials: true, params: request})
@@ -174,14 +169,14 @@ angular.module("monroe")
     	if (isFinite(anumber))    request.start = anumber;
     	anumber = Number(experiment.duration);
     	if (isFinite(anumber) && ('start' in request))    request.stop = request.start + anumber;
-    	
-    	request.nodetypes = "static";
-    	
+    	  	
     	request.interfaces = "";
     	if ($scope.experiment.useInterface1)    request.interfaces += "iface1";
     	if (experiment.useInterface2)    request.interfaces += (request.interfaces == "") ? "iface2" : ",iface2";
     	if (experiment.useInterface3)    request.interfaces += (request.interfaces == "") ? "iface3" : ",iface3";
     	if (request.interfaces == "")            delete request.interfaces;
+    	
+    	PrepareNodeFilters(experiment, request);
     	
     	//// Options
     	request.options = {};
@@ -219,6 +214,7 @@ angular.module("monroe")
         
         console.log(request);
         console.log(request.options);
+        console.log(request.nodetypes);
         $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 console.log("Experiment submitted: ", data);
@@ -232,4 +228,5 @@ angular.module("monroe")
         var elTimestamp = Number(fecha) / 1000;
         console.log("El timestamp: ", elTimestamp);
     }
+    
 });

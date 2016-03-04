@@ -132,13 +132,13 @@
 
         <div class="form-group col-md-2">
             <label class="control-label">Countries (pick zero, one or several):</label>
-            <select multiple class="form-control" ng-model="experiment.countryFilter">
+            <select multiple class="form-control" ng-model="experiment.countryFilter" ng-change="CheckCountryFilter(experiment);">
                 <option value="norway">Norway</option>
                 <option value="sweden">Sweden</option>
                 <option value="italy">Italy</option>
                 <option value="spain">Spain</option>
             </select>
-            <div class="checkbox"><label><input type="checkbox" ng-model="experiment.countryFilterAny">Any</label></div>
+            <label><input type="checkbox" ng-model="experiment.countryFilterAny" ng-change="SetCountryFilterAny(experiment);">Any</label>
         </div>
         
         <div class="form-group col-md-2"></div>
@@ -208,7 +208,7 @@
             <div class="col-md-2"><input type="text" class="form-control" id="start" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.start"></div>
             <div class="col-md-2"><button type="submit" class="btn btn-default" ng-click="checkSchedule(experiment)">Check availability</button></div>
             <!--<label class="control-label col-md-7" for="experimentName" style="text-align:left" ng-model="experiment.startParsed" value="zz">(parsed date)</label>-->
-            <span class="col-md-7" style="text-align:left">{{experiment.startParsed}}</span>
+            <span class="col-md-7 control-label" style="text-align:left">{{experiment.startParsed}}</span>
         </div>
     </div>
     </div>
