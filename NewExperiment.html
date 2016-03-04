@@ -115,17 +115,15 @@
     </div>
     <div class="panel-body">
         <div class="form-group">
-            <label class="control-label col-md-1" for="nodes">Nodes:</label>
-            <div class="col-md-11">
-                <input type="text" class="form-control" id="nodes" placeholder="Number of nodes" ng-model="experiment.nodeCount">
+            <label class="control-label col-md-2" for="nodes">Number of nodes:</label>
+            <div class="col-md-1">
+                <input type="text" class="form-control" id="nodes" placeholder="1" ng-model="experiment.nodeCount">
             </div>
-        </div>
         
-        <div class="form-group col-md-12">
             <label class="control-label col-md-1" for="experimentDuration">Duration:</label>
-            <div class="col-md-2"><input type="text" class="form-control" id="experimentDuration" placeholder="(seconds)" ng-model="experiment.duration"></div>
+            <div class="col-md-1"><input type="text" class="form-control" id="experimentDuration" placeholder="300" ng-model="experiment.duration"></div>
             <label class="control-label col-md-1">seconds</label>
-        </div>        
+        </div>
 
         <div class="form-group col-md-3">
             <label class="control-label">Countries (pick zero, one or several):</label>
@@ -198,7 +196,7 @@
         <div class="form-group col-md-12" ng-hide=!experiment.recurrence>
             <label class="control-label col-md-1" for="until">Until:</label>
             <div class="col-md-2"><input type="text" class="form-control" id="until" placeholder="yyyy-mm-dd hh:mm" ng-model="experiment.repeatUntil"></div>
-            <label class="control-label col-md-1" ng-model="experiment.untilParsed">(parsed date)</label>
+            <label class="control-label" ng-model="experiment.untilParsed">(parsed date)</label>
         </div>
 
         <div class="form-group col-md-12">
