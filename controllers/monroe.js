@@ -166,8 +166,6 @@ angular.module("monroe")
     	
     	request.nodetypes = "static";
     	
-    	//request.nodes = [];
-    	
     	request.interfaces = "";
     	if (experiment.useInterface1)    request.interfaces += "iface1";
     	if (experiment.useInterface2)    request.interfaces += (request.interfaces == "") ? "iface2" : ",iface2";
@@ -199,7 +197,10 @@ angular.module("monroe")
     	    if (isFinite(anumber))    request.options["until"] = anumber;
         }
         
+        request.options["nodes"] = experiment.specificNodes;
+        
         request.options = JSON.stringify(request.options);
+        
     	
     	//// Deployment options
     	//request.deployment_options = new Object;
