@@ -101,7 +101,9 @@ angular.module("monroe")
                                                  checkScheduleURL) {
     $scope.experiment = new Object();
     //$scope.experiment.nodeType.options[1].selected = true;
-    $scope.experiment.totalActiveQuota = 0;
+    $scope.experiment.useInterface1 = false;
+    $scope.experiment.useInterface2 = false;
+    $scope.experiment.useInterface3 = false;
 
     /************* Check schedule **********/
     $scope.checkSchedule = function(experiment) {
@@ -130,6 +132,13 @@ angular.module("monroe")
     	    	experiment.startParsed = "Impossible to consult the scheduler.";
     	    	console.log("Schedule imposible: " + error);
     	    })
+    }
+    
+    /******* Track parmeters *******/
+    $scope.InterfacesCount = function(experiment) {
+        experiment.interfacesCount = experiment.useInterface1 + experiment.useInterface2 + experiment.useInterface3;
+        experiment.totalActiveQuota = experiment.activeQuota * experiment.interfacesCount;
+        console.log("Hit! InterfacesCount: ", experiment.interfacesCount, " - use1: ", experiment.useInterface1, " - use2: ", experiment.useInterface2, " - use3: ", experiment.useInterface3);
     }
     
     /******* Create new schedule *******/
@@ -167,7 +176,7 @@ angular.module("monroe")
     	request.nodetypes = "static";
     	
     	request.interfaces = "";
-    	if (experiment.useInterface1)    request.interfaces += "iface1";
+    	if ($scope.experiment.useInterface1)    request.interfaces += "iface1";
     	if (experiment.useInterface2)    request.interfaces += (request.interfaces == "") ? "iface2" : ",iface2";
     	if (experiment.useInterface3)    request.interfaces += (request.interfaces == "") ? "iface3" : ",iface3";
     	if (request.interfaces == "")            delete request.interfaces;

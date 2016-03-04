@@ -159,16 +159,16 @@
 
         <div class="col-md-12"><h4>Required interfaces:</h4></div>
         <div class="form-group col-md-12">
-            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface1"> Interface 1</label>
-            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface2"> Interface 2</label>
-            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface3"> Interface 3</label>
+            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface1" ng-change="InterfacesCount(experiment)"> Interface 1</label>
+            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface2" ng-change="InterfacesCount(experiment)"> Interface 2</label>
+            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface3" ng-change="InterfacesCount(experiment)"> Interface 3</label>
         </div>
         
         <div class="col-md-12"><h4>Data quotas:</h4></div>
         <div class="form-group col-md-12">
             <label class="control-label col-md-2" for="activeQuota">Active-data quota:</label>
-            <div class="col-md-2"><input type="text" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota"></div>
-            <label class="control-label col-md-2">{{experiment.activeQuota}} bytes x {{experiment.activeInterfaces}} interfaces = {{experiment.totalActiveQuota}} bytes</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
+            <label class="control-label" style="text-align:left">Total active-data quota: {{experiment.activeQuota}} bytes x {{experiment.interfacesCount}} interfaces = {{experiment.totalActiveQuota}} bytes</label>
         </div>
         <div class="form-group col-md-12">
             <label class="control-label col-md-2" for="resultsQuota">Log files quota:</label>
