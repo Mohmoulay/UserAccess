@@ -79,6 +79,10 @@ angular.module("monroe")
     $scope.experiment.useInterface1 = false;
     $scope.experiment.useInterface2 = false;
     $scope.experiment.useInterface3 = false;
+    $scope.experiment.interfacesCount = 0;
+    $scope.experiment.activeQuota = 1048576;
+    $scope.experiment.totalActiveQuota = 0;
+    $scope.experiment.resultsQuota = 0;
 
     $scope.CheckCountryFilter = function(experiment) {
     	experiment.countryFilterAny = experiment.countryFilter == "";
@@ -114,7 +118,7 @@ angular.module("monroe")
     	PrepareNodeFilters(experiment, request);
     	
     	console.log("Enviando: ", request);
-    	$http.get(checkScheduleURL, {withCredentials: true, params: request})
+    	/*$http.get(checkScheduleURL, {withCredentials: true, params: request})
     	    .success(function(data) {
     	    	console.log("Got: ", data);
     	    	if (data.length == 1)
@@ -127,7 +131,7 @@ angular.module("monroe")
     	    	experiment.startParsed = "Impossible to consult the scheduler.";
     	    	console.log("Schedule imposible: " + error);
     	    })
-    	    
+    	*/
     	console.log("Country filter: ", experiment.countryFilter.join());
     }
     
@@ -135,7 +139,6 @@ angular.module("monroe")
     $scope.InterfacesCount = function(experiment) {
         experiment.interfacesCount = experiment.useInterface1 + experiment.useInterface2 + experiment.useInterface3;
         experiment.totalActiveQuota = experiment.activeQuota * experiment.interfacesCount;
-        console.log("Hit! InterfacesCount: ", experiment.interfacesCount, " - use1: ", experiment.useInterface1, " - use2: ", experiment.useInterface2, " - use3: ", experiment.useInterface3);
     }
     
     /******* Verify schedule validity *******/
@@ -180,7 +183,7 @@ angular.module("monroe")
     	
     	//// Options
     	request.options = {};
-    	anumber = Number(experiment.activeQuota);
+    	anumber = Number(experiment.totalActiveQuota);
     	if (isFinite(anumber))
     	{
     	    request.options["traffic_in"] = anumber;
@@ -215,14 +218,14 @@ angular.module("monroe")
         console.log(request);
         console.log(request.options);
         console.log(request.nodetypes);
-        $http.post(newExperimentURL, request, {withCredentials: true})
+        /*$http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 console.log("Experiment submitted: ", data);
             })
             .error(function(error) {
                 console.log("Error submitting experiment: ", error);
             });
-        
+        */
         var fecha = new Date(experiment.myDate);
         console.log("La fecha: ", fecha);
         var elTimestamp = Number(fecha) / 1000;

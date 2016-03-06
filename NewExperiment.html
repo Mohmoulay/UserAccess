@@ -122,11 +122,11 @@
         <div class="form-group">
             <label class="control-label col-md-2" for="nodes">Number of nodes:</label>
             <div class="col-md-1">
-                <input type="text" class="form-control" id="nodes" placeholder="1" ng-model="experiment.nodeCount">
+                <input type="number" min="1" class="form-control" id="nodes" placeholder="1" ng-model="experiment.nodeCount">
             </div>
         
             <label class="control-label col-md-1" for="experimentDuration">Duration:</label>
-            <div class="col-md-1"><input type="text" class="form-control" id="experimentDuration" placeholder="300" ng-model="experiment.duration"></div>
+            <div class="col-md-1"><input type="number" min="300" class="form-control" id="experimentDuration" placeholder="300" ng-model="experiment.duration"></div>
             <label class="control-label col-md-1">seconds</label>
         </div>
 
@@ -155,7 +155,7 @@
         <div class="form-group col-md-12">
             <label class="control-label col-md-1" for="specificNodes" data-toggle="tooltip" title="Specify specific node IDs">Node IDs:</label>
             <div class="col-md-11">
-                <input type="text" class="form-control" id="specificNodes" placeholder="List of specific nodes to use in the experiment" ng-model="experiment.specificNodes">
+                <input type="text" class="form-control" id="specificNodes" placeholder="List of comma-separated specific nodes to use in the experiment. Leave empty for automatic assignment." ng-model="experiment.specificNodes">
             </div>
         </div>
 
@@ -169,12 +169,12 @@
         <div class="col-md-12"><h4>Data quotas:</h4></div>
         <div class="form-group col-md-12">
             <label class="control-label col-md-2" for="activeQuota">Active-data quota:</label>
-            <div class="col-md-2"><input type="text" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
+            <div class="col-md-2"><input type="number" min="0" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
             <label class="control-label" style="text-align:left">Total active-data quota: {{experiment.activeQuota}} bytes x {{experiment.interfacesCount}} interfaces = {{experiment.totalActiveQuota}} bytes</label>
         </div>
         <div class="form-group col-md-12">
             <label class="control-label col-md-2" for="resultsQuota">Log files quota:</label>
-            <div class="col-md-2"><input type="text" class="form-control" id="resultsQuota" placeholder="(bytes)" ng-model="experiment.resultsQuota"></div>
+            <div class="col-md-2"><input type="number" min="0" class="form-control" id="resultsQuota" placeholder="(bytes)" ng-model="experiment.resultsQuota"></div>
         </div>
         <div class="form-group col-md-12">
             <label class="control-label col-md-2">Deployment-data quota:</label>
@@ -194,7 +194,7 @@
         </div>
         <div class="form-group col-md-12" ng-hide=!experiment.recurrence>
             <label class="control-label col-md-1" for="period">Every:</label>
-            <div class="col-md-2"><input type="text" class="form-control" id="period" placeholder="(seconds)" ng-model="experiment.period"></div>
+            <div class="col-md-2"><input type="number" min="3600" class="form-control" id="period" placeholder="(seconds)" ng-model="experiment.period"></div>
             <label class="control-label col-md-1">seconds</label>
         </div>
         <div class="form-group col-md-12" ng-hide=!experiment.recurrence>
