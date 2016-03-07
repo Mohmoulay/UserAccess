@@ -204,7 +204,7 @@
 
         <div class="form-group col-md-12">
             <label class="control-label col-md-1" for="start">Start:</label>
-            <div class="col-md-2"><input type="text" class="form-control" id="start" placeholder="dd/mm/yyyy hh:mm" ng-model="experiment.start"></div>
+            <div class="col-md-2"><input type="text" class="form-control" id="start" ng-model="experiment.start"></div>
             <div class="col-md-2"><button type="submit" class="btn btn-default" ng-click="checkSchedule(experiment)">Check availability</button></div>
             <!--<label class="control-label col-md-7" for="experimentName" style="text-align:left" ng-model="experiment.startParsed" value="zz">(parsed date)</label>-->
             <span class="col-md-7 control-label" style="text-align:left">{{experiment.startParsed}}</span>

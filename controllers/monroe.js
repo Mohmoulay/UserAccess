@@ -84,6 +84,7 @@ angular.module("monroe")
     $scope.experiment.activeQuota = 1048576;
     $scope.experiment.totalActiveQuota = 0;
     $scope.experiment.resultsQuota = 0;
+    $scope.experiment.start = 0;
 
     $scope.CheckCountryFilter = function(experiment) {
     	experiment.countryFilterAny = experiment.countryFilter == "";
