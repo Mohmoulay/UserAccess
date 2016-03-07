@@ -50,7 +50,6 @@ angular.module("monroe")
     .controller("indexCtrl", function ($http, AuthURL) {
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
-                console.log(data);
                 if (data.verified == "SUCCESS") {
                     if (data.user.role == "user")
                         window.location.replace("StatusExperiment.html");
@@ -73,6 +72,8 @@ angular.module("monroe")
                                                  newExperimentURL,
                                                  checkScheduleURL) {
     $scope.experiment = new Object();
+    $scope.experiment.nodeCount = 1;
+    $scope.experiment.duration = 300;
     $scope.experiment.nodeType = "static";
     $scope.experiment.countryFilterAny = true;
     $scope.experiment.countryFilter = [];
@@ -118,7 +119,7 @@ angular.module("monroe")
     	PrepareNodeFilters(experiment, request);
     	
     	console.log("Enviando: ", request);
-    	/*$http.get(checkScheduleURL, {withCredentials: true, params: request})
+    	$http.get(checkScheduleURL, {withCredentials: true, params: request})
     	    .success(function(data) {
     	    	console.log("Got: ", data);
     	    	if (data.length == 1)
@@ -131,8 +132,6 @@ angular.module("monroe")
     	    	experiment.startParsed = "Impossible to consult the scheduler.";
     	    	console.log("Schedule imposible: " + error);
     	    })
-    	*/
-    	console.log("Country filter: ", experiment.countryFilter.join());
     }
     
     /******* Track parmeters *******/
@@ -165,8 +164,10 @@ angular.module("monroe")
     	
     	request.name = experiment.name;
     	request.script = experiment.script;
+    	console.log("nodeCount: ", experiment.nodeCount);
     	anumber = Number(experiment.nodeCount);
     	if (isFinite(anumber))    request.nodecount = anumber;
+    	console.log("nodeCount: ", request.nodecount);
     	
     	anumber = Number(experiment.start);
     	if (isFinite(anumber))    request.start = anumber;
@@ -216,20 +217,18 @@ angular.module("monroe")
     	//request.deployment_options["restart"] = 1;
         
         console.log(request);
-        console.log(request.options);
-        console.log(request.nodetypes);
-        /*$http.post(newExperimentURL, request, {withCredentials: true})
+        $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 console.log("Experiment submitted: ", data);
             })
             .error(function(error) {
                 console.log("Error submitting experiment: ", error);
             });
-        */
-        var fecha = new Date(experiment.myDate);
+        
+        /*var fecha = new Date(experiment.myDate);
         console.log("La fecha: ", fecha);
         var elTimestamp = Number(fecha) / 1000;
-        console.log("El timestamp: ", elTimestamp);
+        console.log("El timestamp: ", elTimestamp);*/
     }
     
 });
