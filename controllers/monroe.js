@@ -74,7 +74,7 @@ angular.module("monroe")
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
-    $scope.experiment.nodeType = "static";
+    $scope.experiment.nodeType = "deployed";
     $scope.experiment.countryFilterAny = true;
     $scope.experiment.countryFilter = [];
     $scope.experiment.useInterface1 = false;
@@ -92,7 +92,7 @@ angular.module("monroe")
 
     $scope.SetCountryFilterAny = function(experiment) {
     	if (experiment.countryFilterAny)
-    	    experiment.countryFilter = "";
+    	    experiment.countryFilter = [];
     }
     
     PrepareNodeFilters = function(experiment, request) {
@@ -100,7 +100,8 @@ angular.module("monroe")
     	request.nodetypes = experiment.countryFilter.join('|');
     	// Add node type with an AND (comma):
     	if (request.nodetypes != "")
-    	    request.nodetypes += "," + experiment.nodeType;
+    	    //request.nodetypes += "," + experiment.nodeType;
+    	    request.nodetypes = "country:" + request.nodetypes + "," + experiment.nodeType;
     	else
     	    request.nodetypes = experiment.nodeType;
     }
@@ -108,6 +109,7 @@ angular.module("monroe")
 
     /************* Check schedule **********/
     $scope.checkSchedule = function(experiment) {
+    	// Add options.nodes="xxx" if the user specifies them, so the check takes the node requirements into account.
     	var request = new Object;
     	var anumber;
     	
