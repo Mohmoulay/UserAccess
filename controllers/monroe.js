@@ -99,7 +99,7 @@ angular.module("monroe")
     
     PrepareNodeFilters = function(experiment, request) {
     	// Join countries in an OR:
-    	request.nodetypes = experiment.countryFilter.join('|');
+    	request.nodetypes = experiment.countryFilter.join('|country:');
     	// Add node type with an AND (comma):
     	if (request.nodetypes != "")
     	    //request.nodetypes += "," + experiment.nodeType;
