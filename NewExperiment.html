@@ -218,6 +218,27 @@
             <button type="submit" class="btn btn-default" ng-click="newExperiment(experiment)">Submit Experiment</button>
         </div>
     </div>
+    
+    
+    <div class="panel panel-success" ng-hide="!experiment.showSuccessPanel">
+    <div class="panel-heading">
+        Experiment successfully submitted
+    </div>
+    <div class="panel-body">
+        Experiment id:{{experiment.schedID}}<br>
+        Number of intervals in recurrence:{{experiment.schedNumScheds}}<br>
+        Number of nodes:{{experiment.schedNodes}}<br>
+    </div>
+    </div>
+
+    <div class="panel panel-danger" ng-hide="!experiment.showFailurePanel">
+    <div class="panel-heading">
+        Failure while submitting experiment
+    </div>
+    <div class="panel-body">
+        Scheduler message: {{experiment.schedMessage}}
+    </div>
+    </div>
 
     Probando el calendario:
     <div ng-cloak>

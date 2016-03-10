@@ -85,6 +85,8 @@ angular.module("monroe")
     $scope.experiment.totalActiveQuota = 0;
     $scope.experiment.resultsQuota = 0;
     $scope.experiment.start = 0;
+    $scope.experiment.showSuccessPanel = false;
+    $scope.experiment.showFailurePanel = false;
 
     $scope.CheckCountryFilter = function(experiment) {
     	experiment.countryFilterAny = experiment.countryFilter == "";
@@ -223,9 +225,15 @@ angular.module("monroe")
         $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 console.log("Experiment submitted: ", data);
+                experiment.schedID = data.experiment;
+                experiment.schedNumScheds = data.intervals;
+                experiment.schedNodes = data.nodecount;
+                experiment.showSuccessPanel = true;
             })
             .error(function(error) {
                 console.log("Error submitting experiment: ", error);
+                experiment.schedMessage = error.message;
+                experiment.showFailurePanel = true;
             });
         
         /*var fecha = new Date(experiment.myDate);
