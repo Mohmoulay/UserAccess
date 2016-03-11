@@ -60,7 +60,7 @@ angular.module("monroe")
                     window.location.replace("NewUsers.html");
             })
             .error(function (error) {
-                window.location.replace("NewUsers.html");
+                window.location.replace("ErrorServer.html");
             });
 });
   
