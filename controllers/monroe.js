@@ -84,12 +84,11 @@ angular.module("monroe")
     $scope.experiment.activeQuota = 1048576;
     $scope.experiment.totalActiveQuota = 0;
     $scope.experiment.resultsQuota = 0;
-    $scope.experiment.start = 0;
     $scope.experiment.showSuccessPanel = false;
     $scope.experiment.showFailurePanel = false;
 
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
-	$scope.experiment.myDate = new Date( (new Date()).toUTCString() );
+	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
 
     $scope.CheckCountryFilter = function(experiment) {
     	experiment.countryFilterAny = experiment.countryFilter == "";
@@ -111,8 +110,8 @@ angular.module("monroe")
     }
 
     $scope.UpdateConfirmStartDate = function (experiment) {
-		if ( (experiment.myDate != null) && (experiment.myDate != undefined) )
-            experiment.confirmStartDate = experiment.myDate.toString();
+		if ( (experiment.startDate != null) && (experiment.startDate != undefined) )
+            experiment.confirmStartDate = experiment.startDate.toString();
 		else
 			experiment.confirmStartDate = "--/--/--- --:--:--";
 		//console.log("Cambiado. ConfirmStrtDate: ", experiment.confirmStartDate);
@@ -130,7 +129,7 @@ angular.module("monroe")
     	if (isFinite(anumber))    request.nodecount = anumber;
     	anumber = Number(experiment.duration);
     	if (isFinite(anumber))    request.duration = anumber;
-    	anumber = Number(experiment.start);
+    	anumber = Number(experiment.startDate) / 1000|0;
     	if (isFinite(anumber))    request.start = anumber;
     	PrepareNodeFilters(experiment, request);
     	
@@ -183,7 +182,7 @@ angular.module("monroe")
     	anumber = Number(experiment.nodeCount);
     	if (isFinite(anumber))    request.nodecount = anumber;
     	
-    	anumber = Number(experiment.start);
+    	anumber = Number(experiment.startDate) / 1000|0;
     	if (isFinite(anumber))    request.start = anumber;
     	anumber = Number(experiment.duration);
     	if (isFinite(anumber) && ('start' in request))    request.stop = request.start + anumber;
@@ -247,10 +246,10 @@ angular.module("monroe")
                 experiment.showFailurePanel = true;
             });
         */
-        console.log("La fecha: ", experiment.myDate);
-        var elTimestamp = Number(experiment.myDate) / 1000|0;
+        console.log("La fecha: ", experiment.startDate);
+        var elTimestamp = Number(experiment.startDate) / 1000|0;
         console.log("El timestamp: ", elTimestamp);
-        experiment.outputDate = experiment.myDate.toString();
+        experiment.outputDate = experiment.startDate.toString();
     }
     
 });

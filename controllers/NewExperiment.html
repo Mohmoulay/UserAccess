@@ -188,35 +188,42 @@
             <div class="col-md-2"><input type="text" class="form-control" id="until" placeholder="yyyy-mm-dd hh:mm" ng-model="experiment.repeatUntil"></div>
             <label class="control-label" ng-model="experiment.untilParsed">(parsed date)</label>
         </div>
-
-        <div class="form-group col-md-12">
-            <label class="control-label col-md-1" for="start">Start:</label>
-            <div class="col-md-2"><input type="text" class="form-control" id="start" ng-model="experiment.start"></div>
-            <div class="col-md-2"><button type="submit" class="btn btn-default" ng-click="checkSchedule(experiment)">Check availability</button></div>
-            <!--<label class="control-label col-md-7" for="experimentName" style="text-align:left" ng-model="experiment.startParsed" value="zz">(parsed date)</label>-->
-            <span class="col-md-7 control-label" style="text-align:left">{{experiment.startParsed}}</span>
-        </div>
-		
+	
+		<br><br>
 	    <div class="row">
             <label class="col-md-3">Select starting date and time:</label>
 		    <label class="col-md-6">Date and time in YOUR local time-zone:</label>
 		</div>
 		<div class="row">
-		    <div class="col-md-3"><input type="datetime-local" step="1" ng-model="experiment.myDate" id="myDate" ng-model-options="{ timezone: 'utc' }" ng-change="UpdateConfirmStartDate(experiment);" required /><label style="padding-left:.1cm">UTC</label></div>
+		    <div class="col-md-3"><input type="datetime-local" step="1" ng-model="experiment.startDate" id="startDate" ng-model-options="{ timezone: 'utc' }" ng-change="UpdateConfirmStartDate(experiment);" required /><label style="padding-left:.1cm">UTC</label></div>
 			<span class="col-md-6">{{experiment.confirmStartDate}}</span>
 		</div>
 		<div class="row">
 		    <label class="col-md-3"><input type="checkbox" ng-model="experiment.startASAP" ng-change="SetStartDateASAP(experiment);"> As soon as possible</label>
 		</div>           
+		
+		<span class="help-block">
+		    <dl>
+			    <dt>Tips:</dt>
+				<dd style="padding-left:.25cm">- Input a date and press "Check availability" to verify if the schedule is possible,</dd>
+				<dd style="padding-left:.25cm">- or mark "As soon as possible" and press "Check availability" to know the earliest possible starting time.</dd>
+				<dd style="padding-left:.25cm">- Input a valid starting date and leave "As soon as possible" unchecked to submit the experiment.</dd>
+			</dl>
+		</span>
             
     </div>
     </div>
 
     <!-- ----------------------------------------->
-    <div class="panel-footer">
+    <div class="panel panel-default">
+	<div class="panel-heading">
+	</div>
+	<div class="panel-body">
         <div class="col-md-offset-1">
             <button type="submit" class="btn btn-default" ng-click="newExperiment(experiment)">Submit Experiment</button>
         </div>
+		<div class="col-md-2"><button type="submit" class="btn btn-default" ng-click="checkSchedule(experiment)">Check availability</button></div>
+		<span class="col-md-7 control-label" style="text-align:left">{{experiment.startParsed}}</span>
     </div>
     
     
