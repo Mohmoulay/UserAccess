@@ -88,6 +88,9 @@ angular.module("monroe")
     $scope.experiment.showSuccessPanel = false;
     $scope.experiment.showFailurePanel = false;
 
+    // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
+	$scope.experiment.myDate = new Date( (new Date()).toUTCString() );
+
     $scope.CheckCountryFilter = function(experiment) {
     	experiment.countryFilterAny = experiment.countryFilter == "";
     }
@@ -102,11 +105,19 @@ angular.module("monroe")
     	request.nodetypes = experiment.countryFilter.join('|country:');
     	// Add node type with an AND (comma):
     	if (request.nodetypes != "")
-    	    //request.nodetypes += "," + experiment.nodeType;
     	    request.nodetypes = "country:" + request.nodetypes + "," + experiment.nodeType;
     	else
     	    request.nodetypes = experiment.nodeType;
     }
+
+    $scope.UpdateConfirmStartDate = function (experiment) {
+		if ( (experiment.myDate != null) && (experiment.myDate != undefined) )
+            experiment.confirmStartDate = experiment.myDate.toString();
+		else
+			experiment.confirmStartDate = "--/--/--- --:--:--";
+		//console.log("Cambiado. ConfirmStrtDate: ", experiment.confirmStartDate);
+    }
+	$scope.UpdateConfirmStartDate($scope.experiment); // Execute call at app start.
 
 
     /************* Check schedule **********/
@@ -169,10 +180,8 @@ angular.module("monroe")
     	
     	request.name = experiment.name;
     	request.script = experiment.script;
-    	console.log("nodeCount: ", experiment.nodeCount);
     	anumber = Number(experiment.nodeCount);
     	if (isFinite(anumber))    request.nodecount = anumber;
-    	console.log("nodeCount: ", request.nodecount);
     	
     	anumber = Number(experiment.start);
     	if (isFinite(anumber))    request.start = anumber;
@@ -222,24 +231,26 @@ angular.module("monroe")
     	//request.deployment_options["restart"] = 1;
         
         console.log(request);
-        $http.post(newExperimentURL, request, {withCredentials: true})
+        /*$http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 console.log("Experiment submitted: ", data);
                 experiment.schedID = data.experiment;
                 experiment.schedNumScheds = data.intervals;
                 experiment.schedNodes = data.nodecount;
                 experiment.showSuccessPanel = true;
+                experiment.showFailurePanel = false;
             })
             .error(function(error) {
                 console.log("Error submitting experiment: ", error);
                 experiment.schedMessage = error.message;
+                experiment.showSuccessPanel = false;
                 experiment.showFailurePanel = true;
             });
-        
-        /*var fecha = new Date(experiment.myDate);
-        console.log("La fecha: ", fecha);
-        var elTimestamp = Number(fecha) / 1000;
-        console.log("El timestamp: ", elTimestamp);*/
+        */
+        console.log("La fecha: ", experiment.myDate);
+        var elTimestamp = Number(experiment.myDate) / 1000|0;
+        console.log("El timestamp: ", elTimestamp);
+        experiment.outputDate = experiment.myDate.toString();
     }
     
 });

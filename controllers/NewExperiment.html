@@ -1,0 +1,248 @@
+<!-- TODO:
+    * (M) Check the availablity of nodes for the specified time period
+    * (L) Review positive and negative filters
+ -->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="monroe">
+<head>
+
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <title>Monroe Experimenters Portal</title>
+
+    <!-- Include Bootstrap and AngularJS --> 
+	<!--
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+	-->
+
+    <script type="text/javascript" src="./jquery.js"></script>
+    <script type="text/javascript" src="./angular.js"></script>
+    <link rel="stylesheet" href="./bootstrap.css">
+    <link rel="stylesheet" href="./bootstrap-theme.css">
+    <script type="text/javascript" src="./bootstrap.js"></script>
+
+    <!-- Monroe App -->
+    <script>
+        angular.module("monroe", []);
+    </script>
+
+    <script src="controllers/monroe.js"></script>
+
+    <!-- Monroe Style -->
+    <style>
+        #monroeSty {
+            padding-top:    25px;
+            padding-botton: 25px;
+            padding-right:  50px;
+            padding-left:   50px;
+        }
+    </style>
+
+</head>
+
+<body ng-controller="newExperimentCtrl" id="monroeSty">
+
+    <!-- Navigation Tabs -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="pull-left" href="https://www.monroe-project.eu/">
+                    <img src = "media/monroe_logo.png" height="50" hspace="20"></img>
+                </a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="StatusExperiment.html" data-toggle="tooltip" title="Status of my experiments">Status</a></li>
+                    <li class="active"><a href="NewExperiment.html" data-toggle="tooltip" title="Create a new experiment">New</a></li>
+                    <li><a href="Resources.html"data-toggle="tooltip" title="Show information about Monroe resources">Resources</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="Help.html" data-toggle="tooltip" title="Learn about the experimenters portal"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
+               </ul>
+            </div>
+        </div>
+    </nav>
+
+<!-- New Experiments Tab -->
+
+<form class="form-horizontal" role="form">
+
+<div class="panel panel-default">
+<div class="panel-heading">
+    <h3>New Experiment</h3>
+</div>
+<div class="panel-body">
+
+    <!-- ----------------------------------------->
+    <div class="panel panel-info">
+    <div class="panel-heading">
+        Description
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="control-label col-md-1" for="experimentName">Name:</label>
+            <div class="col-md-11">
+                <input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.name">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-1" for="script">Script:</label>
+            <div class="col-md-11">
+                <input type="text" class="form-control" id="script" placeholder="Docker pull URL" ng-model="experiment.script">
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ----------------------------------------->
+    <div class="panel panel-info">
+    <div class="panel-heading">
+        Requirements
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="nodes">Number of nodes:</label>
+            <div class="col-md-1">
+                <input type="number" min="1" class="form-control" id="nodes" placeholder="1" ng-model="experiment.nodeCount">
+            </div>
+        
+            <label class="control-label col-md-1" for="experimentDuration">Duration:</label>
+            <div class="col-md-1"><input type="number" min="300" class="form-control" id="experimentDuration" ng-model="experiment.duration"></div>
+            <label class="control-label col-md-1">seconds</label>
+        </div>
+
+        <div class="form-group col-md-2">
+            <label class="control-label">Countries (pick zero, one or several):</label>
+            <select multiple class="form-control" ng-model="experiment.countryFilter" ng-change="CheckCountryFilter(experiment);">
+                <option value="norway">Norway</option>
+                <option value="sweden">Sweden</option>
+                <option value="italy">Italy</option>
+                <option value="spain">Spain</option>
+            </select>
+            <label><input type="checkbox" ng-model="experiment.countryFilterAny" ng-change="SetCountryFilterAny(experiment);">Any</label>
+        </div>
+        
+        <div class="form-group col-md-2"></div>
+        
+        <div class="form-group col-md-2">
+            <label class="control-label">Node type (pick one):</label>
+            <select class="form-control" ng-model="experiment.nodeType">
+                <option value="deployed" selected>Deployed</option>
+                <!--<option value="mobile">Mobile</option>-->
+                <option value="testing">Testing</option>
+            </select>
+        </div>
+        
+        <div class="form-group col-md-12">
+            <label class="control-label col-md-1" for="specificNodes" data-toggle="tooltip" title="Specify specific node IDs">Node IDs:</label>
+            <div class="col-md-11">
+                <input type="text" class="form-control" id="specificNodes" placeholder="List of comma-separated specific nodes to use in the experiment. Leave empty for automatic assignment." ng-model="experiment.specificNodes">
+            </div>
+        </div>
+
+        <div class="col-md-12"><h4>Required interfaces:</h4></div>
+        <div class="form-group col-md-12">
+            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface1" ng-change="InterfacesCount(experiment)"> Interface 1</label>
+            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface2" ng-change="InterfacesCount(experiment)"> Interface 2</label>
+            <label class="control-label col-md-2"><input type="checkbox" ng-model="experiment.useInterface3" ng-change="InterfacesCount(experiment)"> Interface 3</label>
+        </div>
+        
+        <div class="col-md-12"><h4>Data quotas:</h4></div>
+        <div class="form-group col-md-12">
+            <label class="control-label col-md-2" for="activeQuota">Active-data quota:</label>
+            <div class="col-md-2"><input type="number" min="0" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
+            <label class="control-label" style="text-align:left">Total active-data quota: {{experiment.activeQuota}} bytes x {{experiment.interfacesCount}} interfaces = {{experiment.totalActiveQuota}} bytes</label>
+        </div>
+        <div class="form-group col-md-12">
+            <label class="control-label col-md-2" for="resultsQuota">Log files quota:</label>
+            <div class="col-md-2"><input type="number" min="0" class="form-control" id="resultsQuota" placeholder="(bytes)" ng-model="experiment.resultsQuota"></div>
+        </div>
+        <div class="form-group col-md-12">
+            <label class="control-label col-md-2">Deployment-data quota:</label>
+            <div class="col-md-2"><span ng-model="experiment.deploymentQuota">(bytes)</span></div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ----------------------------------------->
+    <div class="panel panel-info">
+    <div class="panel-heading">
+        Scheduling options
+    </div>
+    <div class="panel-body">            
+        <div class="col-md-12">
+            <label><input type="checkbox" ng-model="experiment.recurrence"> Recurrence</label>
+        </div>
+        <div class="form-group col-md-12" ng-hide=!experiment.recurrence>
+            <label class="control-label col-md-1" for="period">Every:</label>
+            <div class="col-md-2"><input type="number" min="3600" class="form-control" id="period" placeholder="(seconds)" ng-model="experiment.period"></div>
+            <label class="control-label col-md-1">seconds</label>
+        </div>
+        <div class="form-group col-md-12" ng-hide=!experiment.recurrence>
+            <label class="control-label col-md-1" for="until">Until:</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="until" placeholder="yyyy-mm-dd hh:mm" ng-model="experiment.repeatUntil"></div>
+            <label class="control-label" ng-model="experiment.untilParsed">(parsed date)</label>
+        </div>
+
+        <div class="form-group col-md-12">
+            <label class="control-label col-md-1" for="start">Start:</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="start" ng-model="experiment.start"></div>
+            <div class="col-md-2"><button type="submit" class="btn btn-default" ng-click="checkSchedule(experiment)">Check availability</button></div>
+            <!--<label class="control-label col-md-7" for="experimentName" style="text-align:left" ng-model="experiment.startParsed" value="zz">(parsed date)</label>-->
+            <span class="col-md-7 control-label" style="text-align:left">{{experiment.startParsed}}</span>
+        </div>
+		
+	    <div class="row">
+            <label class="col-md-3">Select starting date and time:</label>
+		    <label class="col-md-6">Date and time in YOUR local time-zone:</label>
+		</div>
+		<div class="row">
+		    <div class="col-md-3"><input type="datetime-local" step="1" ng-model="experiment.myDate" id="myDate" ng-model-options="{ timezone: 'utc' }" ng-change="UpdateConfirmStartDate(experiment);" required /><label style="padding-left:.1cm">UTC</label></div>
+			<span class="col-md-6">{{experiment.confirmStartDate}}</span>
+		</div>
+		<div class="row">
+		    <label class="col-md-3"><input type="checkbox" ng-model="experiment.startASAP" ng-change="SetStartDateASAP(experiment);"> As soon as possible</label>
+		</div>           
+            
+    </div>
+    </div>
+
+    <!-- ----------------------------------------->
+    <div class="panel-footer">
+        <div class="col-md-offset-1">
+            <button type="submit" class="btn btn-default" ng-click="newExperiment(experiment)">Submit Experiment</button>
+        </div>
+    </div>
+    
+    
+    <div class="panel panel-success" ng-hide="!experiment.showSuccessPanel">
+    <div class="panel-heading">
+        Experiment successfully submitted
+    </div>
+    <div class="panel-body">
+        Experiment id:{{experiment.schedID}}<br>
+        Number of intervals in recurrence:{{experiment.schedNumScheds}}<br>
+        Number of nodes:{{experiment.schedNodes}}<br>
+    </div>
+    </div>
+
+    <div class="panel panel-danger" ng-hide="!experiment.showFailurePanel">
+    <div class="panel-heading">
+        Failure while submitting experiment
+    </div>
+    <div class="panel-body">
+        Scheduler message: {{experiment.schedMessage}}
+    </div>
+    </div>
+
+</form>
+
+</div> <!-- Panel Body -->
+</div> <!-- Panel -->
+
+</body>
