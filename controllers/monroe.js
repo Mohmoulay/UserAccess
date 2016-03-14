@@ -118,7 +118,10 @@ angular.module("monroe")
     }
 	$scope.UpdateConfirmStartDate($scope.experiment); // Execute call at app start.
 
-
+    TimestampToString = function(timestamp) {
+		return (new Date(timestamp * 1000)).toUTCString(); // toLocaleString() / toUTCString()
+	}
+	
     /************* Check schedule **********/
     $scope.checkSchedule = function(experiment) {
     	// Add options.nodes="xxx" if the user specifies them, so the check takes the node requirements into account.
@@ -138,8 +141,10 @@ angular.module("monroe")
     	    .success(function(data) {
     	    	console.log("Got: ", data);
     	    	if (data.length == 1)
-    	    	    experiment.startParsed = 'Possible schedule starting at "' + data[0].start + '", finishing at "' + data[0].stop + 
-    	    	                         '". The experiment could use up to ' + data[0].max_nodecount + ' nodes. The schedule could be delayed or extended until "' + data[0].max_stop + '".';
+    	    	    experiment.startParsed = 'Possible schedule starting at "' + TimestampToString(data[0].start) + 
+				                             '", finishing at "' + TimestampToString(data[0].stop) + 
+    	    	                         '". The experiment could use up to ' + data[0].max_nodecount + 
+										 ' nodes. The schedule could be delayed or extended until "' + TimestampToString(data[0].max_stop) + '".';
     	    	else
     	    	    experiment.startParsed = "Impossible to satisfy the requirements.";
     	    })
