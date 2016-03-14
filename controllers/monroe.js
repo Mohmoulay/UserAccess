@@ -86,9 +86,16 @@ angular.module("monroe")
     $scope.experiment.resultsQuota = 0;
     $scope.experiment.showSuccessPanel = false;
     $scope.experiment.showFailurePanel = false;
+	$scope.experiment.checkAvailabilityStart = "";
+	$scope.experiment.checkAvailabilityStop = "";
+	$scope.experiment.checkAvailabilityMaxNodes = "";
+	$scope.experiment.checkAvailabilitySlotEnd = "";
+	$scope.experiment.checkAvailabilityStartTimestamp = 0;
+	$scope.experiment.checkAvailabilityShow = false;
 
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
 	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
+	$scope.experiment.startASAP = false;
 
     $scope.CheckCountryFilter = function(experiment) {
     	experiment.countryFilterAny = experiment.countryFilter == "";
@@ -114,12 +121,25 @@ angular.module("monroe")
             experiment.confirmStartDate = experiment.startDate.toString();
 		else
 			experiment.confirmStartDate = "--/--/--- --:--:--";
-		//console.log("Cambiado. ConfirmStrtDate: ", experiment.confirmStartDate);
+		experiment.checkAvailabilityShow = false;
     }
 	$scope.UpdateConfirmStartDate($scope.experiment); // Execute call at app start.
 
+    $scope.UpdateRepeatUntil = function (experiment) {
+		if ( (experiment.repeatUntil != null) && (experiment.repeatUntil != undefined) )
+            experiment.untilParsed = experiment.repeatUntil.toString();
+		else
+			experiment.untilParsed = "--/--/--- --:--:--";
+		//experiment.checkAvailabilityShow = false;
+    }
+
     TimestampToString = function(timestamp) {
 		return (new Date(timestamp * 1000)).toUTCString(); // toLocaleString() / toUTCString()
+	}
+	
+	$scope.UseProposedSchedule = function(experiment) {
+		experiment.startDate = new Date( (new Date(experiment.checkAvailabilityStartTimestamp)).toUTCString() );
+		$scope.UpdateConfirmStartDate(experiment);
 	}
 	
     /************* Check schedule **********/
@@ -132,26 +152,36 @@ angular.module("monroe")
     	if (isFinite(anumber))    request.nodecount = anumber;
     	anumber = Number(experiment.duration);
     	if (isFinite(anumber))    request.duration = anumber;
-    	anumber = Number(experiment.startDate) / 1000|0;
-    	if (isFinite(anumber))    request.start = anumber;
+		if (experiment.startASAP) {
+			request.start = 0;
+		}
+		else {
+    	    anumber = Number(experiment.startDate) / 1000|0;
+    	    if (isFinite(anumber))    request.start = anumber;		
+		}
     	PrepareNodeFilters(experiment, request);
     	
     	console.log("Enviando: ", request);
     	$http.get(checkScheduleURL, {withCredentials: true, params: request})
     	    .success(function(data) {
     	    	console.log("Got: ", data);
-    	    	if (data.length == 1)
-    	    	    experiment.startParsed = 'Possible schedule starting at "' + TimestampToString(data[0].start) + 
-				                             '", finishing at "' + TimestampToString(data[0].stop) + 
-    	    	                         '". The experiment could use up to ' + data[0].max_nodecount + 
-										 ' nodes. The schedule could be delayed or extended until "' + TimestampToString(data[0].max_stop) + '".';
-    	    	else
-    	    	    experiment.startParsed = "Impossible to satisfy the requirements.";
+    	    	if (data.length == 1) {
+					experiment.checkAvailabilityStartTimestamp = data[0].start * 1000;
+					experiment.checkAvailabilityStart = 'Available slot starting at "' + TimestampToString(data[0].start) + '".';
+					experiment.checkAvailabilityStop = 'Finishing at "' + TimestampToString(data[0].stop) + '".';
+					experiment.checkAvailabilityMaxNodes = 'The experiment could use up to ' + data[0].max_nodecount + ' nodes.';
+					experiment.checkAvailabilitySlotEnd = 'The experiment may be delayed or the slot extended until "' + TimestampToString(data[0].max_stop) + '".';
+				}
+    	    	else {
+					experiment.checkAvailabilityStartTimestamp = 0;
+    	    	    experiment.checkAvailabilityStart = "Impossible to satisfy the requirements.";
+				}
     	    })
     	    .error(function(error) {
-    	    	experiment.startParsed = "Impossible to consult the scheduler.";
-    	    	console.log("Schedule imposible: " + error);
+    	    	experiment.checkAvailabilityStartTimestamp = 0;
+    	    	experiment.checkAvailabilityStart = "Impossible to contact the scheduler. (Error: ", error, ")";
     	    })
+			experiment.checkAvailabilityShow = true;
     }
     
     /******* Track parmeters *******/
@@ -170,11 +200,18 @@ angular.module("monroe")
     		res = res && isFinite(anumber) && (anumber >= 3600);
     		if (!res)
     		    window.alert("If recurrence is selected, the minimum period must be at least 3600 seconds.");
+			
+			if (res) {
+				res = (experiment.repeatUntil != null) && (experiment.repeatUntil != undefined) && isFinite(Number(experiment.repeatUntil));
+				if (!res)
+					window.alert("If recurrence is selected, a valid ending date must be provided.");
+			}
     	}
     	
     	return res
     }
     
+	/************* New Experiment **********/
     $scope.newExperiment = function(experiment) {
     	if (!verifyExperiment(experiment))
     	    return;
@@ -185,10 +222,14 @@ angular.module("monroe")
     	request.name = experiment.name;
     	request.script = experiment.script;
     	anumber = Number(experiment.nodeCount);
-    	if (isFinite(anumber))    request.nodecount = anumber;
-    	
-    	anumber = Number(experiment.startDate) / 1000|0;
-    	if (isFinite(anumber))    request.start = anumber;
+    	if (isFinite(anumber))    request.nodecount = anumber; 	
+		if (experiment.startASAP) {
+			request.start = 0;
+		}
+		else {
+    	    anumber = Number(experiment.startDate) / 1000|0;
+    	    if (isFinite(anumber))    request.start = anumber;		
+		}
     	anumber = Number(experiment.duration);
     	if (isFinite(anumber) && ('start' in request))    request.stop = request.start + anumber;
     	  	
@@ -251,10 +292,6 @@ angular.module("monroe")
                 experiment.showFailurePanel = true;
             });
         */
-        console.log("La fecha: ", experiment.startDate);
-        var elTimestamp = Number(experiment.startDate) / 1000|0;
-        console.log("El timestamp: ", elTimestamp);
-        experiment.outputDate = experiment.startDate.toString();
     }
     
 });
