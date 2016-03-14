@@ -276,7 +276,7 @@ angular.module("monroe")
     	//request.deployment_options["restart"] = 1;
         
         console.log(request);
-        /*$http.post(newExperimentURL, request, {withCredentials: true})
+        $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 console.log("Experiment submitted: ", data);
                 experiment.schedID = data.experiment;
@@ -291,7 +291,6 @@ angular.module("monroe")
                 experiment.showSuccessPanel = false;
                 experiment.showFailurePanel = true;
             });
-        */
     }
     
 });
