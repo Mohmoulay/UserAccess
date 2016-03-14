@@ -262,7 +262,7 @@ angular.module("monroe")
     	    request.options["recurrence"] = 'simple';
     	    anumber = Number(experiment.period);
     	    if (isFinite(anumber))    request.options["period"] = anumber;
-    	    anumber = Number(experiment.repeatUntil);
+    	    anumber = Number(experiment.repeatUntil) / 1000|0;
     	    if (isFinite(anumber))    request.options["until"] = anumber;
         }
         
