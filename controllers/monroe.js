@@ -1,6 +1,6 @@
 angular.module("monroe")
-    .constant("myExperimentsURL", "https://52.18.248.196:9099/v1/users/2/experiments")
-    .constant("newExperimentURL", "https://52.18.248.196:9099/v1/experiments")
+    .constant("myExperimentsURL", "https://163.117.140.155/v1/users/2/experiments")
+    .constant("newExperimentURL", "https://163.117.140.155/v1/experiments")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
                                                  myExperimentsURL,
                                                  newExperimentURL) {
@@ -28,7 +28,7 @@ angular.module("monroe")
 });
 
 angular.module("monroe")
-    .constant("nodesURL", "https://52.18.248.196:9099/v1/resources")
+    .constant("nodesURL", "https://163.117.140.155/v1/resources")
     .controller("nodesCtrl", function($scope, $http, $location, nodesURL) {
 
     $scope.data = {};
@@ -46,7 +46,7 @@ angular.module("monroe")
 });
 
 angular.module("monroe")
-    .constant("AuthURL", "https://52.18.248.196:9099/v1/backend/auth")
+    .constant("AuthURL", "https://163.117.140.155/v1/backend/auth")
     .controller("indexCtrl", function ($http, AuthURL) {
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
@@ -66,8 +66,8 @@ angular.module("monroe")
   
   
 angular.module("monroe")
-    .constant("newExperimentURL", "https://52.18.248.196:9099/v1/experiments")
-    .constant("checkScheduleURL", "https://52.18.248.196:9099/v1/schedules/find")
+    .constant("newExperimentURL", "https://163.117.140.155/v1/experiments")
+    .constant("checkScheduleURL", "https://163.117.140.155/v1/schedules/find")
     .controller("newExperimentCtrl", function($scope, $http, $location,
                                                  newExperimentURL,
                                                  checkScheduleURL) {
