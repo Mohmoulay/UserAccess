@@ -1,30 +1,47 @@
 angular.module("monroe")
-    .constant("myExperimentsURL", "https://163.117.140.155/v1/users/2/experiments")
+    .constant("myExperimentsURLa", "https://163.117.140.155/v1/users/")
+	.constant("myExperimentsURLb", "/experiments")
     .constant("newExperimentURL", "https://163.117.140.155/v1/experiments")
+	.constant("AuthURL", "https://163.117.140.155/v1/backend/auth")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
-                                                 myExperimentsURL,
-                                                 newExperimentURL) {
-    $scope.data = {};
+                                                 myExperimentsURLa, myExperimentsURLb,
+                                                 newExperimentURL,
+												 AuthURL) {
+	$scope.userID = -1;
+	$scope.userName = new String;
+	$scope.data = {};
     $scope.experimentSelected = {};
 
-    /*
-     * Get the list of my experiments
-     */
-    $http.get(myExperimentsURL, {withCredentials: true})
-        .success(function(data) {
-            $scope.data.experiments = data;
-        })
-        .error(function(error) {
-            $scope.data.error = error;
-        });
+	// Get the list of my experiments.
+	$scope.GetUserID = function($scope) {
+        $http.get(AuthURL, {withCredentials: true})
+            .success(function (data) {
+                if (data.verified == "SUCCESS") {
+                    $scope.userID = data.user.id;
+					$scope.userName = data.user.name;
+					console.log($scope.userName, $scope.userID);
+					$scope.listExperiments();
+				}
+			});
+	}
+	$scope.GetUserID($scope);
 
-    /*
-     * View the details of a experiment
-     */
+	// Show all the experiments of this user.
+	$scope.listExperiments = function() {
+		var userURL = myExperimentsURLa + $scope.userID + myExperimentsURLb;
+		$http.get(userURL, {withCredentials: true})
+			.success(function(data) {
+				$scope.data.experiments = data;
+			})
+			.error(function(error) {
+				$scope.data.error = error;
+			});		
+	}
+		
+    // View the details of an experiment.
     $scope.viewExperiment = function() {
         $scope.experimentSelected = this.item;
     }
-
 });
 
 angular.module("monroe")
