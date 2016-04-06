@@ -262,10 +262,7 @@ angular.module("monroe")
     	request.options = {};
     	anumber = Number(experiment.totalActiveQuota);
     	if (isFinite(anumber))
-    	{
-    	    request.options["traffic_in"] = anumber;
-    	    request.options["traffic_out"] = anumber;
-    	}
+    	    request.options["traffic"] = anumber;
     	
     	anumber = Number(experiment.resultsQuota);
     	if (isFinite(anumber))    request.options["resultsQuota"] = anumber;
