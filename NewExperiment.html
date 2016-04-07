@@ -159,7 +159,8 @@
         <div class="row">
             <label class="control-label col-md-2" for="activeQuota">Active-data quota:</label>
             <div class="col-md-2"><input type="number" min="0" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
-            <label class="control-label" style="text-align:left">Total active-data quota: {{experiment.activeQuota}} bytes x {{experiment.interfacesCount}} interfaces = {{experiment.totalActiveQuota}} bytes</label>
+            <!--<label class="control-label" style="text-align:left">Total active-data quota: {{experiment.activeQuota}} bytes x {{experiment.interfacesCount}} interfaces = {{experiment.totalActiveQuota}} bytes</label>-->
+			<label class="control-label" style="text-align:left">(per interface)</label>
         </div>
         <div class="row" id="colSep">
             <label class="control-label col-md-2" for="resultsQuota">Log files quota:</label>

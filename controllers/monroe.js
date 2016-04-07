@@ -99,7 +99,7 @@ angular.module("monroe")
     $scope.experiment.useInterface3 = false;
     $scope.experiment.interfacesCount = 0;
     $scope.experiment.activeQuota = 1048576;
-    $scope.experiment.totalActiveQuota = 0;
+    $scope.experiment.totalActiveQuota = $scope.experiment.activeQuota; //0;
     $scope.experiment.resultsQuota = 0;
     $scope.experiment.showSuccessPanel = false;
     $scope.experiment.showFailurePanel = false;
@@ -203,8 +203,10 @@ angular.module("monroe")
     
     /******* Track parmeters *******/
     $scope.InterfacesCount = function(experiment) {
-        experiment.interfacesCount = experiment.useInterface1 + experiment.useInterface2 + experiment.useInterface3;
-        experiment.totalActiveQuota = experiment.activeQuota * experiment.interfacesCount;
+		// Modified to send quota per interface, not total.
+        //experiment.interfacesCount = experiment.useInterface1 + experiment.useInterface2 + experiment.useInterface3;
+        //experiment.totalActiveQuota = experiment.activeQuota * experiment.interfacesCount;
+		experiment.totalActiveQuota = experiment.activeQuota;
     }
     
     /******* Verify schedule validity *******/
@@ -281,6 +283,7 @@ angular.module("monroe")
         }
         
         request.options["nodes"] = experiment.specificNodes;
+		request.options["storage"] = 1024*1024*1024;	// TODO
         
         request.options = JSON.stringify(request.options);
         
