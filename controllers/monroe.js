@@ -283,7 +283,7 @@ angular.module("monroe")
         }
         
         request.options["nodes"] = experiment.specificNodes;
-		request.options["storage"] = 1024*1024*1024;	// TODO
+		request.options["storage"] = 100*1024*1024;	// TODO
         
         request.options = JSON.stringify(request.options);
         
