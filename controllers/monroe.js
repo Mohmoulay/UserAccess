@@ -1,8 +1,8 @@
 angular.module("monroe")
-    .constant("myExperimentsURLa", "https://193.10.227.18/v1/users/")
+    .constant("myExperimentsURLa", "https://www.monroe-system.eu/v1/users/")
 	.constant("myExperimentsURLb", "/experiments")
-    .constant("newExperimentURL", "https://193.10.227.18/v1/experiments")
-	.constant("AuthURL", "https://193.10.227.18/v1/backend/auth")
+    .constant("newExperimentURL", "https://www.monroe-system.eu/v1/experiments")
+	.constant("AuthURL", "https://www.monroe-system.eu/v1/backend/auth")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
                                                  myExperimentsURLa, myExperimentsURLb,
                                                  newExperimentURL,
@@ -10,8 +10,30 @@ angular.module("monroe")
 	$scope.userID = -1;
 	$scope.userName = new String;
 	$scope.data = {};
-    $scope.experimentSelected = {};
+    $scope.selectedExperiment = {};
+	$scope.selectedExperiment.executions = {};
+	$scope.selectedExperiment.executions["total"] = 0;
+	$scope.selectedExperiment.executions["finished"] = 0;
+	$scope.selectedExperiment.executions["canceled"] = 0;
+	$scope.selectedExperiment.executions["failed"] = 0;
+	$scope.selectedExperiment.executions["defined"] = 0;
+	$scope.selectedExperiment.executions["deployed"] = 0;
+	$scope.selectedExperiment.executions["remaining"] = 0;
 
+	$scope.TimestampToString = function(timestamp) {
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
+	}
+	
+	$scope.IsExperimentCompleted = function(schedules) {
+		var res = true;
+		for (var itSchedule in schedules) {
+			res = (schedules[itSchedule].status == "finished");
+			if (!res)
+				break;
+		}
+		return res ? "Yes" : "No";
+	}
+	
 	// Get the list of my experiments.
 	$scope.GetUserID = function($scope) {
         $http.get(AuthURL, {withCredentials: true})
@@ -38,14 +60,43 @@ angular.module("monroe")
 			});		
 	}
 		
+	$scope.CountExperimentSchedules = function(schedules, executions) {
+		executions.total = 0;
+		executions.finished = 0;
+		executions.canceled = 0;
+		executions.failed = 0;
+		executions.defined = 0;
+		executions.deployed = 0;
+		console.log("Schedules: ", schedules);
+		for (var it in schedules) {
+			var schedule = schedules[it];
+			console.log("Status: ", schedule.status);
+			++ executions.total;
+			if (schedule.status == "finished")
+				++ executions.finished;
+			else if (schedule.status == "canceled")
+				++ executions.canceled;
+			else if (schedule.status == "failed")
+				++ executions.failed;
+			else if (schedule.status == "defined")
+				++ executions.defined;
+			else if (schedule.status == "deployed")
+				++ executions.deployed;
+		}
+		executions.remaining = executions.total - executions.finished - executions.canceled - executions.failed;
+		console.log("total: ", executions.total, "finished: ", executions.finished, "canceled: ", executions.canceled, "failed. ", executions.failed, 
+				"remaining: ", executions.remaining, "defined: ", executions.defined, "deployed: ", executions.deployed);
+	}
+	
     // View the details of an experiment.
     $scope.viewExperiment = function() {
-        $scope.experimentSelected = this.item;
+        $scope.selectedExperiment.experiment = this.item;		
+		$scope.CountExperimentSchedules($scope.selectedExperiment.experiment.schedules, $scope.selectedExperiment.executions);
     }
 });
 
 angular.module("monroe")
-    .constant("nodesURL", "https://193.10.227.18/v1/resources")
+    .constant("nodesURL", "https://www.monroe-system.eu/v1/resources")
     .controller("nodesCtrl", function($scope, $http, $location, nodesURL) {
 
     $scope.data = {};
@@ -63,7 +114,7 @@ angular.module("monroe")
 });
 
 angular.module("monroe")
-    .constant("AuthURL", "https://193.10.227.18/v1/backend/auth")
+    .constant("AuthURL", "https://www.monroe-system.eu/v1/backend/auth")
     .controller("indexCtrl", function ($http, AuthURL) {
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
@@ -83,8 +134,8 @@ angular.module("monroe")
   
   
 angular.module("monroe")
-    .constant("newExperimentURL", "https://193.10.227.18/v1/experiments")
-    .constant("checkScheduleURL", "https://193.10.227.18/v1/schedules/find")
+    .constant("newExperimentURL", "https://www.monroe-system.eu/v1/experiments")
+    .constant("checkScheduleURL", "https://www.monroe-system.eu/v1/schedules/find")
     .controller("newExperimentCtrl", function($scope, $http, $location,
                                                  newExperimentURL,
                                                  checkScheduleURL) {

@@ -11,11 +11,9 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <title>Monroe Experimenters Portal</title>
 
-    <!-- Include Bootstrap -->
-
+    <!-- Include Bootstrap and AngularJS --> 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
@@ -79,11 +77,11 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>id</th>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Start</th>
                 <th>Stop</th>
-                <th>Type</th>
+                <th>Completed</th>
             </tr>
         </thead>
 
@@ -92,9 +90,9 @@
             <tr>
                 <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
-                <td>{{item.start}}</td>
-                <td>{{item.stop}}</td>
-                <td>{{item.type}}</td>
+                <td>{{TimestampToString(item.start)}}</td>
+                <td>{{TimestampToString(item.stop)}}</td>
+                <td>{{IsExperimentCompleted(item.schedules)}}</td>
             </tr>
 
         </tbody>
@@ -124,40 +122,47 @@
     <div class="panel panel-default">
 
     <div class="panel-heading">
-    <h3>Experiments Details</h3>
+    <h3>Details for experiment "{{selectedExperiment.experiment.name}}"</h3>
     </div>
 
     <div class="panel-body">
         <ul class="list-group">
-            <li class="list-group-item"><strong>Name:</strong> {{experimentSelected.name}}</li>
-            <li class="list-group-item"><strong>Start:</strong> {{experimentSelected.start}}</li>
-            <li class="list-group-item"><strong>Stop:</strong> {{experimentSelected.stop}}</li>
-            <li class="list-group-item"><strong>Type:</strong> {{experimentSelected.type}}</li>
-            <li class="list-group-item"><strong>Nodes</strong>
+            <li class="list-group-item"><strong>Node types:</strong> {{selectedExperiment.experiment.type}}</li>
+            <li class="list-group-item"><strong>Number of executions: {{selectedExperiment.executions.total}}</strong>
 
                 <table class="table table-condensed">
                     <thead>
                     </thead>
                     <tbody>
                         <tr>
-                        <td class="col-md-1">Total: </td>
-                        <td class="col-md-1"><span class="label label-default label-as-badge">XXX</span></td>
-                        <td class="col-md-10"></td>
-                        </tr>
-                        <tr>
                         <td class="col-md-1">Finished: </td>
-                        <td class="col-md-1"><span class="label label-success label-as-badge">XXX</span></td>
-                        <td class="col-md-10"></td>
-                        </tr>
-                        <tr>
-                        <td class="col-md-1">Interrupted: </td>
-                        <td class="col-md-1"><span class="label label-warning label-as-badge">XXX</span></td>
+                        <td class="col-md-1"><span class="label label-success label-as-badge">{{selectedExperiment.executions.finished}}</span></td>
                         <td class="col-md-10"></td>
                         </tr>
                         <tr>
                         <td class="col-md-1">Failed: </td>
-                        <td class="col-md-1"><span class="label label-danger label-as-badge">XXX</span></td>
+                        <td class="col-md-1"><span class="label label-danger label-as-badge">{{selectedExperiment.executions.failed}}</span></td>
                         <td class="col-md-10"></td>
+                        </tr>
+                        <tr>
+                        <td class="col-md-1">Canceled: </td>
+                        <td class="col-md-1"><span class="label label-warning label-as-badge">{{selectedExperiment.executions.canceled}}</span></td>
+                        <td class="col-md-10"></td>
+                        </tr>
+                        <tr>
+                        <td class="col-md-1">Remaining: </td>
+                        <td class="col-md-1"><span class="label label-default label-as-badge">{{selectedExperiment.executions.remaining}}</span></td>
+                        <td class="col-md-10"></td>
+						</tr>
+						<tr>
+						<td class="col-md-1"></td>
+						<td class="col-md-2">Defined: {{selectedExperiment.executions.defined}}</td>
+                        <td class="col-md-9"></td>
+						</tr>
+						<tr>
+						<td class="col-md-1"></td>
+						<td class="col-md-2">Deployed: {{selectedExperiment.executions.deployed}}</td>
+                        <td class="col-md-9"></td>
                         </tr>
                     </tbody>
                 </table>
