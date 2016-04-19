@@ -19,6 +19,8 @@ angular.module("monroe")
 	$scope.selectedExperiment.executions["defined"] = 0;
 	$scope.selectedExperiment.executions["deployed"] = 0;
 	$scope.selectedExperiment.executions["remaining"] = 0;
+	
+	$scope.hideCompleted = true;
 
 	$scope.TimestampToString = function(timestamp) {
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
@@ -31,10 +33,19 @@ angular.module("monroe")
 			if (!res)
 				break;
 		}
-		return res ? "Yes" : "No";
+		return res;
+	}
+		
+	$scope.GetExperimentByID = function(experiments, id) {
+		for (var it in experiments) {
+			var exp = experiments[it];
+			if (exp.id == id)
+				return exp;
+		}
+		return undefined;
 	}
 	
-	// Get the list of my experiments.
+	// Get the user ID.
 	$scope.GetUserID = function($scope) {
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
@@ -54,6 +65,10 @@ angular.module("monroe")
 		$http.get(userURL, {withCredentials: true})
 			.success(function(data) {
 				$scope.data.experiments = data;
+				for (var it in $scope.data.experiments) {
+					var exp = $scope.data.experiments[it];
+					exp.completed = $scope.IsExperimentCompleted(exp.schedules);
+				}
 			})
 			.error(function(error) {
 				$scope.data.error = error;
@@ -93,24 +108,6 @@ angular.module("monroe")
         $scope.selectedExperiment.experiment = this.item;		
 		$scope.CountExperimentSchedules($scope.selectedExperiment.experiment.schedules, $scope.selectedExperiment.executions);
     }
-});
-
-angular.module("monroe")
-    .constant("nodesURL", "https://www.monroe-system.eu/v1/resources")
-    .controller("nodesCtrl", function($scope, $http, $location, nodesURL) {
-
-    $scope.data = {};
-
-    /*
-     * Get the list of nodes
-     */
-    $http.get(nodesURL, {withCredentials: true})
-        .success(function(data) {
-            $scope.data.nodes = data;
-        })
-        .error(function(error) {
-            $scope.data.error = error;
-        });
 });
 
 angular.module("monroe")
