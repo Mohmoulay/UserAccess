@@ -1,27 +1,32 @@
 angular.module("monroe")
-    .constant("myExperimentsURLa", "https://www.monroe-system.eu/v1/users/")
+    .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu/v1/users/")
 	.constant("myExperimentsURLb", "/experiments")
-    .constant("newExperimentURL", "https://www.monroe-system.eu/v1/experiments")
-	.constant("AuthURL", "https://www.monroe-system.eu/v1/backend/auth")
+    .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
+	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
+	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments/")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
                                                  myExperimentsURLa, myExperimentsURLb,
                                                  newExperimentURL,
-												 AuthURL) {
+												 AuthURL, DeleteExperimentURL) {
 	$scope.userID = -1;
 	$scope.userName = new String;
 	$scope.data = {};
     $scope.selectedExperiment = {};
-	$scope.selectedExperiment.executions = {};
-	$scope.selectedExperiment.executions["total"] = 0;
-	$scope.selectedExperiment.executions["finished"] = 0;
-	$scope.selectedExperiment.executions["canceled"] = 0;
-	$scope.selectedExperiment.executions["failed"] = 0;
-	$scope.selectedExperiment.executions["defined"] = 0;
-	$scope.selectedExperiment.executions["deployed"] = 0;
-	$scope.selectedExperiment.executions["remaining"] = 0;
-	
 	$scope.hideCompleted = true;
-
+	
+	$scope.selectedExperiment.executions = {};
+	$scope.ResetExecutionCounters = function(executions) {
+		executions.total = 0;
+		executions.finished = 0;
+		executions.canceled = 0;
+		executions.aborted = 0;
+		executions.failed = 0;
+		executions.defined = 0;
+		executions.deployed = 0;
+		executions.remaining = 0;
+	}
+	$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
+	
 	$scope.TimestampToString = function(timestamp) {
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
 	}
@@ -74,14 +79,9 @@ angular.module("monroe")
 				$scope.data.error = error;
 			});		
 	}
-		
+			
 	$scope.CountExperimentSchedules = function(schedules, executions) {
-		executions.total = 0;
-		executions.finished = 0;
-		executions.canceled = 0;
-		executions.failed = 0;
-		executions.defined = 0;
-		executions.deployed = 0;
+		$scope.ResetExecutionCounters(executions);
 		console.log("Schedules: ", schedules);
 		for (var it in schedules) {
 			var schedule = schedules[it];
@@ -91,6 +91,8 @@ angular.module("monroe")
 				++ executions.finished;
 			else if (schedule.status == "canceled")
 				++ executions.canceled;
+			else if (schedule.status == "aborted")
+				++ executions.aborted;
 			else if (schedule.status == "failed")
 				++ executions.failed;
 			else if (schedule.status == "defined")
@@ -98,8 +100,9 @@ angular.module("monroe")
 			else if (schedule.status == "deployed")
 				++ executions.deployed;
 		}
-		executions.remaining = executions.total - executions.finished - executions.canceled - executions.failed;
-		console.log("total: ", executions.total, "finished: ", executions.finished, "canceled: ", executions.canceled, "failed. ", executions.failed, 
+		executions.remaining = executions.total - executions.finished - executions.canceled - executions.aborted - executions.failed;
+		console.log("total: ", executions.total, "finished: ", executions.finished, "canceled: ", executions.canceled, 
+				"aborted: ", executions.aborted, "failed: ", executions.failed, 
 				"remaining: ", executions.remaining, "defined: ", executions.defined, "deployed: ", executions.deployed);
 	}
 	
@@ -108,10 +111,32 @@ angular.module("monroe")
         $scope.selectedExperiment.experiment = this.item;		
 		$scope.CountExperimentSchedules($scope.selectedExperiment.experiment.schedules, $scope.selectedExperiment.executions);
     }
+	
+	// Deletes a completed experiment or cancels and deletes an incomplete one.
+	$scope.DeleteExperiment = function(experiment, event) {
+		console.log('Deleting experiment ' + experiment.id + ' "' + experiment.name + '"');
+		if (confirm('Do you want to cancel and/or delete experiment ' + experiment.id + '?\n"' + experiment.name + '"')) {
+			var deleteUrl = DeleteExperimentURL + experiment.id;
+			console.log("DeleteURL: ", deleteUrl);
+
+			$http.delete(deleteUrl, {withCredentials: true})
+				.success(function(data) {
+					console.log("Experiment deleted: ", data);
+					$scope.listExperiments();	// Call from success for Angular to notice the changes.
+					delete $scope.selectedExperiment.experiment;
+					$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
+				})
+				.error(function(error) {
+					console.log("Error deleting experiment: ", error);
+				});
+		}
+
+		event.stopPropagation(); // Stop the event before reaching the list controller that would try to show a non-existent experiment.		
+	}
 });
 
 angular.module("monroe")
-    .constant("AuthURL", "https://www.monroe-system.eu/v1/backend/auth")
+    .constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
     .controller("indexCtrl", function ($http, AuthURL) {
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
@@ -131,15 +156,15 @@ angular.module("monroe")
   
   
 angular.module("monroe")
-    .constant("newExperimentURL", "https://www.monroe-system.eu/v1/experiments")
-    .constant("checkScheduleURL", "https://www.monroe-system.eu/v1/schedules/find")
+    .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
+    .constant("checkScheduleURL", "https://scheduler.monroe-system.eu/v1/schedules/find")
     .controller("newExperimentCtrl", function($scope, $http, $location,
                                                  newExperimentURL,
                                                  checkScheduleURL) {
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
-    $scope.experiment.nodeType = "deployed";
+    $scope.experiment.nodeType = "status:deployed";
     $scope.experiment.countryFilterAny = true;
     $scope.experiment.countryFilter = [];
     $scope.experiment.useInterface1 = false;
