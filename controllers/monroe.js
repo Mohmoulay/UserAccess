@@ -4,14 +4,17 @@ angular.module("monroe")
     .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
 	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
 	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments/")
+	.constant("ExperimentSchedulesURL", "https://scheduler.monroe-system.eu/v1/schedules/")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
                                                  myExperimentsURLa, myExperimentsURLb,
                                                  newExperimentURL,
-												 AuthURL, DeleteExperimentURL) {
+												 AuthURL, DeleteExperimentURL, 
+												 ExperimentSchedulesURL) {
 	$scope.userID = -1;
 	$scope.userName = new String;
 	$scope.data = {};
-    $scope.selectedExperiment = {};
+    $scope.selectedExperiment = {}; // Contains executions{}, experiment{} and schedules{} (detailed schedule, not the abbreviated from the experiments listing). Schedules{} is "scheduleid":{schedule_data}
+	$scope.selectedExperiment.schedules = [];
 	$scope.hideCompleted = true;
 	
 	$scope.selectedExperiment.executions = {};
@@ -55,7 +58,7 @@ angular.module("monroe")
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
                 if (data.verified == "SUCCESS") {
-                    $scope.userID = data.user.id;
+                    $scope.userID = 15;//data.user.id;
 					$scope.userName = data.user.name;
 					console.log($scope.userName, $scope.userID);
 					$scope.listExperiments();
@@ -79,7 +82,13 @@ angular.module("monroe")
 				$scope.data.error = error;
 			});		
 	}
-			
+
+	$scope.StatusCodeToText = function(code) {
+		// When needed, do something more complex than just capitalizing...
+		var table = {"defined": "Defined", "deployed": "Deployed", "finished": "Finished", "canceled": "Canceled", "aborted": "Aborted", "failed": "Failed"};
+		return table[code];
+	}
+	
 	$scope.CountExperimentSchedules = function(schedules, executions) {
 		$scope.ResetExecutionCounters(executions);
 		console.log("Schedules: ", schedules);
@@ -105,11 +114,26 @@ angular.module("monroe")
 				"aborted: ", executions.aborted, "failed: ", executions.failed, 
 				"remaining: ", executions.remaining, "defined: ", executions.defined, "deployed: ", executions.deployed);
 	}
-	
+		
     // View the details of an experiment.
     $scope.viewExperiment = function() {
         $scope.selectedExperiment.experiment = this.item;		
 		$scope.CountExperimentSchedules($scope.selectedExperiment.experiment.schedules, $scope.selectedExperiment.executions);
+		$scope.selectedExperiment.schedules = [];
+		
+		// Get the full details of the experiment schedules.
+		for (var it in $scope.selectedExperiment.experiment.schedules) {
+			// "it" is the schedule id, we aren't interested in the values.
+			var schedulesURL = ExperimentSchedulesURL + it;
+			// Get the full details of the experiment schedules.
+			$http.get(schedulesURL, {withCredentials: true})
+				.success(function (data) {
+					$scope.selectedExperiment.schedules.push(data[0]); // Why does it return an array with one element?
+				})
+				.error(function (error) {
+					console.log("Error: ", error);
+				});
+		}
     }
 	
 	// Deletes a completed experiment or cancels and deletes an incomplete one.
@@ -124,6 +148,7 @@ angular.module("monroe")
 					console.log("Experiment deleted: ", data);
 					$scope.listExperiments();	// Call from success for Angular to notice the changes.
 					delete $scope.selectedExperiment.experiment;
+					delete $scope.selectedExperiment.schedules;
 					$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
 				})
 				.error(function(error) {
