@@ -1,3 +1,7 @@
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////// statusExperimentCtrl //////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 angular.module("monroe")
     .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu/v1/users/")
 	.constant("myExperimentsURLb", "/experiments")
@@ -6,10 +10,10 @@ angular.module("monroe")
 	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments/")
 	.constant("ExperimentSchedulesURL", "https://scheduler.monroe-system.eu/v1/schedules/")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
-                                                 myExperimentsURLa, myExperimentsURLb,
-                                                 newExperimentURL,
-												 AuthURL, DeleteExperimentURL, 
-												 ExperimentSchedulesURL) {
+											myExperimentsURLa, myExperimentsURLb,
+											newExperimentURL,
+											AuthURL, DeleteExperimentURL, 
+											ExperimentSchedulesURL) {
 	$scope.userID = -1;
 	$scope.userName = new String;
 	$scope.data = {};
@@ -160,6 +164,11 @@ angular.module("monroe")
 	}
 });
 
+
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////// indexCtrl /////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 angular.module("monroe")
     .constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
     .controller("indexCtrl", function ($http, AuthURL) {
@@ -180,12 +189,16 @@ angular.module("monroe")
 });
   
   
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////// newExperimentCtrl /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 angular.module("monroe")
     .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
     .constant("checkScheduleURL", "https://scheduler.monroe-system.eu/v1/schedules/find")
     .controller("newExperimentCtrl", function($scope, $http, $location,
-                                                 newExperimentURL,
-                                                 checkScheduleURL) {
+										newExperimentURL,
+										checkScheduleURL) {
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
@@ -408,4 +421,57 @@ angular.module("monroe")
             });
     }
     
+});
+
+
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////// resourcesCtrl /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+angular.module("monroe")
+	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
+	.constant("ResourcesURL", "https://scheduler.monroe-system.eu/v1/resources/")
+    .controller("resourcesCtrl", function($scope, $http, $location,
+									ResourcesURL, AuthURL) {
+	$scope.userID = -1;
+    $scope.selectedNode = {};
+	$scope.nodes = [];
+	
+	$scope.TimestampToString = function(timestamp) {
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
+	}
+	
+	// Get the user ID.
+	$scope.GetUserID = function($scope) {
+        $http.get(AuthURL, {withCredentials: true})
+            .success(function (data) {
+                if (data.verified == "SUCCESS") {
+                    $scope.userID = data.user.id;
+					$scope.userName = data.user.name;
+					console.log($scope.userName, $scope.userID);
+					$scope.listNodes();
+				}
+			});
+	}
+	$scope.GetUserID($scope);
+
+	// Show all the nodes in the inventory.
+	$scope.listNodes = function() {
+		$http.get(ResourcesURL, {withCredentials: true})
+			.success(function(data) {
+				$scope.nodes = data;
+				for (var it in $scope.nodes) {
+					var node = $scope.nodes[it];
+					node.type = node.type;
+				}
+			})
+			.error(function(error) {
+				$scope.data.error = error;
+			});		
+	}
+
+	$scope.Capitalize = function(theString) {		
+		if (angular.isString(theString))
+			return theString[0].toLocaleUpperCase() + theString.slice(1);
+	}
 });

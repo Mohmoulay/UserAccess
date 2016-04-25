@@ -1,20 +1,14 @@
-<!-- TODO:
-    * (H) Add a new time filter to check reservations
-    * (M) Consider to show only a summary
- -->
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" ng-app="monroe">
+
 <head>
 
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <title>Monroe Experimenters Portal</title>
 
-    <!-- Include Bootstrap -->
-
+    <!-- Include Bootstrap and AngularJS --> 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
@@ -40,7 +34,7 @@
 
 </head>
 
-<body ng-controller="nodesCtrl" id="monroeSty">
+<body ng-controller="resourcesCtrl" id="monroeSty">
 
     <!-- Navigation Tabs -->
     <nav class="navbar navbar-default">
@@ -88,7 +82,7 @@
                 <option>Sweden</option>
                 <option>Italy</option>
                 <option>Spain</option>
-                <option>All of them</option>
+                <option>Any</option>
             </select>
         </div>
         </div>
@@ -97,10 +91,9 @@
         <div class="form-group">
             <label for="sel1">Type of node:</label>
             <select class="form-control" id="typeFilter">
-                <option>Urban</option>
-                <option>Rural</option>
-                <option>Bus</option>
-                <option>All of them</option>
+                <option>Deployed</option>
+                <option>Testing</option>
+                <option>All</option>
             </select>
         </div>
         </div>
@@ -115,18 +108,28 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>ID</th>
                 <th>Hostname</th>
-                <th>Status</th>
-                <th>Type</th>
+                <th>Country</th>
+                <th>Address</th>
+				<th>Active?</th>
+				<th>Type</th>
+				<th>Model</th>
+				<th>Heart beat</th>
+				<th>Project</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="node in data.nodes">
+            <tr ng-repeat="node in nodes">
                 <td>{{node.id}}</td>
                 <td>{{node.hostname}}</td>
-                <td>{{node.status}}</td>
-                <td>{{node.type[0]}}</td>
+                <td>{{node.type.country}}</td>	
+				<td>{{node.type.address}}</td>
+				<td>{{node.status == "active" ? "Yes" : "No"}}</td>
+				<td>{{Capitalize(node.type.status)}}</td>
+				<td>{{node.type.model}}</td>
+				<td>{{node.heartbeat > 0 ? TimestampToString(node.heartbeat) : "Never"}}</td>
+				<td>{{Capitalize(node.type.project)}}</td>
             </tr>
         </tbody>
     </table>
@@ -145,7 +148,5 @@
 
     </div>
     </div>
-
-    <!-- New Experiment Tab -->
 
 </body>
