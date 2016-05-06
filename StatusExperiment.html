@@ -174,7 +174,7 @@
             <li class="list-group-item"><strong>Individual schedules:</strong> {{selectedExperiment.executions.total}}</li>
                 <table class="table table-condensed">
                     <thead>
-						<tr><th>Schedule ID</th><th>Node ID</th><th>Status</th><th>Start</th><th>Stop</th><th>Shared</th><th>Storage</th><th>Traffic quota</th></tr>
+						<tr><th>Schedule ID</th><th>Node ID</th><th>Status</th><th>Start</th><th>Stop</th><th>Shared</th><th>Storage</th><th>Traffic quota</th><th>Results</th></tr>
                     </thead>
 					<tbody ng-repeat="item in selectedExperiment.schedules | orderBy:'item.id'" >
 						<tr>
@@ -186,6 +186,7 @@
 							<td>{{item.shared}}</td>
 							<td>{{item.deployment_options.storage}}</td>
 							<td>{{item.deployment_options.traffic}}</td>
+							<td ng-if="item.status == 'finished'"><a href="{{CreateResultsURL(item.id, item.nodeid)}}">download</a></td>
 						</tr>
                     </tbody>
                 </table>
