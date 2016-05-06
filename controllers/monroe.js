@@ -93,8 +93,8 @@ angular.module("monroe")
 		return table[code];
 	}
 	
-	$scope.CreateResultsURL = function(schedId, nodeId) {
-		return 'https://www.monroe-system.eu/results/result_' + schedId + '_' + nodeId + '.tgz';
+	$scope.CreateResultsURL = function(schedId) {
+		return 'https://www.monroe-system.eu/user/' + schedId + '/';
 	}
 	
 	$scope.CountExperimentSchedules = function(schedules, executions) {
