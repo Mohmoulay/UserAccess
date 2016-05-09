@@ -121,10 +121,6 @@ angular.module("monroe")
 				++ executions.started;
 		}
 		executions.remaining = executions.total - executions.stopped - executions.canceled - executions.aborted - executions.failed;
-		console.log("total: ", executions.total, "stopped: ", executions.stopped, "canceled: ", executions.canceled, 
-				"aborted: ", executions.aborted, "failed: ", executions.failed, 
-				"remaining: ", executions.remaining, "defined: ", executions.defined, "deployed: ", executions.deployed,
-				"started: ", executions.started);
 	}
 		
     // View the details of an experiment.
@@ -140,7 +136,7 @@ angular.module("monroe")
 			// Get the full details of the experiment schedules.
 			$http.get(schedulesURL, {withCredentials: true})
 				.success(function (data) {
-					$scope.selectedExperiment.schedules.push(data[0]); // Why does it return an array with one element?
+					$scope.selectedExperiment.schedules.push(data);
 				})
 				.error(function (error) {
 					console.log("Error: ", error);
