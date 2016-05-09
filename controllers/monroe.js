@@ -210,7 +210,7 @@ angular.module("monroe")
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
-    $scope.experiment.nodeType = "status:deployed";
+    $scope.experiment.nodeType = "type:deployed";
     $scope.experiment.countryFilterAny = true;
     $scope.experiment.countryFilter = [];
     $scope.experiment.useInterface1 = false;
