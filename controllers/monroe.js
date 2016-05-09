@@ -24,12 +24,13 @@ angular.module("monroe")
 	$scope.selectedExperiment.executions = {};
 	$scope.ResetExecutionCounters = function(executions) {
 		executions.total = 0;
-		executions.finished = 0;
+		executions.stopped = 0;
 		executions.canceled = 0;
 		executions.aborted = 0;
 		executions.failed = 0;
 		executions.defined = 0;
 		executions.deployed = 0;
+		executions.started = 0;
 		executions.remaining = 0;
 	}
 	$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
@@ -41,7 +42,7 @@ angular.module("monroe")
 	$scope.IsExperimentCompleted = function(schedules) {
 		var res = true;
 		for (var itSchedule in schedules) {
-			res = (schedules[itSchedule].status == "finished");
+			res = (schedules[itSchedule].status == "stopped");
 			if (!res)
 				break;
 		}
@@ -89,7 +90,7 @@ angular.module("monroe")
 
 	$scope.StatusCodeToText = function(code) {
 		// When needed, do something more complex than just capitalizing...
-		var table = {"defined": "Defined", "deployed": "Deployed", "finished": "Finished", "canceled": "Canceled", "aborted": "Aborted", "failed": "Failed"};
+		var table = {"defined": "Defined", "deployed": "Deployed", "started": "Started", "stopped": "Stopped", "canceled": "Canceled", "aborted": "Aborted", "failed": "Failed"};
 		return table[code];
 	}
 	
@@ -104,8 +105,8 @@ angular.module("monroe")
 			var schedule = schedules[it];
 			console.log("Status: ", schedule.status);
 			++ executions.total;
-			if (schedule.status == "finished")
-				++ executions.finished;
+			if (schedule.status == "stopped")
+				++ executions.stopped;
 			else if (schedule.status == "canceled")
 				++ executions.canceled;
 			else if (schedule.status == "aborted")
@@ -116,11 +117,14 @@ angular.module("monroe")
 				++ executions.defined;
 			else if (schedule.status == "deployed")
 				++ executions.deployed;
+			else if (schedule.status == "started")
+				++ executions.started;
 		}
-		executions.remaining = executions.total - executions.finished - executions.canceled - executions.aborted - executions.failed;
-		console.log("total: ", executions.total, "finished: ", executions.finished, "canceled: ", executions.canceled, 
+		executions.remaining = executions.total - executions.stopped - executions.canceled - executions.aborted - executions.failed;
+		console.log("total: ", executions.total, "stopped: ", executions.stopped, "canceled: ", executions.canceled, 
 				"aborted: ", executions.aborted, "failed: ", executions.failed, 
-				"remaining: ", executions.remaining, "defined: ", executions.defined, "deployed: ", executions.deployed);
+				"remaining: ", executions.remaining, "defined: ", executions.defined, "deployed: ", executions.deployed,
+				"started: ", executions.started);
 	}
 		
     // View the details of an experiment.

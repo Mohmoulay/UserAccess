@@ -131,8 +131,8 @@
                     </thead>
                     <tbody>
                         <tr>
-                        <td class="col-md-1">Finished: </td>
-                        <td class="col-md-1"><span class="label label-success label-as-badge">{{selectedExperiment.executions.finished}}</span></td>
+                        <td class="col-md-1">Stopped: </td>
+                        <td class="col-md-1"><span class="label label-success label-as-badge">{{selectedExperiment.executions.stopped}}</span></td>
                         <td class="col-md-10"></td>
                         </tr>
                         <tr>
@@ -163,6 +163,11 @@
 						<tr>
 						<td class="col-md-1"></td>
 						<td class="col-md-2">Deployed: {{selectedExperiment.executions.deployed}}</td>
+                        <td class="col-md-9"></td>
+                        </tr>
+						<tr>
+						<td class="col-md-1"></td>
+						<td class="col-md-2">Started: {{selectedExperiment.executions.started}}</td>
                         <td class="col-md-9"></td>
                         </tr>
                     </tbody>
