@@ -81,7 +81,7 @@
             </tr>
         </thead>
 
-        <tbody ng-repeat="item in data.experiments" ng-click="viewExperiment();" ng-hide="hideCompleted && item.completed">
+        <tbody ng-repeat="item in data.experiments | orderBy:'-id'" ng-click="viewExperiment();" ng-hide="hideCompleted && item.completed">
             <tr>
                 <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
@@ -181,7 +181,7 @@
                     <thead>
 						<tr><th>Schedule ID</th><th>Node ID</th><th>Status</th><th>Start</th><th>Stop</th><th>Shared</th><th>Storage</th><th>Traffic quota</th><th>Results</th></tr>
                     </thead>
-					<tbody ng-repeat="item in selectedExperiment.schedules | orderBy:'item.id'" >
+					<tbody ng-repeat="item in selectedExperiment.schedules | orderBy:'id'" >
 						<tr>
 							<td>{{item.id}}</td>
 							<td>{{item.nodeid}}</td>

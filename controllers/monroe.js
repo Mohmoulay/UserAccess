@@ -440,6 +440,11 @@ angular.module("monroe")
 	$scope.userID = -1;
     $scope.selectedNode = {};
 	$scope.nodes = [];
+
+	$scope.refresh = function($scope) {
+		window.location.reload(true);
+	}
+	setTimeout($scope.refresh, 30000);
 	
 	$scope.TimestampToString = function(timestamp) {
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
