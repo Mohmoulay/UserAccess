@@ -292,7 +292,8 @@ angular.module("monroe")
     	    if (isFinite(anumber))    request.start = anumber;		
 		}
     	PrepareNodeFilters(experiment, request);
-    	
+		request.nodes = experiment.specificNodes;
+		   	
     	console.log("Enviando: ", request);
     	$http.get(checkScheduleURL, {withCredentials: true, params: request})
     	    .success(function(data) {
