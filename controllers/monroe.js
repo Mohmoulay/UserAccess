@@ -88,10 +88,15 @@ angular.module("monroe")
 			});		
 	}
 
-	$scope.StatusCodeToText = function(code) {
+	/*$scope.StatusCodeToText = function(code) {
 		// When needed, do something more complex than just capitalizing...
 		var table = {"defined": "Defined", "deployed": "Deployed", "started": "Started", "stopped": "Stopped", "canceled": "Canceled", "aborted": "Aborted", "failed": "Failed"};
 		return table[code];
+	}*/
+	
+	$scope.Capitalize = function(theString) {		
+		if (angular.isString(theString))
+			return theString[0].toLocaleUpperCase() + theString.slice(1);
 	}
 	
 	$scope.CreateResultsURL = function(schedId) {
