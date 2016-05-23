@@ -43,7 +43,7 @@ angular.module("monroe")
 	$scope.IsExperimentCompleted = function(schedules) {
 		var res = true;
 		for (var itSchedule in schedules) {
-			res = (schedules[itSchedule].status == "stopped");
+			res = ((schedules[itSchedule].status == "stopped") || (schedules[itSchedule].status == "finished"));
 			if (!res)
 				break;
 		}
