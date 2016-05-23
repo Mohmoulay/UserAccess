@@ -196,7 +196,7 @@
 							<td>{{item.shared}}</td>
 							<td>{{item.deployment_options.storage}}</td>
 							<td>{{item.deployment_options.traffic}}</td>
-							<td ng-if="item.status != 'defined'"><a href="{{CreateResultsURL(item.id)}}">download</a></td>
+							<td ng-if="(item.status != 'defined') && (item.status != 'deployed')"><a href="{{CreateResultsURL(item.id)}}">download</a></td>
 						</tr>
                     </tbody>
                 </table>
