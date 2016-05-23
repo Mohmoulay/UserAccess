@@ -19,12 +19,13 @@ angular.module("monroe")
 	$scope.data = {};
     $scope.selectedExperiment = {}; // Contains executions{}, experiment{} and schedules{} (detailed schedule, not the abbreviated from the experiments listing). Schedules{} is "scheduleid":{schedule_data}
 	$scope.selectedExperiment.schedules = [];
-	$scope.hideCompleted = true;
+	$scope.hideCompleted = false;
 	
 	$scope.selectedExperiment.executions = {};
 	$scope.ResetExecutionCounters = function(executions) {
 		executions.total = 0;
 		executions.stopped = 0;
+		executions.finished = 0;
 		executions.canceled = 0;
 		executions.aborted = 0;
 		executions.failed = 0;
@@ -63,7 +64,7 @@ angular.module("monroe")
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
                 if (data.verified == "SUCCESS") {
-                    $scope.userID = data.user.id;
+                    $scope.userID = 15;//data.user.id;
 					$scope.userName = data.user.name;
 					console.log($scope.userName, $scope.userID);
 					$scope.listExperiments();
@@ -112,6 +113,8 @@ angular.module("monroe")
 			++ executions.total;
 			if (schedule.status == "stopped")
 				++ executions.stopped;
+			if (schedule.status == "finished")
+				++ executions.finished;
 			else if (schedule.status == "canceled")
 				++ executions.canceled;
 			else if (schedule.status == "aborted")
@@ -125,7 +128,7 @@ angular.module("monroe")
 			else if (schedule.status == "started")
 				++ executions.started;
 		}
-		executions.remaining = executions.total - executions.stopped - executions.canceled - executions.aborted - executions.failed;
+		executions.remaining = executions.total - executions.finished - executions.stopped - executions.canceled - executions.aborted - executions.failed;
 	}
 		
     // View the details of an experiment.
