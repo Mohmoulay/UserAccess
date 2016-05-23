@@ -64,7 +64,7 @@ angular.module("monroe")
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
                 if (data.verified == "SUCCESS") {
-                    $scope.userID = 15;//data.user.id;
+                    $scope.userID = data.user.id;
 					$scope.userName = data.user.name;
 					console.log($scope.userName, $scope.userID);
 					$scope.listExperiments();
