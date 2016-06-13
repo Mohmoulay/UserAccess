@@ -320,12 +320,13 @@ angular.module("monroe")
     	    })
     	    .error(function(error) {
     	    	experiment.checkAvailabilityStartTimestamp = 0;
-    	    	experiment.checkAvailabilityStart = "Impossible to contact the scheduler. (Error: ", error, ")";
+    	    	experiment.checkAvailabilityStart = "Impossible to contact the scheduler.";
+				experiment.checkAvailabilitySlotEnd = error.message;
     	    })
 			experiment.checkAvailabilityShow = true;
     }
     
-    /******* Track parmeters *******/
+    /******* Track parameters *******/
     $scope.InterfacesCount = function(experiment) {
 		// Modified to send quota per interface, not total.
         //experiment.interfacesCount = experiment.useInterface1 + experiment.useInterface2 + experiment.useInterface3;
