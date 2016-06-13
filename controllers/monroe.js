@@ -217,9 +217,9 @@ angular.module("monroe")
     $scope.experiment.nodeType = "type:deployed";
     $scope.experiment.countryFilterAny = true;
     $scope.experiment.countryFilter = [];
-    $scope.experiment.useInterface1 = false;
-    $scope.experiment.useInterface2 = false;
-    $scope.experiment.useInterface3 = false;
+    $scope.experiment.useInterface1 = true;
+    $scope.experiment.useInterface2 = true;
+    $scope.experiment.useInterface3 = true;
     $scope.experiment.interfacesCount = 0;
     $scope.experiment.activeQuota = 1048576;
     $scope.experiment.totalActiveQuota = $scope.experiment.activeQuota; //0;
