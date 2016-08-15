@@ -3,12 +3,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 angular.module("monroe")
-    .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu/v1/users/")
+    .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu:4443/v1/users/")
 	.constant("myExperimentsURLb", "/experiments")
-    .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
-	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
-	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments/")
-	.constant("ExperimentSchedulesURL", "https://scheduler.monroe-system.eu/v1/schedules/")
+    .constant("newExperimentURL", "https://scheduler.monroe-system.eu:4443/v1/experiments")
+	.constant("AuthURL", "https://scheduler.monroe-system.eu:4443/v1/backend/auth")
+	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu:4443/v1/experiments/")
+	.constant("ExperimentSchedulesURL", "https://scheduler.monroe-system.eu:4443/v1/schedules/")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
 											myExperimentsURLa, myExperimentsURLb,
 											newExperimentURL,
@@ -101,7 +101,7 @@ angular.module("monroe")
 	}
 	
 	$scope.CreateResultsURL = function(schedId) {
-		return 'https://www.monroe-system.eu/user/' + schedId + '/';
+		return 'https://www.monroe-system.eu:4443/user/' + schedId + '/';
 	}
 	
 	$scope.CountExperimentSchedules = function(schedules, executions) {
@@ -182,7 +182,7 @@ angular.module("monroe")
 ///////////////////////////////////////////////////////////////////////////////
 
 angular.module("monroe")
-    .constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
+    .constant("AuthURL", "https://scheduler.monroe-system.eu:4443/v1/backend/auth")
     .controller("indexCtrl", function ($http, AuthURL) {
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
@@ -206,8 +206,8 @@ angular.module("monroe")
 ///////////////////////////////////////////////////////////////////////////////
 
 angular.module("monroe")
-    .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
-    .constant("checkScheduleURL", "https://scheduler.monroe-system.eu/v1/schedules/find")
+    .constant("newExperimentURL", "https://scheduler.monroe-system.eu:4443/v1/experiments")
+    .constant("checkScheduleURL", "https://scheduler.monroe-system.eu:4443/v1/schedules/find")
     .controller("newExperimentCtrl", function($scope, $http, $location,
 										newExperimentURL,
 										checkScheduleURL) {
@@ -443,8 +443,8 @@ angular.module("monroe")
 ///////////////////////////////////////////////////////////////////////////////
 
 angular.module("monroe")
-	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
-	.constant("ResourcesURL", "https://scheduler.monroe-system.eu/v1/resources/")
+	.constant("AuthURL", "https://scheduler.monroe-system.eu:4443/v1/backend/auth")
+	.constant("ResourcesURL", "https://scheduler.monroe-system.eu:4443/v1/resources/")
     .controller("resourcesCtrl", function($scope, $http, $location,
 									ResourcesURL, AuthURL) {
 	$scope.userID = -1;
