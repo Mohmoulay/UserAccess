@@ -82,6 +82,7 @@ angular.module("monroe")
 				for (var it in $scope.data.experiments) {
 					var exp = $scope.data.experiments[it];
 					exp.completed = $scope.IsExperimentCompleted(exp.schedules);
+          exp.stoptime  = exp.options.until || exp.stop;
 				}
 			})
 			.error(function(error) {
