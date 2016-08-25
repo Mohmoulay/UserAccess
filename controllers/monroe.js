@@ -40,14 +40,22 @@ angular.module("monroe")
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
 	}
 	
-	$scope.IsExperimentCompleted = function(schedules) {
-		var res = true;
+	$scope.ExperimentCompletion = function(schedules) {
+		var finished = 0;
+    var total    = 0;
 		for (var itSchedule in schedules) {
-			res = ((schedules[itSchedule].status == "stopped") || (schedules[itSchedule].status == "finished"));
-			if (!res)
-				break;
+      total += 1;
+			if ((schedules[itSchedule].status.startsWith("stopped")) || (schedules[itSchedule].status.startsWith("finished"))) {
+        finished += 1;
+      }
 		}
-		return res;
+    if (total == finished) {
+      return "Yes";
+    } else if (total == 1) {
+      return "No";
+    } else {
+      return "" + finished + "/" + total;
+    }
 	}
 		
 	$scope.GetExperimentByID = function(experiments, id) {
@@ -81,7 +89,7 @@ angular.module("monroe")
 				$scope.data.experiments = data;
 				for (var it in $scope.data.experiments) {
 					var exp = $scope.data.experiments[it];
-					exp.completed = $scope.IsExperimentCompleted(exp.schedules);
+					exp.completion = $scope.ExperimentCompletion(exp.schedules);
 				}
 			})
 			.error(function(error) {

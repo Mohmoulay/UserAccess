@@ -87,7 +87,7 @@
                 <td>{{item.name}}</td>
                 <td>{{TimestampToString(item.start)}}</td>
                 <td>{{TimestampToString(item.stop)}}</td>
-                <td>{{item.completed ? "Yes" : "No"}}</td>
+                <td>{{item.completion}}</td>
 				<td ng-if="item.completed"><span class="glyphicon glyphicon-trash" style="color:crimson"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(item, $event)">Delete</button></td>
 				<td ng-if="!item.completed"><span class="glyphicon glyphicon-trash" style="color:crimson"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(item, $event)">Cancel & Delete</button></td>
             </tr>
