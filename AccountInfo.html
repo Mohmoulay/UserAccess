@@ -1,18 +1,25 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="monroe">
+
 <head>
 
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <title>Monroe Experimenters Portal</title>
 
-    <!-- Include Bootstrap -->
-
+    <!-- Include Bootstrap and AngularJS --> 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.css" crossorigin="anonymous">
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+
+    <!-- Monroe App -->
+
+    <script>
+        angular.module("monroe", []);
+    </script>
+
+    <script src="controllers/monroe.js"></script>
 
     <!-- Monroe Style -->
 
@@ -27,7 +34,7 @@
 
 </head>
 
-<body id="monroeSty">
+<body ng-controller="accountInfoCtrl" id="monroeSty">
 
     <!-- Navigation Tabs -->
     <nav class="navbar navbar-default">
@@ -56,11 +63,16 @@
     <div class="panel panel-default">
 
     <div class="panel-heading">
-    <h3>Monroe Experimenters Portal</h3>
+    <h3>User account information and quotas</h3>
     </div>
 
     <div class="panel-body">
-    MONROE help is offered in the form of a user manual. Please <a href="https://github.com/MONROE-PROJECT/UserManual/raw/master/user_manual.pdf">download it from here</a>.
+        <p><strong>Full Name: </strong>{{userName}}</p>
+        <p><strong>User ID: </strong>{{userID}}</p>
+        <p><strong>SSL fingerprint: </strong>{{fingerprint}}</p>
+        <p><strong>Data quota (B): </strong>{{quota_data}}</p>
+        <p><strong>Storage quota (B): </strong>{{quota_storage}}</p>
+        <p><strong>Time quota: </strong>{{quota_time}}</p>
     </div>
 
     </div>

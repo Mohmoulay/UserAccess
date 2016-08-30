@@ -494,3 +494,30 @@ angular.module("monroe")
 			return theString[0].toLocaleUpperCase() + theString.slice(1);
 	}
 });
+
+
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////// accountInfoCtrl ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+angular.module("monroe")
+	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
+    .controller("accountInfoCtrl", function($scope, $http, $location, AuthURL) {
+	$scope.userID = -1;
+
+	// Get the user ID.
+	$scope.GetUserID = function($scope) {
+        $http.get(AuthURL, {withCredentials: true})
+            .success(function (data) {
+                if (data.verified == "SUCCESS") {
+                    $scope.userID = data.user.id;
+					$scope.userName = data.user.name;
+					$scope.fingerprint = data.fingerprint;
+					$scope.quota_data = data.user.quota_data;
+					$scope.quota_storage = data.user.quota_storage;
+					$scope.quota_time = data.user.quota_time;
+				}
+			});
+	}
+	$scope.GetUserID($scope);
+});
