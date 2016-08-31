@@ -451,8 +451,9 @@ angular.module("monroe")
     $scope.selectedNode = {};
 	$scope.nodes = [];
 
-	$scope.refresh = function($scope) {
-		window.location.reload(true);
+	$scope.refresh = function() {
+		$scope.listNodes();
+		setTimeout($scope.refresh, 30000);
 	}
 	setTimeout($scope.refresh, 30000);
 	
