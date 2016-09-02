@@ -3,17 +3,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 angular.module("monroe")
-    .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu/v1/users/")
+    .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu:4443/v1/users/")
 	.constant("myExperimentsURLb", "/experiments")
     .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
 	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
 	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments/")
-	.constant("ExperimentSchedulesURL", "https://scheduler.monroe-system.eu/v1/schedules/")
+	.constant("ExperimentSchedulesURLa", "https://scheduler.monroe-system.eu/v1/experiments/")
+	.constant("ExperimentSchedulesURLb", "/schedules/")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
 											myExperimentsURLa, myExperimentsURLb,
 											newExperimentURL,
 											AuthURL, DeleteExperimentURL, 
-											ExperimentSchedulesURL) {
+											ExperimentSchedulesURLa, ExperimentSchedulesURLb) {
 	$scope.userID = -1;
 	$scope.userName = new String;
 	$scope.data = {};
@@ -40,14 +41,10 @@ angular.module("monroe")
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
 	}
 	
-	$scope.IsExperimentCompleted = function(schedules) {
-		var res = true;
-		for (var itSchedule in schedules) {
-			res = ((schedules[itSchedule].status == "stopped") || (schedules[itSchedule].status == "finished"));
-			if (!res)
-				break;
-		}
-		return res;
+	$scope.IsExperimentCompleted = function(experiment) {
+		IsUndefinedOrZero = function(a) { return (a == undefined) || (a == 0); }
+		return IsUndefinedOrZero(experiment.summary["canceled"]) && IsUndefinedOrZero(experiment.summary["aborted"]) && IsUndefinedOrZero(experiment.summary["failed"]) &&
+		        IsUndefinedOrZero(experiment.summary["defined"]) && IsUndefinedOrZero(experiment.summary["deployed"]) && IsUndefinedOrZero(experiment.summary["started"]);
 	}
 		
 	$scope.GetExperimentByID = function(experiments, id) {
@@ -64,7 +61,8 @@ angular.module("monroe")
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
                 if (data.verified == "SUCCESS") {
-                    $scope.userID = data.user.id;
+                    //$scope.userID = data.user.id;
+					$scope.userID = 124;
 					$scope.userName = data.user.name;
 					console.log($scope.userName, $scope.userID);
 					$scope.listExperiments();
@@ -81,7 +79,7 @@ angular.module("monroe")
 				$scope.data.experiments = data;
 				for (var it in $scope.data.experiments) {
 					var exp = $scope.data.experiments[it];
-					exp.completed = $scope.IsExperimentCompleted(exp.schedules);
+					exp.completed = $scope.IsExperimentCompleted(exp);
 				}
 			})
 			.error(function(error) {
@@ -104,52 +102,49 @@ angular.module("monroe")
 		return 'https://www.monroe-system.eu/user/' + schedId + '/';
 	}
 	
-	$scope.CountExperimentSchedules = function(schedules, executions) {
+	$scope.CountExperimentSchedules = function(experiment, executions) {
+		var tmp;
 		$scope.ResetExecutionCounters(executions);
-		console.log("Schedules: ", schedules);
-		for (var it in schedules) {
-			var schedule = schedules[it];
-			console.log("Status: ", schedule.status);
-			++ executions.total;
-			if (schedule.status == "stopped")
-				++ executions.stopped;
-			if (schedule.status == "finished")
-				++ executions.finished;
-			else if (schedule.status == "canceled")
-				++ executions.canceled;
-			else if (schedule.status == "aborted")
-				++ executions.aborted;
-			else if (schedule.status == "failed")
-				++ executions.failed;
-			else if (schedule.status == "defined")
-				++ executions.defined;
-			else if (schedule.status == "deployed")
-				++ executions.deployed;
-			else if (schedule.status == "started")
-				++ executions.started;
-		}
+		
+		tmp = experiment.summary["stopped"];
+		executions.stopped = (tmp == undefined) ? 0 : tmp;
+		tmp = experiment.summary["finished"];
+		executions.finished = (tmp == undefined) ? 0 : tmp;
+		tmp = experiment.summary["canceled"];
+		executions.canceled = (tmp == undefined) ? 0 : tmp;
+		tmp = experiment.summary["aborted"];
+		executions.aborted = (tmp == undefined) ? 0 : tmp;
+		tmp = experiment.summary["failed"];
+		executions.failed = (tmp == undefined) ? 0 : tmp;
+		tmp = experiment.summary["defined"];
+		executions.defined = (tmp == undefined) ? 0 : tmp;
+		tmp = experiment.summary["deployed"];
+		executions.deployed = (tmp == undefined) ? 0 : tmp;
+		tmp = experiment.summary["started"];
+		executions.started = (tmp == undefined) ? 0 : tmp;
+
+        executions.total = executions.stopped + executions.finished + executions.canceled + executions.aborted + executions.failed + executions.defined + executions.deployed + executions.started;
 		executions.remaining = executions.total - executions.finished - executions.stopped - executions.canceled - executions.aborted - executions.failed;
 	}
 		
     // View the details of an experiment.
     $scope.viewExperiment = function() {
         $scope.selectedExperiment.experiment = this.item;		
-		$scope.CountExperimentSchedules($scope.selectedExperiment.experiment.schedules, $scope.selectedExperiment.executions);
+		$scope.CountExperimentSchedules($scope.selectedExperiment.experiment, $scope.selectedExperiment.executions);
 		$scope.selectedExperiment.schedules = [];
 		
 		// Get the full details of the experiment schedules.
-		for (var it in $scope.selectedExperiment.experiment.schedules) {
-			// "it" is the schedule id, we aren't interested in the values.
-			var schedulesURL = ExperimentSchedulesURL + it;
-			// Get the full details of the experiment schedules.
-			$http.get(schedulesURL, {withCredentials: true})
-				.success(function (data) {
-					$scope.selectedExperiment.schedules.push(data);
-				})
-				.error(function (error) {
-					console.log("Error: ", error);
-				});
-		}
+		var schedulesURL = ExperimentSchedulesURLa + $scope.selectedExperiment.experiment.id + ExperimentSchedulesURLb;
+		$http.get(schedulesURL, {withCredentials: true})
+			.success(function (data) {
+				for (var it in data.schedules) {
+					data.schedules[it].schedId = it;  // Add the scheduleId (key) to the object for later retrieval.
+					$scope.selectedExperiment.schedules.push(data.schedules[it]);
+				}
+			})
+			.error(function (error) {
+				console.log("Error: ", error);
+			});		
     }
 	
 	// Deletes a completed experiment or cancels and deletes an incomplete one.

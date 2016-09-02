@@ -187,15 +187,15 @@
                     </thead>
 					<tbody ng-repeat="item in selectedExperiment.schedules | orderBy:'id'" >
 						<tr>
-							<td>{{item.id}}</td>
+							<td>{{item.schedId}}</td>
 							<td>{{item.nodeid}}</td>
 							<td>{{Capitalize(item.status)}}</td>
 							<td>{{TimestampToString(item.start)}}</td>
 							<td>{{TimestampToString(item.stop)}}</td>
-							<td>{{item.shared}}</td>
-							<td>{{item.deployment_options.storage}}</td>
-							<td>{{item.deployment_options.traffic}}</td>
-							<td ng-if="(item.status != 'defined') && (item.status != 'deployed')"><a href="{{CreateResultsURL(item.id)}}">download</a></td>
+							<td>{{selectedExperiment.experiment.options["shared"]}}</td>
+							<td>{{selectedExperiment.experiment.options["storage"]}}</td>
+							<td>{{selectedExperiment.experiment.options["traffic"]}}</td>
+							<td ng-if="(item.status != 'defined') && (item.status != 'deployed')"><a href="{{CreateResultsURL(item.schedId)}}">download</a></td>
 						</tr>
                     </tbody>
                 </table>
