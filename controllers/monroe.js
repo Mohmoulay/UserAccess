@@ -222,6 +222,7 @@ angular.module("monroe")
     $scope.experiment.useInterface3 = true;
     $scope.experiment.interfacesCount = 0;
     $scope.experiment.activeQuota = 1048576;
+	$scope.experiment.deploymentQuota = 128;
     $scope.experiment.totalActiveQuota = $scope.experiment.activeQuota; //0;
     $scope.experiment.resultsQuota = 0;
     $scope.experiment.showSuccessPanel = false;
@@ -350,6 +351,13 @@ angular.module("monroe")
 				if (!res)
 					window.alert("If recurrence is selected, a valid ending date must be provided.");
 			}
+
+			if (res) {
+				anumber = Number(experiment.deploymentQuota);
+				res = isFinite(anumber) && (anumber <= 1024);
+				if (!res)
+					window.alert("The maximum allowed storage quota is 1024 MB.");
+			}
     	}
     	
     	return res
@@ -393,8 +401,9 @@ angular.module("monroe")
     	
     	anumber = Number(experiment.resultsQuota);
     	if (isFinite(anumber))    request.options["resultsQuota"] = anumber;
-    	//anumber = Number(experiment.deploymentQuota);
-    	//if (isFinite(anumber))    request.options["deploymentQuota"] = anumber;
+    	anumber = Number(experiment.deploymentQuota);
+    	if (isFinite(anumber))
+				request.options["storage"] = anumber * 1024*1024;
     	
     	request.options["shared"] = 0;
     	
@@ -407,9 +416,7 @@ angular.module("monroe")
     	    if (isFinite(anumber))    request.options["until"] = anumber;
         }
         
-        request.options["nodes"] = experiment.specificNodes;
-		request.options["storage"] = 100*1024*1024;	// TODO
-        
+        request.options["nodes"] = experiment.specificNodes;      
         request.options = JSON.stringify(request.options);
         
     	

@@ -163,9 +163,9 @@
             <div class="col-md-2"><input type="number" min="0" class="form-control" id="resultsQuota" placeholder="(bytes)" ng-model="experiment.resultsQuota"></div>
         </div>
         <div class="row" id="colSep">
-            <label class="control-label col-md-2">Deployment-data quota:</label>
-            <!--<div class="col-md-2"><span class="control-label" ng-model="experiment.deploymentQuota">(bytes)</span></div>-->
-			<label class="control-label" ng-model="experiment.deploymentQuota">(bytes)</label>
+            <label class="control-label col-md-2" for="storageQuota">Deployment-storage quota:</label>
+            <div class="col-md-2"><input type="number" min="0" max="1024" class="form-control" id="storageQuota" placeholder="(MB)" ng-model="experiment.deploymentQuota"></div>
+			<label class="control-label" style="text-align:left">(MB)</label>
         </div>
     </div>
     </div>
