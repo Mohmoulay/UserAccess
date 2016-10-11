@@ -167,6 +167,11 @@
             <div class="col-md-2"><input type="number" min="0" max="1024" class="form-control" id="storageQuota" placeholder="(MB)" ng-model="experiment.deploymentQuota"></div>
 			<label class="control-label" style="text-align:left">(MB)</label>
         </div>
+		<div class="row" id="colSep">
+            <label class="control-label col-md-2" for="userOptions">Additional options:</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="additionalOptions" placeholder='"key":number,"key":"string"' ng-model="experiment.additionalOptions"></div>
+			<label class="control-label" style="text-align:left">JSON-style user options to be passed to the container</label>
+        </div>
     </div>
     </div>
 

@@ -223,6 +223,7 @@ angular.module("monroe")
     $scope.experiment.interfacesCount = 0;
     $scope.experiment.activeQuota = 1048576;
 	$scope.experiment.deploymentQuota = 128;
+	$scope.experiment.additionalOptions = "";
     $scope.experiment.totalActiveQuota = $scope.experiment.activeQuota; //0;
     $scope.experiment.resultsQuota = 0;
     $scope.experiment.showSuccessPanel = false;
@@ -359,6 +360,16 @@ angular.module("monroe")
 					window.alert("The maximum allowed storage quota is 1024 MB.");
 			}
     	}
+		
+		if (res) {
+			try {
+				JSON.parse("{" + experiment.additionalOptions + "}");
+			}
+			catch (err) {
+				window.alert("The string for additional options is not a proper JSON string.");
+				res = false;
+			}
+		}
     	
     	return res
     }
@@ -415,10 +426,10 @@ angular.module("monroe")
     	    anumber = Number(experiment.repeatUntil) / 1000|0;
     	    if (isFinite(anumber))    request.options["until"] = anumber;
         }
-        
-        request.options["nodes"] = experiment.specificNodes;      
+		
+		request.options["nodes"] = experiment.specificNodes;
         request.options = JSON.stringify(request.options);
-        
+		request.options = request.options.slice(0, -1) + "," + experiment.additionalOptions + "}";
     	
     	//// Deployment options
     	//request.deployment_options = new Object;
