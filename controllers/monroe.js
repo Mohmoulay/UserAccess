@@ -429,7 +429,8 @@ angular.module("monroe")
 		
 		request.options["nodes"] = experiment.specificNodes;
         request.options = JSON.stringify(request.options);
-		request.options = request.options.slice(0, -1) + "," + experiment.additionalOptions + "}";
+		if (experiment.additionalOptions.length > 0)
+			request.options = request.options.slice(0, -1) + "," + experiment.additionalOptions + "}";
     	
     	//// Deployment options
     	//request.deployment_options = new Object;
