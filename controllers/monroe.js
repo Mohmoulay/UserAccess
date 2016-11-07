@@ -5,11 +5,11 @@
 angular.module("monroe")
     .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu:4443/v1/users/")
 	.constant("myExperimentsURLb", "/experiments")
-    .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
-	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
-	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments/")
-	.constant("ExperimentSchedulesURLa", "https://scheduler.monroe-system.eu/v1/experiments/")
-	.constant("ExperimentSchedulesURLb", "/schedules/")
+    .constant("newExperimentURL", "https://scheduler.monroe-system.eu:4443/v1/experiments")
+	.constant("AuthURL", "https://scheduler.monroe-system.eu:4443/v1/backend/auth")
+	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu:4443/v1/experiments/")
+	.constant("ExperimentSchedulesURLa", "https://scheduler.monroe-system.eu:4443/v1/experiments/")
+	.constant("ExperimentSchedulesURLb", "/schedules")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
 											myExperimentsURLa, myExperimentsURLb,
 											newExperimentURL,
@@ -27,12 +27,14 @@ angular.module("monroe")
 		executions.total = 0;
 		executions.stopped = 0;
 		executions.finished = 0;
+		executions.failed = 0;
 		executions.canceled = 0;
 		executions.aborted = 0;
-		executions.failed = 0;
 		executions.defined = 0;
 		executions.deployed = 0;
+		executions.delayed = 0;
 		executions.started = 0;
+		executions.restarted = 0;
 		executions.remaining = 0;
 	}
 	$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
@@ -44,7 +46,9 @@ angular.module("monroe")
 	$scope.IsExperimentCompleted = function(experiment) {
 		IsUndefinedOrZero = function(a) { return (a == undefined) || (a == 0); }
 		return IsUndefinedOrZero(experiment.summary["canceled"]) && IsUndefinedOrZero(experiment.summary["aborted"]) && IsUndefinedOrZero(experiment.summary["failed"]) &&
-		        IsUndefinedOrZero(experiment.summary["defined"]) && IsUndefinedOrZero(experiment.summary["deployed"]) && IsUndefinedOrZero(experiment.summary["started"]);
+		        IsUndefinedOrZero(experiment.summary["defined"]) && IsUndefinedOrZero(experiment.summary["deployed"]) && IsUndefinedOrZero(experiment.summary["started"]) &&
+				IsUndefinedOrZero(experiment.summary["delayed"]);
+		return false;
 	}
 		
 	$scope.GetExperimentByID = function(experiments, id) {
@@ -61,8 +65,7 @@ angular.module("monroe")
         $http.get(AuthURL, {withCredentials: true})
             .success(function (data) {
                 if (data.verified == "SUCCESS") {
-                    //$scope.userID = data.user.id;
-					$scope.userID = 124;
+                    $scope.userID = data.user.id;
 					$scope.userName = data.user.name;
 					console.log($scope.userName, $scope.userID);
 					$scope.listExperiments();
@@ -106,24 +109,31 @@ angular.module("monroe")
 		var tmp;
 		$scope.ResetExecutionCounters(executions);
 		
-		tmp = experiment.summary["stopped"];
-		executions.stopped = (tmp == undefined) ? 0 : tmp;
-		tmp = experiment.summary["finished"];
-		executions.finished = (tmp == undefined) ? 0 : tmp;
-		tmp = experiment.summary["canceled"];
-		executions.canceled = (tmp == undefined) ? 0 : tmp;
-		tmp = experiment.summary["aborted"];
-		executions.aborted = (tmp == undefined) ? 0 : tmp;
-		tmp = experiment.summary["failed"];
-		executions.failed = (tmp == undefined) ? 0 : tmp;
-		tmp = experiment.summary["defined"];
-		executions.defined = (tmp == undefined) ? 0 : tmp;
-		tmp = experiment.summary["deployed"];
-		executions.deployed = (tmp == undefined) ? 0 : tmp;
-		tmp = experiment.summary["started"];
-		executions.started = (tmp == undefined) ? 0 : tmp;
+		// Several states share prefixes and should be accumulated, e.g., "failed; no container" and "failed; node in maintenance".
+		for (var state in experiment.summary) {
+			if (state.startsWith("stopped"))
+				executions.stopped = executions.stopped + experiment.summary[state];
+			if (state.startsWith("finished"))
+				executions.finished = executions.finished + experiment.summary[state];
+			if (state.startsWith("failed"))
+				executions.failed = executions.failed + experiment.summary[state];
+			if (state.startsWith("canceled"))
+				executions.canceled = executions.canceled + experiment.summary[state];
+			if (state.startsWith("aborted"))
+				executions.aborted = executions.aborted + experiment.summary[state];
+			if (state.startsWith("defined"))
+				executions.defined = executions.defined + experiment.summary[state];
+			if (state.startsWith("deployed"))
+				executions.deployed = executions.deployed + experiment.summary[state];
+			if (state.startsWith("delayed"))
+				executions.delayed = executions.delayed + experiment.summary[state];
+			if (state.startsWith("started"))
+				executions.started = executions.started + experiment.summary[state];
+			if (state.startsWith("restarted"))
+				executions.restarted = executions.restarted + experiment.summary[state];
+		}
 
-        executions.total = executions.stopped + executions.finished + executions.canceled + executions.aborted + executions.failed + executions.defined + executions.deployed + executions.started;
+        executions.total = executions.stopped + executions.finished + executions.canceled + executions.aborted + executions.failed + executions.defined + executions.deployed + executions.delayed + executions.started + executions.restarted;
 		executions.remaining = executions.total - executions.finished - executions.stopped - executions.canceled - executions.aborted - executions.failed;
 	}
 		
