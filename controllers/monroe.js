@@ -3,12 +3,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 angular.module("monroe")
-    .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu:4443/v1/users/")
+    .constant("myExperimentsURLa", "https://scheduler.monroe-system.eu/v1/users/")
 	.constant("myExperimentsURLb", "/experiments")
-    .constant("newExperimentURL", "https://scheduler.monroe-system.eu:4443/v1/experiments")
-	.constant("AuthURL", "https://scheduler.monroe-system.eu:4443/v1/backend/auth")
-	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu:4443/v1/experiments/")
-	.constant("ExperimentSchedulesURLa", "https://scheduler.monroe-system.eu:4443/v1/experiments/")
+    .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
+	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
+	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments/")
+	.constant("ExperimentSchedulesURLa", "https://scheduler.monroe-system.eu/v1/experiments/")
 	.constant("ExperimentSchedulesURLb", "/schedules")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
 											myExperimentsURLa, myExperimentsURLb,
@@ -227,8 +227,6 @@ angular.module("monroe")
     $scope.experiment.useInterface3 = true;
     $scope.experiment.interfacesCount = 0;
     $scope.experiment.activeQuota = 1048576;
-	$scope.experiment.deploymentQuota = 128;
-	$scope.experiment.additionalOptions = "";
     $scope.experiment.totalActiveQuota = $scope.experiment.activeQuota; //0;
     $scope.experiment.resultsQuota = 0;
     $scope.experiment.showSuccessPanel = false;
@@ -357,24 +355,7 @@ angular.module("monroe")
 				if (!res)
 					window.alert("If recurrence is selected, a valid ending date must be provided.");
 			}
-
-			if (res) {
-				anumber = Number(experiment.deploymentQuota);
-				res = isFinite(anumber) && (anumber <= 1024);
-				if (!res)
-					window.alert("The maximum allowed storage quota is 1024 MB.");
-			}
     	}
-		
-		if (res) {
-			try {
-				JSON.parse("{" + experiment.additionalOptions + "}");
-			}
-			catch (err) {
-				window.alert("The string for additional options is not a proper JSON string.");
-				res = false;
-			}
-		}
     	
     	return res
     }
@@ -417,9 +398,8 @@ angular.module("monroe")
     	
     	anumber = Number(experiment.resultsQuota);
     	if (isFinite(anumber))    request.options["resultsQuota"] = anumber;
-    	anumber = Number(experiment.deploymentQuota);
-    	if (isFinite(anumber))
-				request.options["storage"] = anumber * 1024*1024;
+    	//anumber = Number(experiment.deploymentQuota);
+    	//if (isFinite(anumber))    request.options["deploymentQuota"] = anumber;
     	
     	request.options["shared"] = 0;
     	
@@ -431,11 +411,12 @@ angular.module("monroe")
     	    anumber = Number(experiment.repeatUntil) / 1000|0;
     	    if (isFinite(anumber))    request.options["until"] = anumber;
         }
-		
-		request.options["nodes"] = experiment.specificNodes;
+        
+        request.options["nodes"] = experiment.specificNodes;
+		request.options["storage"] = 100*1024*1024;	// TODO
+        
         request.options = JSON.stringify(request.options);
-		if (experiment.additionalOptions.length > 0)
-			request.options = request.options.slice(0, -1) + "," + experiment.additionalOptions + "}";
+        
     	
     	//// Deployment options
     	//request.deployment_options = new Object;
