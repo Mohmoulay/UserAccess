@@ -82,7 +82,6 @@ angular.module("monroe")
                 if (data.verified == "SUCCESS") {
                     $scope.userID = data.user.id;
 					$scope.userName = data.user.name;
-					console.log($scope.userName, $scope.userID);
 					$scope.listExperiments();
 				}
 			});
@@ -94,7 +93,6 @@ angular.module("monroe")
 		var userURL = myExperimentsURLa + $scope.userID + myExperimentsURLb;
 		if ($scope.showHidden)
 			userURL = userURL + "?showHidden=true";
-		console.log(userURL);
 		$http.get(userURL, {withCredentials: true})
 			.success(function(data) {
 				$scope.data.experiments = data;
@@ -181,15 +179,12 @@ angular.module("monroe")
 	
 	// Deletes a completed experiment or cancels and deletes an incomplete one.
 	$scope.DeleteExperiment = function(experiment, event) {
-		console.log('Deleting experiment ' + experiment.id + ' "' + experiment.name + '"');
 		var action = (experiment.state == $scope.EXPERIMENT_STATES.ONGOING) ? "CANCEL" : "REMOVE";
 		if (confirm('Do you want to ' + action + ' experiment ' + experiment.id + '?\n"' + experiment.name + '"')) {
 			var deleteUrl = DeleteExperimentURL + experiment.id;
-			console.log("DeleteURL: ", deleteUrl);
 
 			$http.delete(deleteUrl, {withCredentials: true})
 				.success(function(data) {
-					console.log("Experiment deleted: ", data);
 					$scope.listExperiments();	// Call from success for Angular to notice the changes.
 					delete $scope.selectedExperiment.experiment;
 					delete $scope.selectedExperiment.schedules;
@@ -338,10 +333,8 @@ angular.module("monroe")
     	PrepareNodeFilters(experiment, request);
 		request.nodes = experiment.specificNodes;
 		   	
-    	console.log("Enviando: ", request);
     	$http.get(checkScheduleURL, {withCredentials: true, params: request})
     	    .success(function(data) {
-    	    	console.log("Got: ", data);
     	    	if (data.length == 1) {
 					experiment.checkAvailabilityStartTimestamp = data[0].start * 1000;
 					experiment.checkAvailabilityStart = 'Available slot starting at "' + TimestampToString(data[0].start) + '".';
@@ -453,10 +446,8 @@ angular.module("monroe")
     	//request.deployment_options = new Object;
     	//request.deployment_options["restart"] = 1;
         
-        console.log(request);
         $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
-                console.log("Experiment submitted: ", data);
                 experiment.schedID = data.experiment;
                 experiment.schedNumScheds = data.intervals;
                 experiment.schedNodes = data.nodecount;
@@ -481,10 +472,10 @@ angular.module("monroe")
 angular.module("monroe")
 	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
 	.constant("ResourcesURL", "https://scheduler.monroe-system.eu/v1/resources/")
+	.constant("GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS", 300)
     .controller("resourcesCtrl", function($scope, $http, $location,
-									ResourcesURL, AuthURL) {
+									ResourcesURL, AuthURL, GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS) {
 	$scope.userID = -1;
-    $scope.selectedNode = {};
 	$scope.nodes = [];
 
 	$scope.refresh = function() {
@@ -504,7 +495,6 @@ angular.module("monroe")
                 if (data.verified == "SUCCESS") {
                     $scope.userID = data.user.id;
 					$scope.userName = data.user.name;
-					console.log($scope.userName, $scope.userID);
 					$scope.listNodes();
 				}
 			});
@@ -516,9 +506,10 @@ angular.module("monroe")
 		$http.get(ResourcesURL, {withCredentials: true})
 			.success(function(data) {
 				$scope.nodes = data;
+				var currentTime = Date.now()/1000|0;
 				for (var it in $scope.nodes) {
 					var node = $scope.nodes[it];
-					node.type = node.type;
+					node.hasRecentHeartbeat = node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > currentTime;
 				}
 			})
 			.error(function(error) {
