@@ -21,6 +21,8 @@ angular.module("monroe")
     $scope.selectedExperiment = {}; // Contains executions{}, experiment{} and schedules{} (detailed schedule, not the abbreviated from the experiments listing). Schedules{} is "scheduleid":{schedule_data}
 	$scope.selectedExperiment.schedules = [];
 	$scope.hideCompleted = false;
+	$scope.hideOngoing = false;
+	$scope.showHidden = false; // If false, show normal experiments. If true, ask the scheduler also for hidden experiments.
 	
 	$scope.EXPERIMENT_STATES = {
 		ONGOING: {value: 1},
@@ -90,6 +92,9 @@ angular.module("monroe")
 	// Show all the experiments of this user.
 	$scope.listExperiments = function() {
 		var userURL = myExperimentsURLa + $scope.userID + myExperimentsURLb;
+		if ($scope.showHidden)
+			userURL = userURL + "?showHidden=true";
+		console.log(userURL);
 		$http.get(userURL, {withCredentials: true})
 			.success(function(data) {
 				$scope.data.experiments = data;
@@ -177,7 +182,8 @@ angular.module("monroe")
 	// Deletes a completed experiment or cancels and deletes an incomplete one.
 	$scope.DeleteExperiment = function(experiment, event) {
 		console.log('Deleting experiment ' + experiment.id + ' "' + experiment.name + '"');
-		if (confirm('Do you want to cancel and/or delete experiment ' + experiment.id + '?\n"' + experiment.name + '"')) {
+		var action = (experiment.state == $scope.EXPERIMENT_STATES.ONGOING) ? "CANCEL" : "REMOVE";
+		if (confirm('Do you want to ' + action + ' experiment ' + experiment.id + '?\n"' + experiment.name + '"')) {
 			var deleteUrl = DeleteExperimentURL + experiment.id;
 			console.log("DeleteURL: ", deleteUrl);
 
@@ -195,6 +201,14 @@ angular.module("monroe")
 		}
 
 		event.stopPropagation(); // Stop the event before reaching the list controller that would try to show a non-existent experiment.		
+	}
+	
+	$scope.ShowHidden = function(event) {
+		// event.target.checked should be equivalent to $scope.showHidden
+		$scope.listExperiments(); // Call for Angular to reload the results.
+		delete $scope.selectedExperiment.experiment;
+		delete $scope.selectedExperiment.schedules;
+		$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
 	}
 });
 

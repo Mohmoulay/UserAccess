@@ -81,7 +81,7 @@
             </tr>
         </thead>
 
-        <tbody ng-repeat="item in data.experiments | orderBy:'-id'" ng-click="viewExperiment();" ng-hide="hideCompleted && item.completed">
+        <tbody ng-repeat="item in data.experiments | orderBy:'-id'" ng-click="viewExperiment();" ng-hide="(hideCompleted && (item.state != EXPERIMENT_STATES.ONGOING)) || (hideOngoing && (item.state == EXPERIMENT_STATES.ONGOING))">
             <tr>
                 <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
@@ -89,14 +89,20 @@
                 <td>{{TimestampToString(item.stop)}}</td>
                 <td>{{item.state == EXPERIMENT_STATES.ONGOING ? "Yes" : "No"}}</td>
 				<td>{{item.state == EXPERIMENT_STATES.ONGOING ? "--" : item.state == EXPERIMENT_STATES.FINISHED_OK ? "Yes" : "No"}}</td>
-				<td ng-if="item.completed"><span class="glyphicon glyphicon-trash" style="color:crimson"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(item, $event)">Delete</button></td>
-				<td ng-if="!item.completed"><span class="glyphicon glyphicon-trash" style="color:crimson"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(item, $event)">Cancel & Delete</button></td>
+				<td ng-if="item.state == EXPERIMENT_STATES.ONGOING"><span class="glyphicon glyphicon-remove" style="color:crimson"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(item, $event)">Cancel</button></td>
+				<td ng-if="item.state != EXPERIMENT_STATES.ONGOING"><span class="glyphicon glyphicon-eye-close" style="color:FireBrick"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(item, $event)">Remove</button></td>
             </tr>
         </tbody>
     </table>
 
     <div class="checkbox-inline">
-        <label><input type="checkbox" ng-model="hideCompleted">Hide Completed</label>
+        <label><input type="checkbox" data-toggle="tooltip" title="Hide experiments that have reached a final state (success or failure)" ng-model="hideCompleted">Hide completed</label>
+    </div>
+    <div class="checkbox-inline">
+        <label><input type="checkbox" data-toggle="tooltip" title="Hide experiments that are still not finished" ng-model="hideOngoing">Hide ongoing</label>
+    </div>
+	<div class="checkbox-inline">
+        <label><input type="checkbox" data-toggle="tooltip" title="Show or hide old experiments that were removed from the listing" ng-model="showHidden" ng-click="ShowHidden($event)">Show &lsquo;removed&rsquo; experiments</label>
     </div>
 
     <div class="text-center">
