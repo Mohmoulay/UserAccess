@@ -22,19 +22,29 @@ angular.module("monroe")
 	$scope.selectedExperiment.schedules = [];
 	$scope.hideCompleted = false;
 	
+	$scope.EXPERIMENT_STATES = {
+		ONGOING: {value: 1},
+		FINISHED_OK: {value: 2},
+		FINISHED_FAILED: {value: 3}
+	};
+	
 	$scope.selectedExperiment.executions = {};
 	$scope.ResetExecutionCounters = function(executions) {
 		executions.total = 0;
-		executions.stopped = 0;
-		executions.finished = 0;
-		executions.failed = 0;
-		executions.canceled = 0;
-		executions.aborted = 0;
-		executions.defined = 0;
+		
+		executions.defined = 0;	// Ongoing states
+		executions.requested = 0;
 		executions.deployed = 0;
 		executions.delayed = 0;
 		executions.started = 0;
 		executions.restarted = 0;
+		
+		executions.finished = 0; // Final states
+		executions.stopped = 0;
+		executions.failed = 0;
+		executions.canceled = 0;
+		executions.aborted = 0;	
+		
 		executions.remaining = 0;
 	}
 	$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
@@ -43,12 +53,15 @@ angular.module("monroe")
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
 	}
 	
-	$scope.IsExperimentCompleted = function(experiment) {
-		IsUndefinedOrZero = function(a) { return (a == undefined) || (a == 0); }
-		return IsUndefinedOrZero(experiment.summary["canceled"]) && IsUndefinedOrZero(experiment.summary["aborted"]) && IsUndefinedOrZero(experiment.summary["failed"]) &&
-		        IsUndefinedOrZero(experiment.summary["defined"]) && IsUndefinedOrZero(experiment.summary["deployed"]) && IsUndefinedOrZero(experiment.summary["started"]) &&
-				IsUndefinedOrZero(experiment.summary["delayed"]);
-		return false;
+	$scope.GetExperimentState = function(experiment) {
+		executions = {};
+		$scope.CountExperimentSchedules(experiment, executions);
+		if ( executions.remaining > 0 )
+			return $scope.EXPERIMENT_STATES.ONGOING;
+		else if ( (executions.failed + executions.canceled + executions.aborted) > 0 )
+			return $scope.EXPERIMENT_STATES.FINISHED_FAILED;
+		else
+			return $scope.EXPERIMENT_STATES.FINISHED_OK;
 	}
 		
 	$scope.GetExperimentByID = function(experiments, id) {
@@ -66,6 +79,7 @@ angular.module("monroe")
             .success(function (data) {
                 if (data.verified == "SUCCESS") {
                     $scope.userID = data.user.id;
+					$scope.userID = 124;
 					$scope.userName = data.user.name;
 					console.log($scope.userName, $scope.userID);
 					$scope.listExperiments();
@@ -82,7 +96,7 @@ angular.module("monroe")
 				$scope.data.experiments = data;
 				for (var it in $scope.data.experiments) {
 					var exp = $scope.data.experiments[it];
-					exp.completed = $scope.IsExperimentCompleted(exp);
+					exp.state = $scope.GetExperimentState(exp);
 				}
 			})
 			.error(function(error) {
@@ -123,6 +137,8 @@ angular.module("monroe")
 				executions.aborted = executions.aborted + experiment.summary[state];
 			if (state.startsWith("defined"))
 				executions.defined = executions.defined + experiment.summary[state];
+			if (state.startsWith("requested"))
+				executions.requested = executions.requested + experiment.summary[state];
 			if (state.startsWith("deployed"))
 				executions.deployed = executions.deployed + experiment.summary[state];
 			if (state.startsWith("delayed"))
@@ -133,7 +149,9 @@ angular.module("monroe")
 				executions.restarted = executions.restarted + experiment.summary[state];
 		}
 
-        executions.total = executions.stopped + executions.finished + executions.canceled + executions.aborted + executions.failed + executions.defined + executions.deployed + executions.delayed + executions.started + executions.restarted;
+        executions.total = executions.stopped + executions.finished + executions.canceled + executions.aborted + executions.failed + 
+							executions.defined + executions.requested + executions.deployed + executions.delayed + executions.started + 
+							executions.restarted;
 		executions.remaining = executions.total - executions.finished - executions.stopped - executions.canceled - executions.aborted - executions.failed;
 	}
 		
