@@ -477,6 +477,11 @@ angular.module("monroe")
 									ResourcesURL, AuthURL, GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS) {
 	$scope.userID = -1;
 	$scope.nodes = [];
+	$scope.showOnlyActive = false; // If true, show only nodes that can currently execute experiments.
+	$scope.locationFilter = [];
+	$scope.nodeTypeFilter = [];
+	$scope.nodeModelFilter = [];
+	$scope.currentTime = 2147483647;
 
 	$scope.refresh = function() {
 		$scope.listNodes();
@@ -506,11 +511,14 @@ angular.module("monroe")
 		$http.get(ResourcesURL, {withCredentials: true})
 			.success(function(data) {
 				$scope.nodes = data;
-				var currentTime = Date.now()/1000|0;
+				$scope.currentTime = Date.now()/1000|0;
 				for (var it in $scope.nodes) {
 					var node = $scope.nodes[it];
-					node.hasRecentHeartbeat = node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > currentTime;
+					node.hasRecentHeartbeat = node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > $scope.currentTime;
+					node.canScheduleExperiments = (node.status=='active') && node.hasRecentHeartbeat && ((node.type == 'testing') || (node.type == 'deployed'));
+					node.isVisible = true;
 				}
+				$scope.FilterNodes();
 			})
 			.error(function(error) {
 				$scope.data.error = error;
@@ -520,6 +528,34 @@ angular.module("monroe")
 	$scope.Capitalize = function(theString) {		
 		if (angular.isString(theString))
 			return theString[0].toLocaleUpperCase() + theString.slice(1);
+	}
+	
+	$scope.ClearLocationFilter = function() {
+		$scope.locationFilter = [];
+		$scope.FilterNodes();
+	}
+	$scope.ClearNodeTypeFilter = function() {
+		$scope.nodeTypeFilter = [];
+		$scope.FilterNodes();
+	}
+	$scope.ClearNodeModelFilter = function() {
+		$scope.nodeModelFilter = [];
+		$scope.FilterNodes();
+	}
+
+	function ArrayIncludes(arr, obj) {
+		for(var i=0; i<arr.length; i++) {
+			if (arr[i] == obj) return true;
+		}
+	}
+	
+	$scope.FilterNodes = function() {
+		for (var it in $scope.nodes) {
+			var node = $scope.nodes[it];
+			node.isVisible = (($scope.locationFilter.length == 0) || ArrayIncludes($scope.locationFilter, node.project));
+			node.isVisible = node.isVisible && (($scope.nodeTypeFilter.length == 0) || ArrayIncludes($scope.nodeTypeFilter, node.type));
+			node.isVisible = node.isVisible && (($scope.nodeModelFilter.length == 0) || ArrayIncludes($scope.nodeModelFilter, node.model));
+		}
 	}
 });
 
