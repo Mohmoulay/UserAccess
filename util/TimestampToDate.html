@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+Timestamp: <input type="text" value="" id="timestamp" onchange="Calcular()"/>
+<br><br><br><br>
+Fecha: <input type="text" value="" id="fecha" size="100cm"/>
+
+<script>
+  function Calcular()
+  {
+  	var laFecha = new Date(timestamp.value * 1000);
+  	fecha.value = laFecha;
+  }
+</script>
+
+</body>
+</html>
