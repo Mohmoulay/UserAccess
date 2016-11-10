@@ -63,7 +63,26 @@
     <div class="panel panel-default">
 
     <div class="panel-heading">
-    <h3>Experiments for user {{userName}} (ID = {{userID}})</h3>
+    <h3>
+		Experiments for user {{userName}} (ID = {{userID}})
+	</h3>
+    <div class="checkbox-inline">
+        <label><input type="checkbox" data-toggle="tooltip" title="Hide experiments that have reached a final state (success or failure)" ng-model="hideCompleted">Hide completed</label>
+    </div>
+    <div class="checkbox-inline">
+        <label><input type="checkbox" data-toggle="tooltip" title="Hide experiments that are still not finished" ng-model="hideOngoing">Hide ongoing</label>
+    </div>
+	<div class="checkbox-inline">
+        <label><input type="checkbox" data-toggle="tooltip" title="Hide failed experiments that will not be executed any more" ng-model="hideFailed">Hide failed</label>
+    </div>
+	<div class="checkbox-inline">
+        <label><input type="checkbox" data-toggle="tooltip" title="Show or hide old experiments that were removed from the listing" ng-model="showHidden" ng-click="ShowHidden($event)">Show &lsquo;removed&rsquo; experiments</label>
+    </div>
+	<p></p>
+	<div class="checkbox-inline">
+        <label class="small"><span class="glyphicon glyphicon-share-alt" style="color:ForestGreen"></span> (To show only successfully completed experiments, hide ongoing and failed)</label>
+    </div>
+
     </div>
 
     <div class="panel-body">
@@ -81,7 +100,7 @@
             </tr>
         </thead>
 
-        <tbody ng-repeat="item in data.experiments | orderBy:'-id'" ng-click="viewExperiment();" ng-hide="(hideCompleted && (item.state != EXPERIMENT_STATES.ONGOING)) || (hideOngoing && (item.state == EXPERIMENT_STATES.ONGOING))">
+        <tbody ng-repeat="item in data.experiments | orderBy:'-id'" ng-click="viewExperiment();" ng-hide="(hideCompleted && (item.state != EXPERIMENT_STATES.ONGOING)) || (hideFailed && (item.state == EXPERIMENT_STATES.FINISHED_FAILED)) || (hideOngoing && (item.state == EXPERIMENT_STATES.ONGOING))">
             <tr>
                 <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
@@ -94,16 +113,6 @@
             </tr>
         </tbody>
     </table>
-
-    <div class="checkbox-inline">
-        <label><input type="checkbox" data-toggle="tooltip" title="Hide experiments that have reached a final state (success or failure)" ng-model="hideCompleted">Hide completed</label>
-    </div>
-    <div class="checkbox-inline">
-        <label><input type="checkbox" data-toggle="tooltip" title="Hide experiments that are still not finished" ng-model="hideOngoing">Hide ongoing</label>
-    </div>
-	<div class="checkbox-inline">
-        <label><input type="checkbox" data-toggle="tooltip" title="Show or hide old experiments that were removed from the listing" ng-model="showHidden" ng-click="ShowHidden($event)">Show &lsquo;removed&rsquo; experiments</label>
-    </div>
 
     <div class="text-center">
         <ul class="pagination pagination-lg">

@@ -22,6 +22,7 @@ angular.module("monroe")
 	$scope.selectedExperiment.schedules = [];
 	$scope.hideCompleted = false;
 	$scope.hideOngoing = false;
+	$scope.hideFailed = false;
 	$scope.showHidden = false; // If false, show normal experiments. If true, ask the scheduler also for hidden experiments.
 	
 	$scope.EXPERIMENT_STATES = {
