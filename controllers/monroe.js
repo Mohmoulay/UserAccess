@@ -82,7 +82,6 @@ angular.module("monroe")
             .success(function (data) {
                 if (data.verified == "SUCCESS") {
                     $scope.userID = data.user.id;
-					$scope.userID = 124;
 					$scope.userName = data.user.name;
 					$scope.listExperiments();
 				}
