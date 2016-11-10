@@ -82,6 +82,7 @@ angular.module("monroe")
             .success(function (data) {
                 if (data.verified == "SUCCESS") {
                     $scope.userID = data.user.id;
+					$scope.userID = 124;
 					$scope.userName = data.user.name;
 					$scope.listExperiments();
 				}
@@ -100,6 +101,9 @@ angular.module("monroe")
 				for (var it in $scope.data.experiments) {
 					var exp = $scope.data.experiments[it];
 					exp.state = $scope.GetExperimentState(exp);
+					exp.hideDetails = true;
+					exp.executions = {};
+					$scope.CountExperimentSchedules(exp, exp.executions);
 				}
 			})
 			.error(function(error) {
@@ -160,22 +164,31 @@ angular.module("monroe")
 		
     // View the details of an experiment.
     $scope.viewExperiment = function() {
-        $scope.selectedExperiment.experiment = this.item;		
-		$scope.CountExperimentSchedules($scope.selectedExperiment.experiment, $scope.selectedExperiment.executions);
-		$scope.selectedExperiment.schedules = [];
+		var selectedExperiment = this.iExperiment;
+        //$scope.selectedExperiment.experiment = this.iExperiment;		
 		
-		// Get the full details of the experiment schedules.
-		var schedulesURL = ExperimentSchedulesURLa + $scope.selectedExperiment.experiment.id + ExperimentSchedulesURLb;
-		$http.get(schedulesURL, {withCredentials: true})
-			.success(function (data) {
-				for (var it in data.schedules) {
-					data.schedules[it].schedId = it;  // Add the scheduleId (key) to the object for later retrieval.
-					$scope.selectedExperiment.schedules.push(data.schedules[it]);
-				}
-			})
-			.error(function (error) {
-				console.log("Error: ", error);
-			});		
+		if (selectedExperiment.hideDetails) {
+			selectedExperiment.hideDetails = false
+			$scope.CountExperimentSchedules(selectedExperiment, selectedExperiment.executions);
+			selectedExperiment.schedules = [];
+			
+			// Get the full details of the experiment schedules.
+			var schedulesURL = ExperimentSchedulesURLa + selectedExperiment.id + ExperimentSchedulesURLb;
+			$http.get(schedulesURL, {withCredentials: true})
+				.success(function (data) {
+					for (var it in data.schedules) {
+						data.schedules[it].schedId = it;  // Add the scheduleId (key) to the object for later retrieval.
+						selectedExperiment.schedules.push(data.schedules[it]);
+					}
+					selectedExperiment.options = data.options;
+				})
+				.error(function (error) {
+					console.log("Error: ", error);
+				});		
+		}
+		else {
+			selectedExperiment.hideDetails = true;
+		}
     }
 	
 	// Deletes a completed experiment or cancels and deletes an incomplete one.
