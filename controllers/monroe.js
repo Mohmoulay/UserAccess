@@ -598,8 +598,19 @@ angular.module("monroe")
 
 angular.module("monroe")
 	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
-    .controller("accountInfoCtrl", function($scope, $http, $location, AuthURL) {
+    .constant("JournalsURLa", "https://scheduler.monroe-system.eu/v1/users/")
+	.constant("JournalsURLb", "/journals")
+    .controller("accountInfoCtrl", function($scope, $http, $location, AuthURL,
+				JournalsURLa, JournalsURLb) {
 	$scope.userID = -1;
+	$scope.userName = new String;
+	$scope.fingerprint = new String;
+	$scope.quota_data = 0;
+	$scope.quota_storage = 0;
+	$scope.quota_time = 0;
+	$scope.journal_time = [];
+	$scope.journal_data = [];
+	$scope.journal_storage = [];
 
 	// Get the user ID.
 	$scope.GetUserID = function($scope) {
@@ -612,8 +623,40 @@ angular.module("monroe")
 					$scope.quota_data = data.user.quota_data;
 					$scope.quota_storage = data.user.quota_storage;
 					$scope.quota_time = data.user.quota_time;
+					$scope.listJournal();
 				}
 			});
 	}
 	$scope.GetUserID($scope);
+
+	$scope.TimestampToString = function(timestamp) {
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
+	}
+	
+	// Show all the journal entries of this user.
+	$scope.listJournal = function() {
+		var userURL = JournalsURLa + $scope.userID + JournalsURLb;
+		$http.get(userURL, {withCredentials: true})
+			.success(function(data) {
+				for (var itEntry in data) {
+					var entry = data[itEntry];
+					if (entry.quota.startsWith("quota_owner_time"))
+						$scope.journal_time.push(entry);
+					else if (entry.quota.startsWith("quota_owner_data"))
+						$scope.journal_data.push(entry);
+					else if (entry.quota.startsWith("quota_owner_storage"))
+						$scope.journal_storage.push(entry);
+					else
+						console.log("Error - Unknown entry type [", entry.quota, "].");
+				}
+			})
+			.error(function(error) {
+				$scope.data.error = error;
+			});		
+	}
+
+	$scope.Capitalize = function(theString) {		
+		if (angular.isString(theString))
+			return theString[0].toLocaleUpperCase() + theString.slice(1);
+	}
 });
