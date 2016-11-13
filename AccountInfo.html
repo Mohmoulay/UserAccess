@@ -92,7 +92,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="entry in journal">
-						<td class="col-md-3">{{TimestampToString(entry.timestamp)}}</td>
+						<td class="col-md-3">({{$index+1}})&nbsp&nbsp{{TimestampToString(entry.timestamp)}}</td>
 						<td class="col-md-1 text-right">{{entry.quotaTime.toLocaleString()}}</td>
 						<td class="col-md-1 text-right">{{Bytes2FriendlyString(entry.quotaStorage)}}</td>
 						<td class="col-md-1 text-right">{{Bytes2FriendlyString(entry.quotaData)}}</td>
