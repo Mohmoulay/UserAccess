@@ -611,6 +611,7 @@ angular.module("monroe")
 	$scope.journal_time = [];
 	$scope.journal_data = [];
 	$scope.journal_storage = [];
+	$scope.journal = [];
 
 	// Get the user ID.
 	$scope.GetUserID = function($scope) {
@@ -638,17 +639,7 @@ angular.module("monroe")
 		var userURL = JournalsURLa + $scope.userID + JournalsURLb;
 		$http.get(userURL, {withCredentials: true})
 			.success(function(data) {
-				for (var itEntry in data) {
-					var entry = data[itEntry];
-					if (entry.quota.startsWith("quota_owner_time"))
-						$scope.journal_time.push(entry);
-					else if (entry.quota.startsWith("quota_owner_data"))
-						$scope.journal_data.push(entry);
-					else if (entry.quota.startsWith("quota_owner_storage"))
-						$scope.journal_storage.push(entry);
-					else
-						console.log("Error - Unknown entry type [", entry.quota, "].");
-				}
+				$scope.UnifyJournal(data);
 			})
 			.error(function(error) {
 				$scope.data.error = error;
@@ -661,7 +652,11 @@ angular.module("monroe")
 	}
 	
 	$scope.Bytes2FriendlyString = function(aNumber) {
-		if (aNumber < 1024)
+		if (aNumber < 0)
+			return "";
+		else if (aNumber == 1)
+			return "1 byte";
+		else if (aNumber < 1024)
 			return aNumber + " bytes";
 		else if (aNumber < 1048576)
 			return (aNumber/1024).toFixed(2) + " KB";
@@ -672,6 +667,38 @@ angular.module("monroe")
 		else if (aNumber < 1125899906842624)
 			return (aNumber/1099511627776).toFixed(2) + " TB";
 		else
-			return aNumber + " bytes";
+			return (aNumber/1125899906842624).toFixed(2) + " PB";
+	}
+	
+	$scope.UnifyJournal = function(data) {
+		IdentifyAndUpdateQuota = function(quota_key, value, time, storage, data) {
+			if (quota_key.startsWith("quota_owner_time"))
+				time = value;
+			else if (quota_key.startsWith("quota_owner_data"))
+				data = value;
+			else if (quota_key.startsWith("quota_owner_storage"))
+				storage = value;
+			return [time, storage, data]; // Because JS does not support pass-by-reference.
+		}
+		
+		var lastTime = 0, lastStorage = 0, lastData = 0, lastTimestamp = 0;
+		var lastReason = [];
+		var entry = data.shift();
+		$scope.journal = [];
+		lastTimestamp = entry.timestamp;
+		lastReason.push($scope.Capitalize(entry.reason));
+		[lastTime, lastStorage, lastData] = IdentifyAndUpdateQuota(entry.quota, entry.new_value, lastTime, lastStorage, lastData);
+		
+		for (var it in data) {
+			var entry = data[it];
+			if (entry.timestamp != lastTimestamp) {
+				$scope.journal.push({timestamp: lastTimestamp, reason: lastReason.join('. '), quotaTime: lastTime, quotaStorage: lastStorage, quotaData: lastData});
+				lastReason = [];
+			}
+			lastTimestamp = entry.timestamp;
+			lastReason.push($scope.Capitalize(entry.reason));
+			[lastTime, lastStorage, lastData] = IdentifyAndUpdateQuota(entry.quota, entry.new_value, lastTime, lastStorage, lastData);
+		}
+		$scope.journal.push({timestamp: lastTimestamp, reason: lastReason.join('. '), quotaTime: lastTime, quotaStorage: lastStorage, quotaData: lastData});
 	}
 });

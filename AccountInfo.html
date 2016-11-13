@@ -74,75 +74,29 @@
 		</div>
     </div>
 	
-	<!-- Time quota journal -->
+	<!-- Unified quotas journal -->
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>Time usage journal</h3>
+			<h3>Quotas usage journal</h3>
 		</div>
 		<div class="panel-body">
             <table class="table table-hover">
 				<thead>
 					<tr>
-						<th>Date</th>
-						<th class="text-right">New value</th>
-						<th>Reason</th>
+						<th class="col-md-3">Date</th>
+						<th class="col-md-1 text-right">New Time</th>
+						<th class="col-md-1 text-right">New Storage</th>
+						<th class="col-md-1 text-right">New Data</th>
+						<th class="col-md-5">Reason</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="entry in journal_time">
-						<td>{{TimestampToString(entry.timestamp)}}</td>
-						<td class="text-right">{{entry.new_value}}</td>
-						<td>{{Capitalize(entry.reason)}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-    </div>
-	
-	<!-- Data quota journal -->
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3>Data usage journal</h3>
-		</div>
-		<div class="panel-body">
-            <table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th class="text-right">New value</th>
-						<th>Reason</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="entry in journal_data">
-						<td>{{TimestampToString(entry.timestamp)}}</td>
-						<td class="text-right">{{Bytes2FriendlyString(entry.new_value)}}</td>
-						<td>{{Capitalize(entry.reason)}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-    </div>
-	
-	<!-- Storage quota journal -->
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3>Storage usage journal</h3>
-		</div>
-		<div class="panel-body">
-            <table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th class="text-right">New value</th>
-						<th>Reason</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="entry in journal_storage">
-						<td>{{TimestampToString(entry.timestamp)}}</td>
-						<td class="text-right">{{Bytes2FriendlyString(entry.new_value)}}</td>
-						<td>{{Capitalize(entry.reason)}}</td>
+					<tr ng-repeat="entry in journal">
+						<td class="col-md-3">{{TimestampToString(entry.timestamp)}}</td>
+						<td class="col-md-1 text-right">{{entry.quotaTime.toLocaleString()}}</td>
+						<td class="col-md-1 text-right">{{Bytes2FriendlyString(entry.quotaStorage)}}</td>
+						<td class="col-md-1 text-right">{{Bytes2FriendlyString(entry.quotaData)}}</td>
+						<td class="col-md-5">{{Capitalize(entry.reason)}}</td>
 					</tr>
 				</tbody>
 			</table>
