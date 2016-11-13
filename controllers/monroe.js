@@ -514,6 +514,7 @@ angular.module("monroe")
 	$scope.nodeTypeFilter = [];
 	$scope.nodeModelFilter = [];
 	$scope.currentTime = 2147483647;
+	$scope.rangeResources = []; // A range with all the indexes in the array of resources, for ng-repeat.
 
 	$scope.refresh = function() {
 		$scope.listNodes();
@@ -582,11 +583,13 @@ angular.module("monroe")
 	}
 	
 	$scope.FilterNodes = function() {
+		$scope.rangeResources = [];
 		for (var it in $scope.nodes) {
 			var node = $scope.nodes[it];
 			node.isVisible = (($scope.locationFilter.length == 0) || ArrayIncludes($scope.locationFilter, node.project));
 			node.isVisible = node.isVisible && (($scope.nodeTypeFilter.length == 0) || ArrayIncludes($scope.nodeTypeFilter, node.type));
 			node.isVisible = node.isVisible && (($scope.nodeModelFilter.length == 0) || ArrayIncludes($scope.nodeModelFilter, node.model));
+			$scope.rangeResources.push(it); // Needed for ng-repeat.
 		}
 	}
 });

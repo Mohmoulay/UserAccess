@@ -58,118 +58,162 @@
         </div>
     </nav>
 
-    <!-- Resources Tab -->
-
-    <div class="panel panel-default">
-    <div class="panel-heading">
-
-    <h3>
-        List of Resources
-    </h3>
-	<div class="checkbox-inline">
-        <label><input type="checkbox" data-toggle="tooltip" title="Shows only nodes that users can currently use to schedule experiments: Active, testing or deployed types, and with recent heartbeat" ng-model="showOnlyActive">Show only nodes that can execute experiments</label>
-    </div>
+    <!-- Resources listing -->
+    <div class="panel panel-info">
+		<div class="panel-heading">
+			<h3>
+				List of Resources
+			</h3>
+			<div class="checkbox-inline">
+				<label><input type="checkbox" data-toggle="tooltip" title="Shows only nodes that users can currently use to schedule experiments: Active, testing or deployed types, and with recent heartbeat" ng-model="showOnlyActive">Show only nodes that can execute experiments</label>
+			</div>
 	
-	<div class="row" id="colSep">
-		<label class="control-label col-md-3" style="text-align:left">Locations:</label>
-		<label class="control-label col-md-2" style="text-align:left">Node types:</label>
-		<label class="control-label col-md-2" style="text-align:left">Node models:</label>
-	</div>
-	<div class="row">
-		<div class="col-md-3">
-			<select multiple class="form-control" size=8 ng-model="locationFilter" ng-change="FilterNodes()">
-				<option value="norway">Norway</option>
-				<option value="sweden">Sweden</option>
-				<option value="torino">Torino</option>
-				<option value="pisa">Pisa</option>
-				<option value="spain">Spain</option>
-				<option value="celerway">Celerway</option>
-				<option value="monroe">MONROE</option>
-				<option value="flex">Flex</option>
-			</select>
-			<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearLocationFilter()">Clear</button>
-		</div>
+			<div class="row" id="colSep">
+				<label class="control-label col-md-3" style="text-align:left">Locations:</label>
+				<label class="control-label col-md-2" style="text-align:left">Node types:</label>
+				<label class="control-label col-md-2" style="text-align:left">Node models:</label>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<select multiple class="form-control" size=8 ng-model="locationFilter" ng-change="FilterNodes()">
+						<option value="norway">Norway</option>
+						<option value="sweden">Sweden</option>
+						<option value="torino">Torino</option>
+						<option value="pisa">Pisa</option>
+						<option value="spain">Spain</option>
+						<option value="celerway">Celerway</option>
+						<option value="monroe">MONROE</option>
+						<option value="flex">Flex</option>
+					</select>
+					<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearLocationFilter()">Clear</button>
+				</div>
 		
-		<div class="col-md-2">
-			<select multiple class="form-control" ng-model="nodeTypeFilter" ng-change="FilterNodes()">
-				<option value="deployed" selected>Deployed</option>
-				<option value="testing">Testing</option>
-				<option value="storage">Storage</option>
-			</select>
-			<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearNodeTypeFilter()">Clear</button>
-		</div>
+				<div class="col-md-2">
+					<select multiple class="form-control" ng-model="nodeTypeFilter" ng-change="FilterNodes()">
+						<option value="deployed" selected>Deployed</option>
+						<option value="testing">Testing</option>
+						<option value="storage">Storage</option>
+					</select>
+					<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearNodeTypeFilter()">Clear</button>
+				</div>
 		
-		<div class="col-md-2">
-			<select multiple class="form-control" ng-model="nodeModelFilter" ng-change="FilterNodes()">
-				<option value="apu1d4" selected>apu1d4</option>
-				<option value="apu1d" selected>apu1d</option>
-				<option value="unknown" selected>others</option>
-			</select>
-			<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearNodeModelFilter()">Clear</button>
-		</div>
-	</div>
+				<div class="col-md-2">
+					<select multiple class="form-control" ng-model="nodeModelFilter" ng-change="FilterNodes()">
+						<option value="apu1d4" selected>apu1d4</option>
+						<option value="apu1d" selected>apu1d</option>
+						<option value="unknown" selected>others</option>
+					</select>
+					<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearNodeModelFilter()">Clear</button>
+				</div>
+			</div>
 
-    <!-- Filters -->
+			<!-- Filters -->
+			<div id="filters" class="collapse">
+				<div class="row">
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="sel1">Country:</label>
+							<select class="form-control" id="countryFilter">
+								<option>Norway</option>
+								<option>Sweden</option>
+								<option>Italy</option>
+								<option>Spain</option>
+								<option>Any</option>
+							</select>
+						</div>
+					</div>
 
-    <div id="filters" class="collapse">
-    <div class="row">
-        <div class="col-md-2">
-        <div class="form-group">
-            <label for="sel1">Country:</label>
-            <select class="form-control" id="countryFilter">
-                <option>Norway</option>
-                <option>Sweden</option>
-                <option>Italy</option>
-                <option>Spain</option>
-                <option>Any</option>
-            </select>
-        </div>
-        </div>
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="sel1">Type of node:</label>
+							<select class="form-control" id="typeFilter">
+								<option>Deployed</option>
+								<option>Testing</option>
+								<option>All</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> <!-- panel-heading-->
 
-        <div class="col-md-2">
-        <div class="form-group">
-            <label for="sel1">Type of node:</label>
-            <select class="form-control" id="typeFilter">
-                <option>Deployed</option>
-                <option>Testing</option>
-                <option>All</option>
-            </select>
-        </div>
-        </div>
+		<div class="panel-body">
+			Last updated: {{currentTime == 2147483647 ? "" : TimestampToString(currentTime)}}
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Status</th>
+						<th>Type</th>
+						<th>Heart beat</th>
+						<th>Project</th>
+						<th>Hostname</th>
+						<th>Model</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="node in nodes" ng-hide="(showOnlyActive && !node.canScheduleExperiments) || !node.isVisible">
+						<td ng-if="node.canScheduleExperiments">{{node.id}} <span class="glyphicon glyphicon-thumbs-up" style="color:ForestGreen"></span></td>
+						<td ng-if="!node.canScheduleExperiments">{{node.id}} <span class="glyphicon glyphicon-ban-circle" style="color:crimson"></span></td>
+						<td>{{Capitalize(node.status)}}</td>
+						<td>{{Capitalize(node.type)}}</td>
+						<td>{{node.heartbeat > 0 ? TimestampToString(node.heartbeat) : "Never"}}</td>
+						<td>{{Capitalize(node.project)}}</td>
+						<td>{{node.hostname}}</td>
+						<td>{{node.model}}</td>
+					</tr>
+				</tbody>
+			</table>
 
-    </div>
-    </div>
-    </div>
+		</div> <!-- panel-body -->
+	</div>	<!-- panel -->
 
-    <div class="panel-body">
-	Last updated: {{currentTime == 2147483647 ? "" : TimestampToString(currentTime)}}
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>ID</th>
-				<th>Status</th>
-				<th>Type</th>
-				<th>Heart beat</th>
-				<th>Project</th>
-				<th>Hostname</th>
-				<th>Model</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="node in nodes" ng-hide="(showOnlyActive && !node.canScheduleExperiments) || !node.isVisible">
-                <td ng-if="node.canScheduleExperiments">{{node.id}} <span class="glyphicon glyphicon-thumbs-up" style="color:ForestGreen"></span></td>
-				<td ng-if="!node.canScheduleExperiments">{{node.id}} <span class="glyphicon glyphicon-ban-circle" style="color:crimson"></span></td>
-				<td>{{Capitalize(node.status)}}</td>
-				<td>{{Capitalize(node.type)}}</td>
-				<td>{{node.heartbeat > 0 ? TimestampToString(node.heartbeat) : "Never"}}</td>
-				<td>{{Capitalize(node.project)}}</td>
-				<td>{{node.hostname}}</td>
-				<td>{{node.model}}</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Nodes represented as a grid of colored buttons, to have a visual representation of the whole system -->
+    <div class="panel panel-info">
+		<div class="panel-heading">
+			<h3>Map of node states</h3>
+		</div> <!-- panel-heading -->
 
-    </div>
-    </div>
+		<div class="panel-body">
+			<!-- Grid of buttons, 10 per row, each 3 cm width, extra-small -->
+			<div>
+				<span data-ng-repeat="i in rangeResources">
+					<!-- Maintenance nodes -->
+					<span ng-if="(nodes[i].status == 'maintenance')" class="btn btn-warning btn-xs" style="width:3cm">
+						<span class="badge">{{nodes[i].id}}</span>&nbsp;&nbsp;{{Capitalize(nodes[i].project)}}&nbsp;&nbsp;
+						<span ng-if="(nodes[i].type == 'testing')" class="glyphicon glyphicon-search" style="color:White"></span>
+						<span ng-if="(nodes[i].type == 'deployed')" class="glyphicon glyphicon-home" style="color:White"></span>
+						<span ng-if="(nodes[i].type == 'mobile')" class="glyphicon glyphicon-road" style="color:White"></span>
+					</span>
+					<!-- Active nodes -->
+					<span ng-if="(nodes[i].status != 'maintenance') && nodes[i].canScheduleExperiments" class="btn btn-success btn-xs" style="width:3cm">
+						<span class="badge">{{nodes[i].id}}</span>&nbsp;&nbsp;{{Capitalize(nodes[i].project)}}&nbsp;&nbsp;
+						<span ng-if="(nodes[i].type == 'testing')" class="glyphicon glyphicon-search" style="color:White"></span>
+						<span ng-if="(nodes[i].type == 'deployed')" class="glyphicon glyphicon-home" style="color:White"></span>
+						<span ng-if="(nodes[i].type == 'mobile')" class="glyphicon glyphicon-road" style="color:White"></span>
+					</span>
+					<!-- Inactive nodes -->
+					<span ng-if="(nodes[i].status != 'maintenance') && !nodes[i].canScheduleExperiments" class="btn btn-danger btn-xs" style="width:3cm">
+						<span class="badge">{{nodes[i].id}}</span>&nbsp;&nbsp;{{Capitalize(nodes[i].project)}}&nbsp;&nbsp;
+						<span ng-if="(nodes[i].type == 'testing')" class="glyphicon glyphicon-search" style="color:White"></span>
+						<span ng-if="(nodes[i].type == 'deployed')" class="glyphicon glyphicon-home" style="color:White"></span>
+						<span ng-if="(nodes[i].type == 'mobile')" class="glyphicon glyphicon-road" style="color:White"></span>
+					</span>
+					<p ng-if="((i) % 10) == 9"></p>
+				</span>
+			</div>
+			
+			<div style="margin-top:1cm">
+				<h4>Legend: </h4>
+				<span class="btn btn-warning btn-xs" style="width:3cm">Maintenance</span>
+				<span class="btn btn-success btn-xs" style="width:3cm">Can schedule</span>
+				<span class="btn btn-danger btn-xs" style="width:3cm">Cannot schedule</span>
+				<p></p>
+				<span class="glyphicon glyphicon-search" style="color:Black">&nbsp;&nbsp;Testing node</span><br>
+				<span class="glyphicon glyphicon-home" style="color:Black">&nbsp;&nbsp;Deployed node (static)</span><br>
+				<span class="glyphicon glyphicon-road" style="color:Black">&nbsp;&nbsp;Deployed node (mobile)</span><br>
+			</div>
+		</div> <!-- panel-body -->
+	</div> <!-- panel -->
 
 </body>
