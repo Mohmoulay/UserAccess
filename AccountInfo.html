@@ -68,9 +68,9 @@
 			<p><strong>Full Name: </strong>{{userName}}</p>
 			<p><strong>User ID: </strong>{{userID}}</p>
 			<p><strong>SSL fingerprint: </strong>{{fingerprint}}</p>
-			<p><strong>Data quota: </strong>{{quota_data}}<strong> bytes</strong> ({{quota_data/1073741824 | number: 2}} GB)</p>
-			<p><strong>Storage quota: </strong>{{quota_storage}}<strong> bytes</strong> ({{quota_storage/1073741824 | number: 2}} GB)</p>
-			<p><strong>Time quota: </strong>{{quota_time}}<strong> seconds</strong> ({{quota_time/3600 | number: 0}} hours)</p>
+			<p><strong>Data quota: </strong>{{quota_data.toLocaleString()}}<strong> bytes</strong> ({{Bytes2FriendlyString(quota_data)}})</p>
+			<p><strong>Storage quota: </strong>{{quota_storage.toLocaleString()}}<strong> bytes</strong> ({{Bytes2FriendlyString(quota_storage)}})</p>
+			<p><strong>Time quota: </strong>{{quota_time.toLocaleString()}}<strong> seconds</strong> ({{(quota_time/3600 | number: 1).toLocaleString()}} hours)</p>
 		</div>
     </div>
 	
@@ -84,14 +84,14 @@
 				<thead>
 					<tr>
 						<th>Date</th>
-						<th>New value</th>
+						<th class="text-right">New value</th>
 						<th>Reason</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="entry in journal_time">
 						<td>{{TimestampToString(entry.timestamp)}}</td>
-						<td>{{entry.new_value}}</td>
+						<td class="text-right">{{entry.new_value}}</td>
 						<td>{{Capitalize(entry.reason)}}</td>
 					</tr>
 				</tbody>
@@ -109,14 +109,14 @@
 				<thead>
 					<tr>
 						<th>Date</th>
-						<th>New value</th>
+						<th class="text-right">New value</th>
 						<th>Reason</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="entry in journal_data">
 						<td>{{TimestampToString(entry.timestamp)}}</td>
-						<td>{{entry.new_value}}</td>
+						<td class="text-right">{{Bytes2FriendlyString(entry.new_value)}}</td>
 						<td>{{Capitalize(entry.reason)}}</td>
 					</tr>
 				</tbody>
@@ -134,14 +134,14 @@
 				<thead>
 					<tr>
 						<th>Date</th>
-						<th>New value</th>
+						<th class="text-right">New value</th>
 						<th>Reason</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="entry in journal_storage">
 						<td>{{TimestampToString(entry.timestamp)}}</td>
-						<td>{{entry.new_value}}</td>
+						<td class="text-right">{{Bytes2FriendlyString(entry.new_value)}}</td>
 						<td>{{Capitalize(entry.reason)}}</td>
 					</tr>
 				</tbody>

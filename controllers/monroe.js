@@ -659,4 +659,19 @@ angular.module("monroe")
 		if (angular.isString(theString))
 			return theString[0].toLocaleUpperCase() + theString.slice(1);
 	}
+	
+	$scope.Bytes2FriendlyString = function(aNumber) {
+		if (aNumber < 1024)
+			return aNumber + " bytes";
+		else if (aNumber < 1048576)
+			return (aNumber/1024).toFixed(2) + " KB";
+		else if (aNumber < 1073741824)
+			return (aNumber/1048576).toFixed(2) + " MB";
+		else if (aNumber < 1099511627776)
+			return (aNumber/1073741824).toFixed(2) + " GB";
+		else if (aNumber < 1125899906842624)
+			return (aNumber/1099511627776).toFixed(2) + " TB";
+		else
+			return aNumber + " bytes";
+	}
 });
