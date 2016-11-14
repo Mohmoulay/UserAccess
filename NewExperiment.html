@@ -164,7 +164,7 @@
         </div>
         <div class="row" id="colSep">
             <label class="control-label col-md-2" for="storageQuota">Deployment-storage quota:</label>
-            <div class="col-md-2"><input type="number" min="0" max="1024" class="form-control" id="storageQuota" placeholder="(MB)" ng-model="experiment.deploymentQuota"></div>
+            <div class="col-md-2"><input type="number" min="0" class="form-control" id="storageQuota" placeholder="(MB)" ng-model="experiment.deploymentQuota"></div>
 			<label class="control-label" style="text-align:left">(MB)</label>
         </div>
 		<div class="row" id="colSep">
@@ -239,15 +239,39 @@
 
     <!-- ----------------------------------------->
     <div class="panel panel-default">
-	<div class="panel-heading">
+		<div class="panel-heading">
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<button type="submit" class="col-md-2 btn btn-default" ng-click="newExperiment(experiment)">Submit Experiment</button>
+				<div class="col-md-1"></div>
+			
+				<!-- Error panels displayed if verification fails -->
+				<div ng-if="showWarningPublicSSHKeyMissing" class="col-md-8 alert alert-danger fade in" role="alert"> <!-- Use alert-dismissible to add close button, but it is deleted permanently! -->
+					<!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+					<strong>ERROR VALIDATING FORM DATA:</strong> The user public SSH key is compulsory.
+				</div>
+				<div ng-if="showWarningSSHOnlyTesting" class="col-md-8 alert alert-danger fade in" role="alert">
+					<strong>ERROR VALIDATING FORM DATA:</strong> SSH tunnel can only be requested for testing nodes.
+				</div>
+				<div ng-if="showWarningNotJSONString" class="col-md-8 alert alert-danger fade in" role="alert">
+					<strong>ERROR VALIDATING FORM DATA:</strong> The string for additional options is not a proper JSON string.
+				</div>
+				<div ng-if="showWarningMinimumRecurrencePeriod" class="col-md-8 alert alert-danger fade in" role="alert">
+					<strong>ERROR VALIDATING FORM DATA:</strong> If recurrence is selected, the minimum period must be at least 3600 seconds.
+				</div>
+				<div ng-if="showWarningRecurrenceEndingTime" class="col-md-8 alert alert-danger fade in" role="alert">
+					<strong>ERROR VALIDATING FORM DATA:</strong> If recurrence is selected, a valid ending date must be provided.
+				</div>
+				<div ng-if="showWarningMaxStorageQuota" class="col-md-8 alert alert-danger fade in" role="alert">
+					<strong>ERROR VALIDATING FORM DATA:</strong> The maximum allowed storage quota is 1024 MB.
+				</div>
+				<div ng-if="showWarningSSHNotRecurrence" class="col-md-8 alert alert-danger fade in" role="alert">
+					<strong>ERROR VALIDATING FORM DATA:</strong> SSH tunnel cannot be requested with recurrent experiments.
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="panel-body">
-        <div class="row">
-            <div class="col-md-2"><button type="submit" class="btn btn-default" ng-click="newExperiment(experiment)">Submit Experiment</button></div>
-        </div>		
-    </div>
-	</div>
-    
     
     <div class="panel panel-success" ng-hide="!experiment.showSuccessPanel">
     <div class="panel-heading">

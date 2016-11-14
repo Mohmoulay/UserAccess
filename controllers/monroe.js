@@ -281,6 +281,17 @@ angular.module("monroe")
 	$scope.experiment.recurrence = false;
 	$scope.experiment.requiresSSH = false;
 	$scope.experiment.sshPublicKey = new String;
+	
+	ResetWarningPanels = function() {
+		$scope.showWarningPublicSSHKeyMissing = false;
+		$scope.showWarningSSHOnlyTesting = false;
+		$scope.showWarningSSHNotRecurrence = false;
+		$scope.showWarningNotJSONString = false;
+		$scope.showWarningMinimumRecurrencePeriod = false;
+		$scope.showWarningRecurrenceEndingTime = false;
+		$scope.showWarningMaxStorageQuota = false;
+	}
+	ResetWarningPanels();
 
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
 	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
@@ -385,42 +396,44 @@ angular.module("monroe")
     verifyExperiment = function(experiment) {
     	var res = true;
     	var anumber;
+		
+		ResetWarningPanels();
     	
     	if (experiment.recurrence) {
     		anumber = Number(experiment.period);
     		res = res && isFinite(anumber) && (anumber >= 3600);
     		if (!res)
-    		    window.alert("If recurrence is selected, the minimum period must be at least 3600 seconds.");
+    		    $scope.showWarningMinimumRecurrencePeriod = true;
 			
 			if (res) {
 				res = (experiment.repeatUntil != null) && (experiment.repeatUntil != undefined) && isFinite(Number(experiment.repeatUntil));
 				if (!res)
-					window.alert("If recurrence is selected, a valid ending date must be provided.");
-			}
-
-			if (res) {
-				anumber = Number(experiment.deploymentQuota);
-				res = isFinite(anumber) && (anumber <= 1024);
-				if (!res)
-					window.alert("The maximum allowed storage quota is 1024 MB.");
+					$scope.showWarningRecurrenceEndingTime = true;
 			}
 			
 			if (res) {
 				res = !experiment.requiresSSH;
 				if (!res)
-					window.alert("SSH tunnel cannot be requested with recurrent experiments.");
+					$scope.showWarningSSHNotRecurrence = true;
 			}
     	}
+		
+		if (res) {
+			anumber = Number(experiment.deploymentQuota);
+			res = isFinite(anumber) && (anumber <= 1024);
+			if (!res)
+				$scope.showWarningMaxStorageQuota = true;
+		}
 		
 		if (res && experiment.requiresSSH) {
 			res = (experiment.nodeType == "type:testing");
 			if (!res)
-				window.alert("SSH tunnel can only be requested for testing nodes.");
+				$scope.showWarningSSHOnlyTesting = true;
 			
 			if (res) {
 				res = (experiment.sshPublicKey.length > 0);
 				if (!res)
-					window.alert("The user public SSH key is compulsory.");
+					$scope.showWarningPublicSSHKeyMissing = true;
 			}
 		}
     	
@@ -429,16 +442,20 @@ angular.module("monroe")
 				JSON.parse("{" + experiment.additionalOptions + "}");
 			}
 			catch (err) {
-				window.alert("The string for additional options is not a proper JSON string.");
+				$scope.showWarningNotJSONString = true;
 				res = false;
 			}
 		}
+
+		if (!res)	// Scroll to bottom of page.
+			$('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
 
     	return res
     }
     
 	/************* New Experiment **********/
     $scope.newExperiment = function(experiment) {
+		ResetWarningPanels();
     	if (!verifyExperiment(experiment))
     	    return;
     	    
@@ -510,6 +527,7 @@ angular.module("monroe")
 		}		
         
 		console.log(request);
+		$scope.showWarningPublicSSHKeyMissing = false;
         $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 experiment.schedID = data.experiment;
@@ -524,6 +542,8 @@ angular.module("monroe")
                 experiment.showSuccessPanel = false;
                 experiment.showFailurePanel = true;
             });
+		// Scroll to bottom of page.
+		$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
     }
     
 });
