@@ -508,9 +508,6 @@ angular.module("monroe")
         }
         
         request.options["nodes"] = experiment.specificNodes;
-        request.options = JSON.stringify(request.options);
-		if (experiment.additionalOptions.length > 0)
-			request.options = request.options.slice(0, -1) + "," + experiment.additionalOptions + "}";
         
     	//// Deployment options
     	//request.deployment_options = new Object;
@@ -518,13 +515,17 @@ angular.module("monroe")
 		
 		// SSH options.
 		if ($scope.experiment.requiresSSH) {
-			request.ssh = new Object;
-			request.ssh["server"] = sshServerURL;
-			request.ssh["server.port"] = 29999;
-			request.ssh["server.user"] = "tunnel";
-			request.ssh["client.public"] = $scope.experiment.sshPublicKey;
-			request.ssh = JSON.stringify(request.ssh);
+			request.options["ssh"] = {};
+			request.options.ssh["server"] = sshServerURL;
+			request.options.ssh["server.port"] = 29999;
+			request.options.ssh["server.user"] = "tunnel";
+			request.options.ssh["client.public"] = $scope.experiment.sshPublicKey;
 		}		
+
+		// Convert JSON-stile request options to a string.
+        request.options = JSON.stringify(request.options);
+		if (experiment.additionalOptions.length > 0)
+			request.options = request.options.slice(0, -1) + "," + experiment.additionalOptions + "}";
         
 		console.log(request);
 		$scope.showWarningPublicSSHKeyMissing = false;
