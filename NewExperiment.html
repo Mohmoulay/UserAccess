@@ -224,7 +224,16 @@
 			<!-- New line under the button -->
 			<span class="col-md-10 col-md-offset-2" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilityMaxNodes}}</span>
 			<span class="col-md-10 col-md-offset-2" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilitySlotEnd}}</span>
-		</div>          
+		</div>
+		
+        <div class="row" style="margin-top:0.5cm">
+            <label class="col-md-2"><input type="checkbox" ng-model="experiment.requiresSSH"> SSH tunnel</label>
+        </div>
+		<div class="row" id="colSep" ng-hide="!experiment.requiresSSH">
+            <label class="control-label col-md-1" for="period">Public SSH key:</label>
+            <div class="col-md-2"><input type="text" class="form-control" id="sshPublicKey" ng-model="experiment.sshPublicKey"></div>
+        </div>
+
     </div>
     </div>
 

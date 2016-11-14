@@ -252,9 +252,9 @@ angular.module("monroe")
 angular.module("monroe")
     .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
     .constant("checkScheduleURL", "https://scheduler.monroe-system.eu/v1/schedules/find")
+	.constant("sshServerURL", "http://tunnel.monroe-system.eu/")
     .controller("newExperimentCtrl", function($scope, $http, $location,
-										newExperimentURL,
-										checkScheduleURL) {
+										newExperimentURL, checkScheduleURL, sshServerURL) {
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
@@ -278,6 +278,9 @@ angular.module("monroe")
 	$scope.experiment.checkAvailabilitySlotEnd = "";
 	$scope.experiment.checkAvailabilityStartTimestamp = 0;
 	$scope.experiment.checkAvailabilityShow = false;
+	$scope.experiment.recurrence = false;
+	$scope.experiment.requiresSSH = false;
+	$scope.experiment.sshPublicKey = new String;
 
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
 	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
@@ -401,7 +404,25 @@ angular.module("monroe")
 				if (!res)
 					window.alert("The maximum allowed storage quota is 1024 MB.");
 			}
+			
+			if (res) {
+				res = !experiment.requiresSSH;
+				if (!res)
+					window.alert("SSH tunnel cannot be requested with recurrent experiments.");
+			}
     	}
+		
+		if (res && experiment.requiresSSH) {
+			res = (experiment.nodeType == "type:testing");
+			if (!res)
+				window.alert("SSH tunnel can only be requested for testing nodes.");
+			
+			if (res) {
+				res = (experiment.sshPublicKey.length > 0);
+				if (!res)
+					window.alert("The user public SSH key is compulsory.");
+			}
+		}
     	
 		if (res) {
 			try {
@@ -477,7 +498,18 @@ angular.module("monroe")
     	//// Deployment options
     	//request.deployment_options = new Object;
     	//request.deployment_options["restart"] = 1;
+		
+		// SSH options.
+		if ($scope.experiment.requiresSSH) {
+			request.ssh = new Object;
+			request.ssh["server"] = sshServerURL;
+			request.ssh["server.port"] = 29999;
+			request.ssh["server.user"] = "tunnel";
+			request.ssh["client.public"] = $scope.experiment.sshPublicKey;
+			request.ssh = JSON.stringify(request.ssh);
+		}		
         
+		console.log(request);
         $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 experiment.schedID = data.experiment;
