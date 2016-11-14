@@ -152,6 +152,7 @@
 						<th>Project</th>
 						<th>Hostname</th>
 						<th>Model</th>
+						<th>Location</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -165,6 +166,8 @@
 						<td>{{Capitalize(node.project)}}</td>
 						<td>{{node.hostname}}</td>
 						<td>{{node.model}}</td>
+						<td ng-if="(node.latitude != undefined) && (node.longitude != undefined)"><a target="_tab" ng-href="http://maps.google.com/?q={{node.latitude}},{{node.longitude}}">Google Maps</a></td>
+						<td ng-if="(node.latitude == undefined) || (node.longitude == undefined)">n/a</td>
 					</tr>
 				</tbody>
 			</table>
