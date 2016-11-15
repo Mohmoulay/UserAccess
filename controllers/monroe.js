@@ -252,7 +252,7 @@ angular.module("monroe")
 angular.module("monroe")
     .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
     .constant("checkScheduleURL", "https://scheduler.monroe-system.eu/v1/schedules/find")
-	.constant("sshServerURL", "http://tunnel.monroe-system.eu/")
+	.constant("sshServerURL", "tunnel.monroe-system.eu/")
     .controller("newExperimentCtrl", function($scope, $http, $location,
 										newExperimentURL, checkScheduleURL, sshServerURL) {
     $scope.experiment = new Object();
