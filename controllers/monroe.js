@@ -252,7 +252,7 @@ angular.module("monroe")
 angular.module("monroe")
     .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
     .constant("checkScheduleURL", "https://scheduler.monroe-system.eu/v1/schedules/find")
-	.constant("sshServerURL", "tunnel.monroe-system.eu/")
+	.constant("sshServerURL", "tunnel.monroe-system.eu")
     .controller("newExperimentCtrl", function($scope, $http, $location,
 										newExperimentURL, checkScheduleURL, sshServerURL) {
     $scope.experiment = new Object();
@@ -536,15 +536,17 @@ angular.module("monroe")
                 experiment.schedNodes = data.nodecount;
                 experiment.showSuccessPanel = true;
                 experiment.showFailurePanel = false;
+				// Scroll to bottom of page.
+				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
             })
             .error(function(error) {
                 console.log("Error submitting experiment: ", error);
                 experiment.schedMessage = error.message;
                 experiment.showSuccessPanel = false;
                 experiment.showFailurePanel = true;
+				// Scroll to bottom of page.
+				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
             });
-		// Scroll to bottom of page.
-		$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
     }
     
 });
