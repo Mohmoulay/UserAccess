@@ -26,10 +26,14 @@ angular.module("monroe")
 	$scope.showHidden = false; // If false, show normal experiments. If true, ask the scheduler also for hidden experiments.
 	
 	$scope.EXPERIMENT_STATES = {
+		ALL_DEFINED : {value: 4},
 		ONGOING: {value: 1},
 		FINISHED_OK: {value: 2},
 		FINISHED_FAILED: {value: 3}
 	};
+	$scope.HasUnfinishedTasks = function(experiment) {
+		return (experiment.state == $scope.EXPERIMENT_STATES.ALL_DEFINED) || (experiment.state == $scope.EXPERIMENT_STATES.ONGOING);
+	}
 	
 	$scope.selectedExperiment.executions = {};
 	$scope.ResetExecutionCounters = function(executions) {
@@ -59,7 +63,9 @@ angular.module("monroe")
 	$scope.GetExperimentState = function(experiment) {
 		executions = {};
 		$scope.CountExperimentSchedules(experiment, executions);
-		if ( executions.remaining > 0 )
+		if (executions.defined == executions.total)
+			return $scope.EXPERIMENT_STATES.ALL_DEFINED;
+		else if ( executions.remaining > 0 )
 			return $scope.EXPERIMENT_STATES.ONGOING;
 		else if ( (executions.failed + executions.canceled + executions.aborted) > 0 )
 			return $scope.EXPERIMENT_STATES.FINISHED_FAILED;
@@ -192,7 +198,7 @@ angular.module("monroe")
 	
 	// Deletes a completed experiment or cancels and deletes an incomplete one.
 	$scope.DeleteExperiment = function(experiment, event) {
-		var action = (experiment.state == $scope.EXPERIMENT_STATES.ONGOING) ? "CANCEL" : "REMOVE";
+		var action = (experiment.state == $scope.EXPERIMENT_STATES.ALL_DEFINED) ? "DELETE" : (experiment.state == $scope.EXPERIMENT_STATES.ONGOING) ? "CANCEL" : "REMOVE";
 		if (confirm('Do you want to ' + action + ' experiment ' + experiment.id + '?\n"' + experiment.name + '"')) {
 			var deleteUrl = DeleteExperimentURL + experiment.id;
 
