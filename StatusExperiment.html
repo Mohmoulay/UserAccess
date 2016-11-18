@@ -204,17 +204,18 @@
 										<tr><th>Sched</th><th>Node</th><th>Status</th><th>Start</th><th>Stop</th><th>Shared</th><th>Storage</th><th>Traffic quota</th><th>Results</th></tr>
 									</thead>
 									<tbody ng-repeat="sched in iExperiment.schedules | orderBy:'id'" >
-										<tr>
-											<td class="text-right">{{sched.schedId}}</td>
-											<td class="text-right">{{sched.nodeid}}</td>
-											<td>{{Capitalize(sched.status)}}</td>
-											<td>{{TimestampToString(sched.start)}}</td>
-											<td>{{TimestampToString(sched.stop)}}</td>
-											<td>{{iExperiment.options.shared}}</td>
-											<td>{{iExperiment.options["storage"]}}</td>
-											<td>{{iExperiment.options["traffic"]}}</td>
-											<td ng-if="(!sched.status.startsWith('defined')) && (!sched.status.startsWith('deployed')) && (!sched.status.startsWith('requested')) && (!sched.status.startsWith('delayed'))"><a href="{{CreateResultsURL(sched.schedId)}}">download</a></td>
+										<tr style="border-top:none;">
+											<td class="text-right" style="border-top:none;">{{sched.schedId}}</td>
+											<td class="text-right" style="border-top:none;">{{sched.nodeid}}</td>
+											<td style="border-top:none;">{{Capitalize(sched.status)}}</td>
+											<td style="border-top:none;">{{TimestampToString(sched.start)}}</td>
+											<td style="border-top:none;">{{TimestampToString(sched.stop)}}</td>
+											<td style="border-top:none;">{{iExperiment.options.shared}}</td>
+											<td style="border-top:none;">{{iExperiment.options["storage"]}}</td>
+											<td style="border-top:none;">{{iExperiment.options["traffic"]}}</td>
+											<td style="border-top:none;" ng-if="(!sched.status.startsWith('defined')) && (!sched.status.startsWith('deployed')) && (!sched.status.startsWith('requested')) && (!sched.status.startsWith('delayed'))"><a href="{{CreateResultsURL(sched.schedId)}}">download</a></td>
 										</tr>
+										<tr style="border-top:none;"><td style="border-top:none;"></td><td colspan="8" style="border-top:none;">To connect to your experiment container: <span style='font-family: "Courier New", Courier, monospace;'>ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i your_private_key -p {{30000+sched.nodeid}} root@tunnel.monroe-system.eu</span></td></tr>
 									</tbody>
 								</table>
 							</li>
