@@ -215,7 +215,8 @@
 											<td style="border-top:none;">{{iExperiment.options["traffic"]}}</td>
 											<td style="border-top:none;" ng-if="(!sched.status.startsWith('defined')) && (!sched.status.startsWith('deployed')) && (!sched.status.startsWith('requested')) && (!sched.status.startsWith('delayed'))"><a href="{{CreateResultsURL(sched.schedId)}}">download</a></td>
 										</tr>
-										<tr style="border-top:none;"><td style="border-top:none;"></td><td colspan="8" style="border-top:none;">To connect to your experiment container: <span style='font-family: "Courier New", Courier, monospace;'>ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i your_private_key -p {{30000+sched.nodeid}} root@tunnel.monroe-system.eu</span></td></tr>
+										<!--<tr style="border-top:none;"><td style="border-top:none;"></td><td colspan="8" style="border-top:none;">To connect to your experiment container: <span style='font-family: "Courier New", Courier, monospace;'>ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i your_private_key -p {{30000+sched.nodeid}} root@tunnel.monroe-system.eu</span></td></tr>-->
+										<tr style="border-top:none;"><td style="border-top:none;"></td><td colspan="8" style="border-top:none;">To connect to your experiment container: <input style='font-family: "Courier New", Courier, monospace; width:80%' type="url" value="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i your_private_key -p {{30000+sched.nodeid}} root@tunnel.monroe-system.eu"></td></tr>
 									</tbody>
 								</table>
 							</li>
