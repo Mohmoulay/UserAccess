@@ -112,7 +112,7 @@ angular.module("monroe")
 				}
 			})
 			.error(function(error) {
-				$scope.data.error = error;
+				$scope.error = error;
 			});		
 	}
 
@@ -615,7 +615,7 @@ angular.module("monroe")
 				$scope.FilterNodes();
 			})
 			.error(function(error) {
-				$scope.data.error = error;
+				$scope.error = error;
 			});		
 	}
 
@@ -706,7 +706,7 @@ angular.module("monroe")
 				$scope.UnifyJournal(data);
 			})
 			.error(function(error) {
-				$scope.data.error = error;
+				$scope.error = error;
 			});		
 	}
 
