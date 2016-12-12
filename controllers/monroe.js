@@ -572,7 +572,7 @@ angular.module("monroe")
 	$scope.nodes = [];
 	$scope.showOnlyActive = false; // If true, show only nodes that can currently execute experiments.
 	$scope.locationFilter = [];
-	$scope.nodeTypeFilter = [];
+	$scope.nodeTypeFilter = ["deployed", "testing"];
 	$scope.nodeModelFilter = [];
 	$scope.currentTime = 2147483647;
 	$scope.rangeResources = []; // A range with all the indexes in the array of resources, for ng-repeat.
@@ -610,7 +610,6 @@ angular.module("monroe")
 					var node = $scope.nodes[it];
 					node.hasRecentHeartbeat = node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > $scope.currentTime;
 					node.canScheduleExperiments = (node.status=='active') && node.hasRecentHeartbeat && ((node.type == 'testing') || (node.type == 'deployed'));
-					node.isVisible = true;
 				}
 				$scope.FilterNodes();
 			})
@@ -647,7 +646,8 @@ angular.module("monroe")
 		$scope.rangeResources = [];
 		for (var it in $scope.nodes) {
 			var node = $scope.nodes[it];
-			node.isVisible = (($scope.locationFilter.length == 0) || ArrayIncludes($scope.locationFilter, node.project));
+			node.isVisible = (node.project != 'monroe') && (node.project != 'celerway');
+			node.isVisible = node.isVisible && (($scope.locationFilter.length == 0) || ArrayIncludes($scope.locationFilter, node.project));
 			node.isVisible = node.isVisible && (($scope.nodeTypeFilter.length == 0) || ArrayIncludes($scope.nodeTypeFilter, node.type));
 			node.isVisible = node.isVisible && (($scope.nodeModelFilter.length == 0) || ArrayIncludes($scope.nodeModelFilter, node.model));
 			$scope.rangeResources.push(it); // Needed for ng-repeat.
