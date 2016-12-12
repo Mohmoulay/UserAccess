@@ -648,7 +648,7 @@ angular.module("monroe")
 		$scope.countShownNodes = 0;
 		for (var it in $scope.nodes) {
 			var node = $scope.nodes[it];
-			node.isVisible = (node.project != 'monroe') && (node.project != 'celerway') && (node.type != 'storage') && (node.type != 'development');
+			node.isVisible = (node.project != 'monroe') && (node.project != 'celerway') && (node.project != 'nimbus') && (node.type != 'storage') && (node.type != 'development');
 			node.isVisible = node.isVisible && (($scope.locationFilter.length == 0) || ArrayIncludes($scope.locationFilter, node.project));
 			node.isVisible = node.isVisible && (($scope.nodeTypeFilter.length == 0) || ArrayIncludes($scope.nodeTypeFilter, node.type));
 			node.isVisible = node.isVisible && (($scope.nodeModelFilter.length == 0) || ArrayIncludes($scope.nodeModelFilter, node.model));
