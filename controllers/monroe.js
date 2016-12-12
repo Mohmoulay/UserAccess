@@ -572,7 +572,7 @@ angular.module("monroe")
 	$scope.nodes = [];
 	$scope.showOnlyActive = false; // If true, show only nodes that can currently execute experiments.
 	$scope.locationFilter = [];
-	$scope.nodeTypeFilter = ["deployed", "testing"];
+	$scope.nodeTypeFilter = [];
 	$scope.nodeModelFilter = [];
 	$scope.currentTime = 2147483647;
 	$scope.rangeResources = []; // A range with all the indexes in the array of resources, for ng-repeat.
@@ -648,7 +648,7 @@ angular.module("monroe")
 		$scope.countShownNodes = 0;
 		for (var it in $scope.nodes) {
 			var node = $scope.nodes[it];
-			node.isVisible = (node.project != 'monroe') && (node.project != 'celerway');
+			node.isVisible = (node.project != 'monroe') && (node.project != 'celerway') && (node.type != 'storage') && (node.type != 'development');
 			node.isVisible = node.isVisible && (($scope.locationFilter.length == 0) || ArrayIncludes($scope.locationFilter, node.project));
 			node.isVisible = node.isVisible && (($scope.nodeTypeFilter.length == 0) || ArrayIncludes($scope.nodeTypeFilter, node.type));
 			node.isVisible = node.isVisible && (($scope.nodeModelFilter.length == 0) || ArrayIncludes($scope.nodeModelFilter, node.model));
