@@ -576,6 +576,7 @@ angular.module("monroe")
 	$scope.nodeModelFilter = [];
 	$scope.currentTime = 2147483647;
 	$scope.rangeResources = []; // A range with all the indexes in the array of resources, for ng-repeat.
+	$scope.countShownNodes = 0; // Count of nodes that are shown after applying filters.
 
 	$scope.refresh = function() {
 		$scope.listNodes();
@@ -644,6 +645,7 @@ angular.module("monroe")
 	
 	$scope.FilterNodes = function() {
 		$scope.rangeResources = [];
+		$scope.countShownNodes = 0;
 		for (var it in $scope.nodes) {
 			var node = $scope.nodes[it];
 			node.isVisible = (node.project != 'monroe') && (node.project != 'celerway');
@@ -651,6 +653,8 @@ angular.module("monroe")
 			node.isVisible = node.isVisible && (($scope.nodeTypeFilter.length == 0) || ArrayIncludes($scope.nodeTypeFilter, node.type));
 			node.isVisible = node.isVisible && (($scope.nodeModelFilter.length == 0) || ArrayIncludes($scope.nodeModelFilter, node.model));
 			$scope.rangeResources.push(it); // Needed for ng-repeat.
+			if (node.isVisible)
+				$scope.countShownNodes = $scope.countShownNodes + 1;
 		}
 	}
 });
