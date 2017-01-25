@@ -267,10 +267,10 @@ angular.module("monroe")
     $scope.experiment.nodeType = "type:deployed";
     $scope.experiment.countryFilterAny = true;
     $scope.experiment.countryFilter = [];
-    $scope.experiment.useInterface1 = true;
+    /*$scope.experiment.useInterface1 = true;
     $scope.experiment.useInterface2 = true;
     $scope.experiment.useInterface3 = true;
-    $scope.experiment.interfacesCount = 0;
+    $scope.experiment.interfacesCount = 0;*/
     $scope.experiment.activeQuota = 1048576;
 	$scope.experiment.deploymentQuota = 128;
 	$scope.experiment.additionalOptions = "";
@@ -482,11 +482,11 @@ angular.module("monroe")
     	anumber = Number(experiment.duration);
     	if (isFinite(anumber) && ('start' in request))    request.stop = request.start + anumber;
     	  	
-    	request.interfaces = "";
+    	/*request.interfaces = "";
     	if ($scope.experiment.useInterface1)    request.interfaces += "iface1";
     	if (experiment.useInterface2)    request.interfaces += (request.interfaces == "") ? "iface2" : ",iface2";
     	if (experiment.useInterface3)    request.interfaces += (request.interfaces == "") ? "iface3" : ",iface3";
-    	if (request.interfaces == "")            delete request.interfaces;
+    	if (request.interfaces == "")            delete request.interfaces;*/
     	
     	PrepareNodeFilters(experiment, request);
     	
