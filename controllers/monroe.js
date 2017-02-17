@@ -366,7 +366,8 @@ angular.module("monroe")
     	    if (isFinite(anumber))    request.start = anumber;		
 		}
     	PrepareNodeFilters(experiment, request);
-		request.nodes = experiment.specificNodes;
+		if (experiment.specificNodes)
+			request.nodes = experiment.specificNodes;
 		   	
     	$http.get(checkScheduleURL, {withCredentials: true, params: request})
     	    .success(function(data) {
