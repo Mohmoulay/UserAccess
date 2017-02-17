@@ -514,7 +514,8 @@ angular.module("monroe")
     	    if (isFinite(anumber))    request.options["until"] = anumber;
         }
         
-        request.options["nodes"] = experiment.specificNodes;
+        if (experiment.specificNodes)
+			request.options["nodes"] = experiment.specificNodes;
         
     	//// Deployment options
     	//request.deployment_options = new Object;
