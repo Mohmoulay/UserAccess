@@ -160,6 +160,10 @@
 						<th>Hostname</th>
 						<th>Model</th>
 						<th>Location</th>
+						<th>Interface 1</th>
+						<th>Interface 2</th>
+						<th>Interface 3</th>
+						<th>Interface 4</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -175,6 +179,7 @@
 						<td>{{node.model}}</td>
 						<td ng-if="(node.latitude != undefined) && (node.longitude != undefined)"><a target="_tab" ng-href="http://maps.google.com/?q={{node.latitude}},{{node.longitude}}">Google Maps</a></td>
 						<td ng-if="(node.latitude == undefined) || (node.longitude == undefined)">n/a</td>
+						<td ng-repeat="iface in node.interfaces">{{iface["mccmnc"]}} ({{iface["operator"]}})</td>
 					</tr>
 				</tbody>
 			</table>

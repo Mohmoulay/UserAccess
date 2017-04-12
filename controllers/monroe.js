@@ -611,6 +611,7 @@ angular.module("monroe")
 				$scope.currentTime = Date.now()/1000|0;
 				for (var it in $scope.nodes) {
 					var node = $scope.nodes[it];
+					node.interfaces = node.interfaces.filter(function(a){return (a['heartbeat'] > 0) && (a['status'] == 'current');});
 					node.hasRecentHeartbeat = node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > $scope.currentTime;
 					node.canScheduleExperiments = (node.status=='active') && node.hasRecentHeartbeat && ((node.type == 'testing') || (node.type == 'deployed'));
 				}
