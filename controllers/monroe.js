@@ -10,11 +10,12 @@ angular.module("monroe")
 	.constant("DeleteExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments/")
 	.constant("ExperimentSchedulesURLa", "https://scheduler.monroe-system.eu/v1/experiments/")
 	.constant("ExperimentSchedulesURLb", "/schedules")
+	.constant("rescheduleExperimentURL", "NewExperiment.html#/?retrieveID=")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
 											myExperimentsURLa, myExperimentsURLb,
 											newExperimentURL,
 											AuthURL, DeleteExperimentURL, 
-											ExperimentSchedulesURLa, ExperimentSchedulesURLb) {
+											ExperimentSchedulesURLa, ExperimentSchedulesURLb, rescheduleExperimentURL) {
 	$scope.userID = -1;
 	$scope.userName = new String;
 	$scope.data = {};
@@ -225,6 +226,12 @@ angular.module("monroe")
 		$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
 	}
 	
+	// Loads the new experiment page and signals to reload the schedule parameters.
+	$scope.RescheduleExperiment = function(experiment, event) {
+		window.location.replace(rescheduleExperimentURL + experiment.id);
+		event.stopPropagation(); // Stop the event before reaching the list controller that would try to show a non-existent experiment.		
+	}
+	
 	$scope.AvoidHiding = function(event) {
 		event.stopPropagation();
 	}
@@ -263,8 +270,11 @@ angular.module("monroe")
     .constant("newExperimentURL", "https://scheduler.monroe-system.eu/v1/experiments")
     .constant("checkScheduleURL", "https://scheduler.monroe-system.eu/v1/schedules/find")
 	.constant("sshServerURL", "tunnel.monroe-system.eu")
+	.constant("ExperimentDetailsURLa", "https://scheduler.monroe-system.eu/v1/experiments/")
+	.constant("ExperimentDetailsURLb", "/schedules")
     .controller("newExperimentCtrl", function($scope, $http, $location,
-										newExperimentURL, checkScheduleURL, sshServerURL) {
+										newExperimentURL, checkScheduleURL, sshServerURL,
+										ExperimentDetailsURLa, ExperimentDetailsURLb) {
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
@@ -291,6 +301,9 @@ angular.module("monroe")
 	$scope.experiment.recurrence = false;
 	$scope.experiment.requiresSSH = false;
 	$scope.experiment.sshPublicKey = new String;
+	$scope.experiment.rescheduleID = $location.search()["retrieveID"];
+	if ($scope.experiment.rescheduleID == undefined)
+		$scope.experiment.rescheduleID = -1;
 	
 	ResetWarningPanels = function() {
 		$scope.showWarningPublicSSHKeyMissing = false;
@@ -301,7 +314,6 @@ angular.module("monroe")
 		$scope.showWarningRecurrenceEndingTime = false;
 		$scope.showWarningMaxStorageQuota = false;
 	}
-	ResetWarningPanels();
 
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
 	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
@@ -370,6 +382,7 @@ angular.module("monroe")
     	    if (isFinite(anumber))    request.start = anumber;		
 		}
     	PrepareNodeFilters(experiment, request);
+		
 		if (experiment.specificNodes)
 			request.nodes = experiment.specificNodes;
 		   	
@@ -561,6 +574,64 @@ angular.module("monroe")
             });
     }
     
+	// Retrieve the details of an experiment by ID.
+    $scope.retrieveExperiment = function(id) {
+		// Get the full details of the experiment schedules.
+		var experimentURL = ExperimentDetailsURLa + id + ExperimentDetailsURLb;
+		$http.get(experimentURL, {withCredentials: true})
+			.success(function (data) {
+				console.log(data);
+				if (data.name)	$scope.experiment.name = data.name;
+				if (data.script)	$scope.experiment.script = data.script;
+				if (data.nodecount)	$scope.experiment.nodeCount = data.nodecount;
+				if (data.start)	{
+					$scope.experiment.startDate = new Date( (new Date(data.start * 1000)).toUTCString() );
+					$scope.UpdateConfirmStartDate($scope.experiment);
+					if (data.stop)
+						$scope.experiment.duration = data.stop - data.start;
+				}
+				$scope.experiment.startASAP = false;
+				if (data.options["traffic"])	$scope.experiment.activeQuota = data.options["traffic"];
+				//if (data.options["resultsQuota"])	$scope.experiment.resultsQuota = data.options["resultsQuota"]; // It's in the individual shcedule.
+				if (data.options["storage"])	$scope.experiment.deploymentQuota = data.options["storage"] / (1024*1024.0);
+				if (data.options["recurrence"]) {
+					$scope.experiment.recurrence = true;
+					if (data.options["period"])
+						$scope.experiment.period = data.options["period"];
+					if (data.options["until"]) {
+						$scope.experiment.repeatUntil = new Date( (new Date(data.options["until"] * 1000)).toUTCString() );
+						$scope.UpdateRepeatUntil($scope.experiment);
+					}
+				}
+				// It's in the individual schedules.
+				/*if (data.options["ssh"]) {
+					$scope.experiment.requiresSSH = true;
+					if (data.options["ssh.client.public"])	$scope.experiment.sshPublicKey = data.options["ssh.client.public"];
+				}*/
+				
+				//  To calculate the number of nodes used by the experiment (and their number), we have
+				// to traverse the list of schedules and identify the distinct nodes.
+				// Note: To get SSH, we would need to pick each schedule, not the experiment summary :-(
+				if (data.schedules) {
+					var nodes = {};	// Count distinct nodeIds for all schedules.
+					for (var it in data.schedules)
+						nodes[data.schedules[it].nodeid] = true;
+					var nodeIds = Object.keys(nodes);
+					$scope.experiment.nodeCount = nodeIds.length;
+					$scope.experiment.specificNodes = nodeIds;
+				}
+			})
+			.error(function (error) {
+				console.log("Error retrieving experiment " + id + ": ", error);
+			});
+		}
+	Init = function() {
+		if ($scope.experiment.rescheduleID >= 0)
+			$scope.retrieveExperiment($scope.experiment.rescheduleID);
+		
+		ResetWarningPanels();
+	}
+	Init();
 });
 
 

@@ -98,6 +98,7 @@
                 <th>Ongoing</th>
 				<th>Successful</th>
 				<th></th>
+				<th></th>
             </tr>
         </thead>
 
@@ -114,6 +115,7 @@
 				<td ng-if="iExperiment.state == EXPERIMENT_STATES.ALL_DEFINED"><span class="glyphicon glyphicon-trash" style="color:crimson"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(iExperiment, $event)">Delete</button></td>
 				<td ng-if="iExperiment.state == EXPERIMENT_STATES.ONGOING"><span class="glyphicon glyphicon-remove" style="color:crimson"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(iExperiment, $event)">Cancel</button></td>
 				<td ng-if="(iExperiment.state == EXPERIMENT_STATES.FINISHED_OK) || (iExperiment.state == EXPERIMENT_STATES.FINISHED_FAILED)"><span class="glyphicon glyphicon-eye-close" style="color:FireBrick"></span> <button type="submit" class="btn btn-default btn-xs" ng-click="DeleteExperiment(iExperiment, $event)">Remove</button></td>
+				<td><button type="submit" class="btn btn-default btn-xs" ng-click="RescheduleExperiment(iExperiment, $event)">Re-schedule</button></td>
 			</tr>
 			
 			<!-- Present the details for the experiment only if it is selected -->
