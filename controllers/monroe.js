@@ -224,6 +224,10 @@ angular.module("monroe")
 		delete $scope.selectedExperiment.schedules;
 		$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
 	}
+	
+	$scope.AvoidHiding = function(event) {
+		event.stopPropagation();
+	}
 });
 
 
