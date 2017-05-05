@@ -584,6 +584,7 @@ angular.module("monroe")
             })
             .error(function(error) {
                 console.log("Error submitting experiment: ", error);
+                console.log("Error submitting experiment: ", error);
                 experiment.schedMessage = error.message;
                 experiment.showSuccessPanel = false;
                 experiment.showFailurePanel = true;
@@ -640,7 +641,7 @@ angular.module("monroe")
 						nodes[data.schedules[it].nodeid] = true;
 					var nodeIds = Object.keys(nodes);
 					$scope.experiment.nodeCount = nodeIds.length;
-					$scope.experiment.specificNodes = nodeIds;
+					$scope.experiment.specificNodes = nodeIds.join(',');
 				}
 			})
 			.error(function (error) {
