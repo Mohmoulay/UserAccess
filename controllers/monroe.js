@@ -301,6 +301,8 @@ angular.module("monroe")
 	$scope.experiment.recurrence = false;
 	$scope.experiment.requiresSSH = false;
 	$scope.experiment.sshPublicKey = new String;
+	$scope.experiment.nodeModel = "apu2d4";
+	$scope.experiment.interfaceCount = "one";
 	$scope.experiment.rescheduleID = $location.search()["retrieveID"];
 	if ($scope.experiment.rescheduleID == undefined)
 		$scope.experiment.rescheduleID = -1;
@@ -313,6 +315,7 @@ angular.module("monroe")
 		$scope.showWarningMinimumRecurrencePeriod = false;
 		$scope.showWarningRecurrenceEndingTime = false;
 		$scope.showWarningMaxStorageQuota = false;
+		$scope.showWarningNotEvenNodesForDualExperiment = false;
 	}
 
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
@@ -336,6 +339,11 @@ angular.module("monroe")
     	    request.nodetypes = "country:" + request.nodetypes + "," + experiment.nodeType;
     	else
     	    request.nodetypes = experiment.nodeType;
+		
+		request.nodetypes = request.nodetypes + ",model:" + experiment.nodeModel;
+		if (experiment.nodeModel == "apu2d4") {
+			request.interfaceCount = experiment.interfaceCount == "one" ? 1 : experiment.interfaceCount == "two" ? 2 : 3;
+		}
     }
 
     $scope.UpdateConfirmStartDate = function (experiment) {
@@ -381,8 +389,8 @@ angular.module("monroe")
     	    anumber = Number(experiment.startDate) / 1000|0;
     	    if (isFinite(anumber))    request.start = anumber;		
 		}
-    	PrepareNodeFilters(experiment, request);
-		
+		PrepareNodeFilters(experiment, request);
+
 		if (experiment.specificNodes)
 			request.nodes = experiment.specificNodes;
 		   	
@@ -470,6 +478,16 @@ angular.module("monroe")
 				res = false;
 			}
 		}
+		
+		// The scheduler considers pairs if interfaceCount=3, but nodeCount must be even.
+		if (res) {
+			if ( (experiment.nodeModel == "apu2d4") && (experiment.interfaceCount == "three") ) {
+				anumber = Number(experiment.nodeCount);
+				res = isFinite(anumber) && (anumber % 2 == 0);
+				if (!res)
+					$scope.showWarningNotEvenNodesForDualExperiment = true;
+			}
+		}
 
 		if (!res)	// Scroll to bottom of page.
 			$('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
@@ -505,10 +523,10 @@ angular.module("monroe")
     	if (experiment.useInterface2)    request.interfaces += (request.interfaces == "") ? "iface2" : ",iface2";
     	if (experiment.useInterface3)    request.interfaces += (request.interfaces == "") ? "iface3" : ",iface3";
     	if (request.interfaces == "")            delete request.interfaces;*/
-    	
-    	PrepareNodeFilters(experiment, request);
-    	
-    	//// Options
+		
+		PrepareNodeFilters(experiment, request);
+		
+		//// Options
     	request.options = {};
     	anumber = Number(experiment.totalActiveQuota);
     	if (isFinite(anumber))
@@ -574,6 +592,10 @@ angular.module("monroe")
             });
     }
     
+	$scope.ClearNodeModel = function() {
+		$scope.experiment.nodeModel = "apu2d4";
+	}
+	
 	// Retrieve the details of an experiment by ID.
     $scope.retrieveExperiment = function(id) {
 		// Get the full details of the experiment schedules.

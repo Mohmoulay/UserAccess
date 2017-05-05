@@ -113,6 +113,8 @@
         <div class="row" id="colSep">
             <label class="control-label col-md-3" style="text-align:left">Countries (pick zero, one or several):</label>
 			<label class="control-label col-md-2" style="text-align:left">Node type (pick one):</label>
+			<label class="control-label col-md-1" style="text-align:left">Node model:</label>
+			<label class="control-label col-md-3" style="text-align:left" ng-hide="experiment.nodeModel != 'apu2d4'">Number of interfaces:</label>
 		</div>
 		<div class="row">
 		    <div class="col-md-3">
@@ -129,6 +131,23 @@
                     <!--<option value="mobile">Mobile</option>-->
                     <option value="type:testing">Testing</option>
                 </select>
+			</div>
+			<div class="col-md-1">
+					<select class="form-control" ng-model="experiment.nodeModel">
+						<option value="apu2d4" selected>New</option>
+						<option value="apu1d4">Old (MiFis)</option>
+					</select>
+					<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearNodeModel()">Clear</button>
+			</div>
+			<div class="col-md-3" ng-hide="experiment.nodeModel != 'apu2d4'">
+                <select class="form-control col-md-2" ng-model="experiment.interfaceCount">
+                    <option value="one" selected>One</option>
+                    <option value="two">Two</option>
+                    <option value="three">Three</option>
+                </select>
+                <span>One: Scheduler chooses only nodes with one 4G interface + WiFi</span><br>
+				<span>Two: Scheduler chooses only nodes with two 4G interfaces</span><br>
+				<span>Three: Scheduler chooses pairs of co-located nodes</span>
 			</div>
         </div>
 		<div class="row">
@@ -268,6 +287,9 @@
 				</div>
 				<div ng-if="showWarningSSHNotRecurrence" class="col-md-8 alert alert-danger fade in" role="alert">
 					<strong>ERROR VALIDATING FORM DATA:</strong> SSH tunnel cannot be requested with recurrent experiments.
+				</div>
+				<div ng-if="showWarningNotEvenNodesForDualExperiment" class="col-md-8 alert alert-danger fade in" role="alert">
+					<strong>ERROR VALIDATING FORM DATA:</strong> The number of nodes must be even for dual-node experiments.
 				</div>
 			</div>
 		</div>
