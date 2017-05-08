@@ -50,6 +50,7 @@
                     <li><a href="StatusExperiment.html" data-toggle="tooltip" title="Status of my experiments">Status</a></li>
                     <li><a href="NewExperiment.html" data-toggle="tooltip" title="Create a new experiment">New</a></li>
                     <li class="active"><a href="Resources.html"data-toggle="tooltip" title="Show information about Monroe resources">Resources</a></li>
+					<li><a href="http://visual.monroe-system.eu"data-toggle="tooltip" title="Open MONROE visualization tools">Visualization</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="AccountInfo.html" data-toggle="tooltip" title="Access information on quotas and permissions"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
@@ -77,8 +78,9 @@
 			</div>
 			<div class="row">
 				<div class="col-md-3">
-					<select multiple class="form-control" size=8 ng-model="locationFilter" ng-change="FilterNodes()">
+					<select multiple class="form-control" size=9 ng-model="locationFilter" ng-change="FilterNodes()">
 						<option value="norway">Norway</option>
+						<option value="nsb">Norway-NSB</option>
 						<option value="sweden">Sweden</option>
 						<option value="torino">Torino</option>
 						<option value="pisa">Pisa</option>
@@ -160,6 +162,7 @@
 						<th>Hostname</th>
 						<th>Model</th>
 						<th>Location</th>
+						<th>Graphs</th>
 						<th>Interface 1</th>
 						<th>Interface 2</th>
 						<th>Interface 3</th>
@@ -176,8 +179,10 @@
 						<td>{{Capitalize(node.project)}}</td>
 						<td>{{node.hostname}}</td>
 						<td>{{node.model}}</td>
-						<td ng-if="(node.latitude != undefined) && (node.longitude != undefined)"><a target="_tab" ng-href="http://maps.google.com/?q={{node.latitude}},{{node.longitude}}">Google Maps</a></td>
+						<td ng-if="(node.latitude != undefined) && (node.longitude != undefined)"><a target="_tab" ng-href="http://maps.google.com/?q={{node.latitude}},{{node.longitude}}">Maps</a></td>
 						<td ng-if="(node.latitude == undefined) || (node.longitude == undefined)">n/a</td>
+						<td ng-if="node.countryVisz != undefined"><a target="_tab" ng-href="http://visual.monroe-system.eu/#/testbed/periodic?country={{node.countryVisz}}&site={{node.site}}&nodeid={{node.id}}">Visz</a></td>
+						<td ng-if="node.countryVisz == undefined">n/a</td>
 						<td ng-repeat="iface in node.interfaces">{{iface["mccmnc"]}} ({{iface["operator"]}})</td>
 					</tr>
 				</tbody>

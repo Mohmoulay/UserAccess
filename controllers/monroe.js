@@ -712,6 +712,7 @@ angular.module("monroe")
 					node.interfaces = node.interfaces.filter(function(a){return (a['heartbeat'] > 0) && (a['status'] == 'current');});
 					node.hasRecentHeartbeat = node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > $scope.currentTime;
 					node.canScheduleExperiments = (node.status=='active') && node.hasRecentHeartbeat && ((node.type == 'testing') || (node.type == 'deployed'));
+					node.countryVisz = node.project == 'norway' ? 'no' : node.project == 'nsb' ? 'no' : node.project == 'sweden' ? 'se' : node.project == 'torino' ? 'it' : node.project == 'pisa' ? 'it' : node.project == 'spain' ? 'es' : undefined;
 				}
 				$scope.FilterNodes();
 			})
