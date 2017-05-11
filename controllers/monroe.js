@@ -292,12 +292,6 @@ angular.module("monroe")
     $scope.experiment.resultsQuota = 0;
     $scope.experiment.showSuccessPanel = false;
     $scope.experiment.showFailurePanel = false;
-	$scope.experiment.checkAvailabilityStart = "";
-	$scope.experiment.checkAvailabilityStop = "";
-	$scope.experiment.checkAvailabilityMaxNodes = "";
-	$scope.experiment.checkAvailabilitySlotEnd = "";
-	$scope.experiment.checkAvailabilityStartTimestamp = 0;
-	$scope.experiment.checkAvailabilityShow = false;
 	$scope.experiment.recurrence = false;
 	$scope.experiment.requiresSSH = false;
 	$scope.experiment.sshPublicKey = new String;
@@ -317,6 +311,17 @@ angular.module("monroe")
 		$scope.showWarningMaxStorageQuota = false;
 		$scope.showWarningNotEvenNodesForDualExperiment = false;
 	}
+	
+	ResetAvailability = function() {
+		$scope.experiment.checkAvailabilityStart = "";
+		$scope.experiment.checkAvailabilityStop = "";
+		$scope.experiment.checkAvailabilityMaxNodes = "";
+		$scope.experiment.checkAvailabilitySlotEnd = "";
+		$scope.experiment.checkAvailabilityStartTimestamp = 0;
+		$scope.experiment.checkAvailabilityShow = false;
+	}
+	ResetAvailability();
+		
 
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
 	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
@@ -393,6 +398,8 @@ angular.module("monroe")
 
 		if (experiment.specificNodes)
 			request.nodes = experiment.specificNodes;
+		
+		ResetAvailability();
 		   	
     	$http.get(checkScheduleURL, {withCredentials: true, params: request})
     	    .success(function(data) {
@@ -402,18 +409,18 @@ angular.module("monroe")
 					experiment.checkAvailabilityStop = 'Finishing at "' + TimestampToString(data[0].stop) + '".';
 					experiment.checkAvailabilityMaxNodes = 'The experiment could use up to ' + data[0].max_nodecount + ' nodes.';
 					experiment.checkAvailabilitySlotEnd = 'The experiment may be delayed or the slot extended until "' + TimestampToString(data[0].max_stop) + '".';
+					experiment.checkAvailabilityShow = true;
 				}
     	    	else {
 					experiment.checkAvailabilityStartTimestamp = 0;
-    	    	    experiment.checkAvailabilityStart = "Impossible to satisfy the requirements.";
+    	    	    experiment.checkAvailabilityStart = "Unable to satisfy the requirements.";
 				}
     	    })
     	    .error(function(error) {
     	    	experiment.checkAvailabilityStartTimestamp = 0;
-    	    	experiment.checkAvailabilityStart = "Impossible to contact the scheduler.";
+    	    	experiment.checkAvailabilityStart = "Unable to satisfy the requirements.";
 				experiment.checkAvailabilitySlotEnd = error.message;
     	    })
-			experiment.checkAvailabilityShow = true;
     }
     
     /******* Track parameters *******/
