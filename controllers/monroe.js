@@ -579,6 +579,8 @@ angular.module("monroe")
         
 		console.log(request);
 		$scope.showWarningPublicSSHKeyMissing = false;
+		experiment.showSuccessPanel = false;
+		experiment.showFailurePanel = false;
         $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 experiment.schedID = data.experiment;
