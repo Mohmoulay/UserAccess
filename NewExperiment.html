@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" crossorigin="anonymous">
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- "Font Awesome by Dave Gandy - http://fontawesome.io" MIT License-->
 
 	<!--
     <script type="text/javascript" src="./jquery.js"></script>
@@ -238,12 +239,15 @@
 		</span>
 		
 		<div class="row" id="colSep">
-		    <div class="col-md-2"><button type="submit" class="btn btn-default" ng-click="checkSchedule(experiment)">Check availability</button></div>
-		    <span class="col-md-10" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilityStart}}<a href="" ng-click="UseProposedSchedule(experiment)" style="padding-left:1cm">-->Request this slot!<--</a></span>
-			<span class="col-md-10" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilityStop}}</span>
+		    <div class="col-md-3"><button type="submit" class="btn btn-default" ng-click="checkSchedule(experiment)" ng-hide="experiment.showAvailabilityProgress">Check availability</button>
+			<button type="submit" class="btn btn-default" ng-hide="!experiment.showAvailabilityProgress">Checking availability...</button>
+			<i class="fa fa-spinner fa-spin" ng-if="experiment.showAvailabilityProgress"></i></div>
+		
+		    <span class="col-md-9" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilityStart}}<a href="" ng-click="UseProposedSchedule(experiment)" style="padding-left:1cm" ng-hide="!experiment.checkAvailabilityShowUseSlot">-->Request this slot!<--</a></span>
+			<span class="col-md-9" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilityStop}}</span>
 			<!-- New line under the button -->
-			<span class="col-md-10 col-md-offset-2" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilityMaxNodes}}</span>
-			<span class="col-md-10 col-md-offset-2" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilitySlotEnd}}</span>
+			<span class="col-md-9 col-md-offset-3" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilityMaxNodes}}</span>
+			<span class="col-md-9 col-md-offset-3" style="text-align:left" ng-hide="!experiment.checkAvailabilityShow">{{experiment.checkAvailabilitySlotEnd}}</span>
 		</div>
 		
         <div class="row" style="margin-top:0.5cm">
@@ -263,7 +267,9 @@
 		</div>
 		<div class="panel-body">
 			<div class="row">
-				<button type="submit" class="col-md-2 btn btn-default" ng-click="newExperiment(experiment)">Submit Experiment</button>
+				<button type="submit" class="col-md-2 btn btn-default" ng-click="newExperiment(experiment)" ng-hide="experiment.showSubmitProgress">Submit Experiment</button>
+				<button type="submit" class="col-md-2 btn btn-default" ng-hide="!experiment.showSubmitProgress">Submission in progress</button>
+				<i class="fa fa-spinner fa-spin" ng-if="experiment.showSubmitProgress"></i>
 				<div class="col-md-1"></div>
 			
 				<!-- Error panels displayed if verification fails -->

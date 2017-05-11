@@ -300,6 +300,8 @@ angular.module("monroe")
 	$scope.experiment.rescheduleID = $location.search()["retrieveID"];
 	if ($scope.experiment.rescheduleID == undefined)
 		$scope.experiment.rescheduleID = -1;
+	$scope.experiment.showSubmitProgress = false;
+	$scope.experiment.showAvailabilityProgress = false;
 	
 	ResetWarningPanels = function() {
 		$scope.showWarningPublicSSHKeyMissing = false;
@@ -319,6 +321,7 @@ angular.module("monroe")
 		$scope.experiment.checkAvailabilitySlotEnd = "";
 		$scope.experiment.checkAvailabilityStartTimestamp = 0;
 		$scope.experiment.checkAvailabilityShow = false;
+		$scope.experiment.checkAvailabilityShowUseSlot = false;
 	}
 	ResetAvailability();
 		
@@ -356,7 +359,8 @@ angular.module("monroe")
             experiment.confirmStartDate = experiment.startDate.toString();
 		else
 			experiment.confirmStartDate = "--/--/--- --:--:--";
-		experiment.checkAvailabilityShow = false;
+		//experiment.checkAvailabilityShow = false;
+		ResetAvailability();
     }
 	$scope.UpdateConfirmStartDate($scope.experiment); // Execute call at app start.
 
@@ -400,7 +404,8 @@ angular.module("monroe")
 			request.nodes = experiment.specificNodes;
 		
 		ResetAvailability();
-		   	
+
+		experiment.showAvailabilityProgress = true;
     	$http.get(checkScheduleURL, {withCredentials: true, params: request})
     	    .success(function(data) {
     	    	if (data.length == 1) {
@@ -410,16 +415,24 @@ angular.module("monroe")
 					experiment.checkAvailabilityMaxNodes = 'The experiment could use up to ' + data[0].max_nodecount + ' nodes.';
 					experiment.checkAvailabilitySlotEnd = 'The experiment may be delayed or the slot extended until "' + TimestampToString(data[0].max_stop) + '".';
 					experiment.checkAvailabilityShow = true;
+					$scope.experiment.checkAvailabilityShowUseSlot = true;
+					experiment.showAvailabilityProgress = false;
 				}
     	    	else {
 					experiment.checkAvailabilityStartTimestamp = 0;
     	    	    experiment.checkAvailabilityStart = "Unable to satisfy the requirements.";
+					experiment.checkAvailabilityShow = true;
+					$scope.experiment.checkAvailabilityShowUseSlot = false;
+					experiment.showAvailabilityProgress = false;
 				}
     	    })
     	    .error(function(error) {
     	    	experiment.checkAvailabilityStartTimestamp = 0;
     	    	experiment.checkAvailabilityStart = "Unable to satisfy the requirements.";
 				experiment.checkAvailabilitySlotEnd = error.message;
+				experiment.checkAvailabilityShow = true;
+				$scope.experiment.checkAvailabilityShowUseSlot = false;
+				experiment.showAvailabilityProgress = false;
     	    })
     }
     
@@ -581,6 +594,7 @@ angular.module("monroe")
 		$scope.showWarningPublicSSHKeyMissing = false;
 		experiment.showSuccessPanel = false;
 		experiment.showFailurePanel = false;
+		experiment.showSubmitProgress = true;
         $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 experiment.schedID = data.experiment;
@@ -588,6 +602,7 @@ angular.module("monroe")
                 experiment.schedNodes = data.nodecount;
                 experiment.showSuccessPanel = true;
                 experiment.showFailurePanel = false;
+				experiment.showSubmitProgress = false;
 				// Scroll to bottom of page.
 				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
             })
@@ -597,6 +612,7 @@ angular.module("monroe")
                 experiment.schedMessage = error.message;
                 experiment.showSuccessPanel = false;
                 experiment.showFailurePanel = true;
+				experiment.showSubmitProgress = false;
 				// Scroll to bottom of page.
 				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
             });
