@@ -183,7 +183,7 @@
 						<td ng-if="(node.latitude == undefined) || (node.longitude == undefined)">n/a</td>
 						<td ng-if="node.countryVisz != undefined"><a target="_tab" ng-href="http://visual.monroe-system.eu/#/testbed/periodic?country={{node.countryVisz}}&site={{node.site}}&nodeid={{node.id}}">Visz</a></td>
 						<td ng-if="node.countryVisz == undefined">n/a</td>
-						<td ng-repeat="iface in node.interfaces">{{iface["mccmnc"]}} ({{iface["operator"]}})</td>
+						<td ng-repeat="iface in node.interfaces">{{iface["mccmnc"]}} ({{iface["operator"]}}) {{CalcRemainingQuota(iface)}}</td>
 					</tr>
 				</tbody>
 			</table>

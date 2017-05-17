@@ -784,6 +784,56 @@ angular.module("monroe")
 				$scope.countShownNodes = $scope.countShownNodes + 1;
 		}
 	}
+	
+	$scope.Bytes2FriendlyString = function(aNumber) {
+		if (aNumber < 0)
+			return "";
+		else if (aNumber == 1)
+			return "1 byte";
+		else if (aNumber < 1024)
+			return aNumber + " bytes";
+		else if (aNumber < 1048576)
+			return (aNumber/1024).toFixed(2) + " KiB";
+		else if (aNumber < 1073741824)
+			return (aNumber/1048576).toFixed(2) + " MiB";
+		else if (aNumber < 1099511627776)
+			return (aNumber/1073741824).toFixed(2) + " GiB";
+		else if (aNumber < 1125899906842624)
+			return (aNumber/1099511627776).toFixed(2) + " TiB";
+		else
+			return (aNumber/1125899906842624).toFixed(2) + " PiB";
+	}
+	
+	$scope.CalcRemainingQuota = function(iface) {
+		var Quotas = {
+			"24202": 50*(1024*1024*1024),	// Telia Norge (NO)
+			"24201": 50*(1024*1024*1024),	// Telenor (NO)
+			//"24001": *(1024*1024*1024),	// Telia Mobile (NO)
+			"24214": Infinity,				// ICE Nordisk (NO)
+			
+			"22201": 20*(1024*1024*1024),	// TIM (IT)
+			"22210": 30*(1024*1024*1024),	// Vodafone (IT)
+			"22288": 25*(1024*1024*1024),	// WIND (Blu)
+			
+			"24002": 100*(1024*1024*1024),	// H3G Access AB / Tre / Three / 3 (SE)
+			"24008": 100*(1024*1024*1024),	// Telenor (Vodafone) (SE)
+			"24001": 200*(1024*1024*1024),	// Telia Mobile (SE)
+			
+			"21404": 20*(1024*1024*1024),	// Yoigo (ES)
+			"21403": 10*(1024*1024*1024),	// Orange (ES)
+			"22210": 30*(1024*1024*1024)	// Vodafone (ES)
+			};
+		
+		var interfaceQuota = Quotas[iface["mccmnc"]];
+		if (interfaceQuota == undefined)
+			return "";
+		else if (interfaceQuota == Infinity)
+			return "Unlimited";
+		else
+			//return $scope.Bytes2FriendlyString(interfaceQuota - iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(interfaceQuota);
+			//return $scope.Bytes2FriendlyString(iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(iface["quota_reset_value"]);
+			return $scope.Bytes2FriendlyString(iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(interfaceQuota);
+	}
 });
 
 
@@ -854,15 +904,15 @@ angular.module("monroe")
 		else if (aNumber < 1024)
 			return aNumber + " bytes";
 		else if (aNumber < 1048576)
-			return (aNumber/1024).toFixed(2) + " KB";
+			return (aNumber/1024).toFixed(2) + " KiB";
 		else if (aNumber < 1073741824)
-			return (aNumber/1048576).toFixed(2) + " MB";
+			return (aNumber/1048576).toFixed(2) + " MiB";
 		else if (aNumber < 1099511627776)
-			return (aNumber/1073741824).toFixed(2) + " GB";
+			return (aNumber/1073741824).toFixed(2) + " GiB";
 		else if (aNumber < 1125899906842624)
-			return (aNumber/1099511627776).toFixed(2) + " TB";
+			return (aNumber/1099511627776).toFixed(2) + " TiB";
 		else
-			return (aNumber/1125899906842624).toFixed(2) + " PB";
+			return (aNumber/1125899906842624).toFixed(2) + " PiB";
 	}
 	
 	$scope.UnifyJournal = function(data) {
