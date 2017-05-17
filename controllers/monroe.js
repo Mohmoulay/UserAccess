@@ -272,9 +272,11 @@ angular.module("monroe")
 	.constant("sshServerURL", "tunnel.monroe-system.eu")
 	.constant("ExperimentDetailsURLa", "https://scheduler.monroe-system.eu/v1/experiments/")
 	.constant("ExperimentDetailsURLb", "/schedules")
+	.constant("PROPOSED_SCHEDULE_BUFFER_TIME", 60000)
     .controller("newExperimentCtrl", function($scope, $http, $location,
 										newExperimentURL, checkScheduleURL, sshServerURL,
-										ExperimentDetailsURLa, ExperimentDetailsURLb) {
+										ExperimentDetailsURLa, ExperimentDetailsURLb,
+										PROPOSED_SCHEDULE_BUFFER_TIME) {
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
@@ -377,7 +379,7 @@ angular.module("monroe")
 	}
 	
 	$scope.UseProposedSchedule = function(experiment) {
-		experiment.startDate = new Date( (new Date(experiment.checkAvailabilityStartTimestamp)).toUTCString() );
+		experiment.startDate = new Date( (new Date(experiment.checkAvailabilityStartTimestamp + PROPOSED_SCHEDULE_BUFFER_TIME)).toUTCString() );
 		$scope.UpdateConfirmStartDate(experiment);
 	}
 	
