@@ -92,6 +92,12 @@
             <label style="text-align:left" class="control-label col-md-1" for="script"><span class="glyphicon glyphicon-asterisk" style="color:crimson"></span> Script:</label>
             <div class="col-md-11"><input type="text" class="form-control" id="script" placeholder="Docker pull URL" ng-model="experiment.script"></div>
         </div>
+		
+		<div class="row" id="colSep">
+			<label style="text-align:left" class="control-label col-md-1" for="userOptions">Parameters:</label>
+			<div class="col-md-7"><input type="text" class="form-control" id="additionalOptions" placeholder='"key":number,"key":"string"' ng-model="experiment.additionalOptions"></div>
+			<label class="control-label col-md-4" style="text-align:left">JSON-style user options to be passed to the container</label>
+		</div>
     </div>
     </div>
 
@@ -112,87 +118,102 @@
             <label class="control-label col-md-1" style="text-align:left">seconds</label>
         </div>
 
-        <div class="row" id="colSep">
-            <label class="control-label col-md-3" style="text-align:left">Countries (pick zero, one or several):</label>
-			<label class="control-label col-md-2" style="text-align:left">Node type (pick one):</label>
-			<label class="control-label col-md-1" style="text-align:left">Node model:</label>
-			<label class="control-label col-md-3" style="text-align:left" ng-hide="experiment.nodeModel != 'apu2d4'">Number of interfaces:</label>
-		</div>
-		<div class="row">
-		    <div class="col-md-3">
-                <select multiple class="form-control" ng-model="experiment.countryFilter" ng-change="CheckCountryFilter(experiment);">
-                    <option value="no">Norway</option>
-                    <option value="se">Sweden</option>
-                   <option value="it">Italy</option>
-                    <option value="es">Spain</option>
-                </select>
+		<br>
+		<div class="panel panel-success col-md-12">
+			<div class="panel-heading">
+				Select nodes either using filters or providing a list of IDs:
 			</div>
-            <div class="col-md-2">
-                <select class="form-control col-md-2" ng-model="experiment.nodeType">
-                    <option value="type:deployed" selected>Deployed</option>
-                    <!--<option value="mobile">Mobile</option>-->
-                    <option value="type:testing">Testing</option>
-                </select>
-			</div>
-			<div class="col-md-1">
-					<select class="form-control" ng-model="experiment.nodeModel">
-						<option value="apu2d4" selected>New</option>
-						<option value="apu1d4">Old (MiFis)</option>
-					</select>
-					<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearNodeModel()">Clear</button>
-			</div>
-			<div class="col-md-3" ng-hide="experiment.nodeModel != 'apu2d4'">
-                <select class="form-control col-md-2" ng-model="experiment.interfaceCount">
-                    <option value="one" selected>One</option>
-                    <option value="two">Two</option>
-                    <option value="three">Three</option>
-                </select>
-                <span>One: Scheduler chooses only nodes with one 4G interface + WiFi</span><br>
-				<span>Two: Scheduler chooses only nodes with two 4G interfaces</span><br>
-				<span>Three: Scheduler chooses pairs of co-located nodes</span>
-			</div>
-        </div>
-		<div class="row">
-		    <label class="col-md-1"><input type="checkbox" ng-model="experiment.countryFilterAny" ng-change="SetCountryFilterAny(experiment);"> Any</label>
-		</div>
-        
-        <div class="row" id="colSep">
-            <label class="control-label col-md-1" style="text-align:left" for="specificNodes" data-toggle="tooltip" title="Specify specific node IDs">Node IDs:</label>
-            <div class="col-md-11">
-                <input type="text" class="form-control" id="specificNodes" placeholder="List of comma-separated specific nodes to use in the experiment. Leave empty for automatic assignment." ng-model="experiment.specificNodes">
-            </div>
-        </div>
+			<div class="panel-body">
+				<div class="panel panel-default col-md-6">
+					<div class="panel-heading">
+						Node filters:
+					</div>
+					<div class="panel-body">
+						<div class="row" id="colSep">
+							<label class="control-label col-md-5" style="text-align:left">Countries (select to restrict):</label>
+							<label class="control-label col-md-3" style="text-align:left">Node type:</label>
+						</div>
+						<div class="row">
+							<div class="col-md-5">
+								<select multiple class="form-control" ng-model="experiment.countryFilter" ng-change="CheckCountryFilter(experiment);" ng-disabled="experiment.disableNodeFilters">
+									<option value="no">Norway</option>
+									<option value="se">Sweden</option>
+									<option value="it">Italy</option>
+									<option value="es">Spain</option>
+								</select>
+							</div>
+							<div class="col-md-3">
+								<select class="form-control col-md-2" ng-model="experiment.nodeType" ng-disabled="experiment.disableNodeFilters">
+									<option value="type:deployed" selected>Deployed</option>
+									<!--<option value="mobile">Mobile</option>-->
+									<option value="type:testing">Testing</option>
+								</select>
+							</div>
+						</div>
+		
+						<div class="row" id="colSep">
+							<label class="control-label col-md-5" style="text-align:left">Node model:</label>
+							<label class="control-label col-md-7" style="text-align:left" ng-hide="experiment.nodeModel != 'apu2d4'">Number of interfaces:</label>
+						</div>
+				
+						<div class="row">
+							<div class="col-md-5">
+								<select class="form-control" ng-model="experiment.nodeModel" ng-disabled="experiment.disableNodeFilters">
+									<option value="apu2d4" selected>New</option>
+									<option value="apu1d4">Old (MiFis)</option>
+								</select>
+							</div>
+							<div class="col-md-7" ng-hide="experiment.nodeModel != 'apu2d4'">
+								<select class="form-control col-md-2" ng-model="experiment.interfaceCount" ng-disabled="experiment.disableNodeFilters">
+									<option value="one" selected>One</option>
+									<option value="two">Two</option>
+									<option value="three">Three</option>
+								</select>
+								<span>One: Scheduler chooses only nodes with one 4G interface + WiFi</span><br>
+								<span>Two: Scheduler chooses only nodes with two 4G interfaces</span><br>
+								<span>Three: Scheduler chooses pairs of co-located nodes</span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-		<!--<div class="row" id="colSep">
-		    <label class="control-label col-md-2" style="text-align:left">Required interfaces:</label>
-            <label class="control-label col-md-2" style="text-align:left"><input type="checkbox" ng-model="experiment.useInterface1" ng-change="InterfacesCount(experiment)"> Interface 1</label>
-            <label class="control-label col-md-2" style="text-align:left"><input type="checkbox" ng-model="experiment.useInterface2" ng-change="InterfacesCount(experiment)"> Interface 2</label>
-            <label class="control-label col-md-2" style="text-align:left"><input type="checkbox" ng-model="experiment.useInterface3" ng-change="InterfacesCount(experiment)"> Interface 3</label>
-        </div>-->
-
-        <div class="row" id="colSep">
-		    <label class="control-label col-md-2" style="text-align:left">Data quotas:</label>
+				<div class="panel panel-default col-md-6">
+					<div class="panel-heading">
+						Explicit node selection:
+					</div>
+					<div class="panel-body">
+						<div class="row" id="colSep">
+							<label class="control-label col-md-2" style="text-align:left" for="specificNodes" data-toggle="tooltip" title="Specify specific node IDs">Node IDs:</label>
+							<div class="col-md-10">
+								<input type="text" class="form-control" id="specificNodes" placeholder="List of comma-separated specific nodes to use in the experiment. Leave empty for automatic assignment." ng-model="experiment.specificNodes" ng-change="ActivateNodeList()">
+							</div>
+						</div>
+						<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearNodeList()">Clear</button>
+					</div>
+				</div>
+			</div>
 		</div>
-        <div class="row">
-            <label class="control-label col-md-2" for="activeQuota">Active-data quota:</label>
-            <div class="col-md-2"><input type="number" min="0" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
-            <!--<label class="control-label" style="text-align:left">Total active-data quota: {{experiment.activeQuota}} bytes x {{experiment.interfacesCount}} interfaces = {{experiment.totalActiveQuota}} bytes</label>-->
-			<label class="control-label" style="text-align:left">(per interface)</label>
-        </div>
-        <div class="row" id="colSep">
-            <label class="control-label col-md-2" for="resultsQuota">Log files quota:</label>
-            <div class="col-md-2"><input type="number" min="0" class="form-control" id="resultsQuota" placeholder="(bytes)" ng-model="experiment.resultsQuota"></div>
-        </div>
-        <div class="row" id="colSep">
-            <label class="control-label col-md-2" for="storageQuota">Deployment-storage quota:</label>
-            <div class="col-md-2"><input type="number" min="0" class="form-control" id="storageQuota" placeholder="(MB)" ng-model="experiment.deploymentQuota"></div>
-			<label class="control-label" style="text-align:left">(MB)</label>
-        </div>
-		<div class="row" id="colSep">
-            <label class="control-label col-md-2" for="userOptions">Additional options:</label>
-            <div class="col-md-2"><input type="text" class="form-control" id="additionalOptions" placeholder='"key":number,"key":"string"' ng-model="experiment.additionalOptions"></div>
-			<label class="control-label" style="text-align:left">JSON-style user options to be passed to the container</label>
-        </div>
+
+		<div class="row col-md-12"></div>
+		<div class="panel panel-success col-md-6">
+			<div class="panel-heading">
+				Data quotas:
+			</div>
+			
+			<div class="panel-body">
+				<div class="row">
+					<label class="control-label col-md-4" style="text-align:left" for="activeQuota">Active-data quota:</label>
+					<div class="col-md-3"><input type="number" min="0" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
+					<label class="control-label" style="text-align:left">(per interface)</label>
+				</div>
+				<div class="row" id="colSep">
+					<label class="control-label col-md-4" style="text-align:left" for="storageQuota">Deployment-storage quota:</label>
+					<div class="col-md-3"><input type="number" min="0" class="form-control" id="storageQuota" placeholder="(MB)" ng-model="experiment.deploymentQuota"></div>
+					<label class="control-label" style="text-align:left">(MB)</label>
+				</div>
+			</div>
+		</div>
+
     </div>
     </div>
 

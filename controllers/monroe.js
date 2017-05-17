@@ -280,9 +280,6 @@ angular.module("monroe")
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
-    $scope.experiment.nodeType = "type:deployed";
-    $scope.experiment.countryFilterAny = true;
-    $scope.experiment.countryFilter = [];
     /*$scope.experiment.useInterface1 = true;
     $scope.experiment.useInterface2 = true;
     $scope.experiment.useInterface3 = true;
@@ -291,19 +288,25 @@ angular.module("monroe")
 	$scope.experiment.deploymentQuota = 128;
 	$scope.experiment.additionalOptions = "";
     $scope.experiment.totalActiveQuota = $scope.experiment.activeQuota; //0;
-    $scope.experiment.resultsQuota = 0;
     $scope.experiment.showSuccessPanel = false;
     $scope.experiment.showFailurePanel = false;
 	$scope.experiment.recurrence = false;
 	$scope.experiment.requiresSSH = false;
 	$scope.experiment.sshPublicKey = new String;
-	$scope.experiment.nodeModel = "apu2d4";
-	$scope.experiment.interfaceCount = "one";
 	$scope.experiment.rescheduleID = $location.search()["retrieveID"];
 	if ($scope.experiment.rescheduleID == undefined)
 		$scope.experiment.rescheduleID = -1;
 	$scope.experiment.showSubmitProgress = false;
 	$scope.experiment.showAvailabilityProgress = false;
+	$scope.experiment.disableNodeFilters = false;
+	
+	ResetNodeFilters = function() {
+		$scope.experiment.countryFilter = [];
+		$scope.experiment.nodeType = "type:deployed";
+		$scope.experiment.nodeModel = "apu2d4";
+		$scope.experiment.interfaceCount = "one";
+	}
+	ResetNodeFilters();
 	
 	ResetWarningPanels = function() {
 		$scope.showWarningPublicSSHKeyMissing = false;
@@ -331,28 +334,24 @@ angular.module("monroe")
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
 	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
 	$scope.experiment.startASAP = false;
-
-    $scope.CheckCountryFilter = function(experiment) {
-    	experiment.countryFilterAny = experiment.countryFilter == "";
-    }
-
-    $scope.SetCountryFilterAny = function(experiment) {
-    	if (experiment.countryFilterAny)
-    	    experiment.countryFilter = [];
-    }
-    
+   
     PrepareNodeFilters = function(experiment, request) {
-    	// Join countries in an OR:
-    	request.nodetypes = experiment.countryFilter.join('|country:');
-    	// Add node type with an AND (comma):
-    	if (request.nodetypes != "")
-    	    request.nodetypes = "country:" + request.nodetypes + "," + experiment.nodeType;
-    	else
-    	    request.nodetypes = experiment.nodeType;
+		if (!experiment.disableNodeFilters) {
+			// Join countries in an OR:
+			request.nodetypes = experiment.countryFilter.join('|country:');
+			// Add node type with an AND (comma):
+			if (request.nodetypes != "")
+				request.nodetypes = "country:" + request.nodetypes + "," + experiment.nodeType;
+			else
+				request.nodetypes = experiment.nodeType;
 		
-		request.nodetypes = request.nodetypes + ",model:" + experiment.nodeModel;
-		if (experiment.nodeModel == "apu2d4") {
-			request.interfaceCount = experiment.interfaceCount == "one" ? 1 : experiment.interfaceCount == "two" ? 2 : 3;
+			request.nodetypes = request.nodetypes + ",model:" + experiment.nodeModel;
+			if (experiment.nodeModel == "apu2d4") {
+				request.interfaceCount = experiment.interfaceCount == "one" ? 1 : experiment.interfaceCount == "two" ? 2 : 3;
+			}
+		}
+		else {
+			request.nodetypes = "";
 		}
     }
 
@@ -479,7 +478,7 @@ angular.module("monroe")
 				$scope.showWarningMaxStorageQuota = true;
 		}
 		
-		if (res && experiment.requiresSSH) {
+		if (res && experiment.requiresSSH && !experiment.disableNodeFilters) {
 			res = (experiment.nodeType == "type:testing");
 			if (!res)
 				$scope.showWarningSSHOnlyTesting = true;
@@ -503,7 +502,7 @@ angular.module("monroe")
 		
 		// The scheduler considers pairs if interfaceCount=3, but nodeCount must be even.
 		if (res) {
-			if ( (experiment.nodeModel == "apu2d4") && (experiment.interfaceCount == "three") ) {
+			if ( (experiment.nodeModel == "apu2d4") && (experiment.interfaceCount == "three") && !experiment.disableNodeFilters ) {
 				anumber = Number(experiment.nodeCount);
 				res = isFinite(anumber) && (anumber % 2 == 0);
 				if (!res)
@@ -554,8 +553,6 @@ angular.module("monroe")
     	if (isFinite(anumber))
     	    request.options["traffic"] = anumber;
     	
-    	anumber = Number(experiment.resultsQuota);
-    	if (isFinite(anumber))    request.options["resultsQuota"] = anumber;
     	anumber = Number(experiment.deploymentQuota);
     	if (isFinite(anumber))
 				request.options["storage"] = anumber * 1024*1024;
@@ -620,8 +617,15 @@ angular.module("monroe")
             });
     }
     
-	$scope.ClearNodeModel = function() {
-		$scope.experiment.nodeModel = "apu2d4";
+	$scope.ClearNodeList = function() {
+		$scope.experiment.specificNodes = "";
+		$scope.ActivateNodeList();
+	}
+	
+	$scope.ActivateNodeList = function() {
+		$scope.experiment.disableNodeFilters = ($scope.experiment.specificNodes.length > 0);
+		/*if ($scope.experiment.disableNodeFilters)
+			ResetNodeFilters();*/
 	}
 	
 	// Retrieve the details of an experiment by ID.
@@ -642,7 +646,6 @@ angular.module("monroe")
 				}
 				$scope.experiment.startASAP = false;
 				if (data.options["traffic"])	$scope.experiment.activeQuota = data.options["traffic"];
-				//if (data.options["resultsQuota"])	$scope.experiment.resultsQuota = data.options["resultsQuota"]; // It's in the individual shcedule.
 				if (data.options["storage"])	$scope.experiment.deploymentQuota = data.options["storage"] / (1024*1024.0);
 				if (data.options["recurrence"]) {
 					$scope.experiment.recurrence = true;
@@ -659,7 +662,7 @@ angular.module("monroe")
 					if (data.options["ssh.client.public"])	$scope.experiment.sshPublicKey = data.options["ssh.client.public"];
 				}*/
 				
-				//  To calculate the number of nodes used by the experiment (and their number), we have
+				//  To calculate the number of nodes used by the experiment (and their IDs), we have
 				// to traverse the list of schedules and identify the distinct nodes.
 				// Note: To get SSH, we would need to pick each schedule, not the experiment summary :-(
 				if (data.schedules) {
@@ -670,6 +673,8 @@ angular.module("monroe")
 					$scope.experiment.nodeCount = nodeIds.length;
 					$scope.experiment.specificNodes = nodeIds.join(',');
 				}
+				//$scope.experiment.disableNodeFilters = ($scope.experiment.specificNodes.length > 0);
+				$scope.ActivateNodeList();
 			})
 			.error(function (error) {
 				console.log("Error retrieving experiment " + id + ": ", error);
