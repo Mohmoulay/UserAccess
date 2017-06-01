@@ -687,6 +687,15 @@ angular.module("monroe")
 						var optionsString = JSON.stringify(data.deployment_options);
 						if (optionsString.length > 0)
 							$scope.experiment.additionalOptions = optionsString.slice(1, -1);
+						
+						if (optionsSSH != undefined) {
+							$scope.experiment.requiresSSH = true;
+							$scope.experiment.sshPublicKey = optionsSSH["client.public"];
+						}
+											
+						
+						
+						
 					})
 					.error(function (error) {
 					});				
