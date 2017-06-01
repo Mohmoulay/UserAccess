@@ -272,10 +272,12 @@ angular.module("monroe")
 	.constant("sshServerURL", "tunnel.monroe-system.eu")
 	.constant("ExperimentDetailsURLa", "https://scheduler.monroe-system.eu/v1/experiments/")
 	.constant("ExperimentDetailsURLb", "/schedules")
+	.constant("ScheduleDetailsURL", "https://scheduler.monroe-system.eu/v1/schedules/")
 	.constant("PROPOSED_SCHEDULE_BUFFER_TIME", 60000)
     .controller("newExperimentCtrl", function($scope, $http, $location,
 										newExperimentURL, checkScheduleURL, sshServerURL,
 										ExperimentDetailsURLa, ExperimentDetailsURLb,
+										ScheduleDetailsURL,
 										PROPOSED_SCHEDULE_BUFFER_TIME) {
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
@@ -652,21 +654,45 @@ angular.module("monroe")
 				//  To calculate the number of nodes used by the experiment (and their IDs), we have
 				// to traverse the list of schedules and identify the distinct nodes.
 				// Note: To get SSH, we would need to pick each schedule, not the experiment summary :-(
+				var schedID; // We overwrite, but we need just one, any.
 				if (data.schedules) {
 					var nodes = {};	// Count distinct nodeIds for all schedules.
-					for (var it in data.schedules)
+					for (var it in data.schedules) {
 						nodes[data.schedules[it].nodeid] = true;
+						schedID = it;
+					}
 					var nodeIds = Object.keys(nodes);
 					$scope.experiment.nodeCount = nodeIds.length;
 					$scope.experiment.specificNodes = nodeIds.join(',');
 				}
 				//$scope.experiment.disableNodeFilters = ($scope.experiment.specificNodes.length > 0);
 				$scope.ActivateNodeList();
+				
+				// Pick one schedule, retrieve it and populate "additional parameters". (All schedules have the same ones)
+				var scheduleURL = ScheduleDetailsURL + schedID;
+				$http.get(scheduleURL, {withCredentials: true})
+					.success(function (data) {
+						console.log("1", data.deployment_options);
+						// Remove non-user options.
+						delete data.deployment_options["script"];
+						delete data.deployment_options["shared"];
+						delete data.deployment_options["storage"];
+						delete data.deployment_options["traffic"];
+						delete data.deployment_options["nodes"];
+						console.log("2", data.deployment_options);
+						var optionsString = JSON.stringify(data.deployment_options);
+						if (optionsString.length > 0)
+							$scope.experiment.additionalOptions = optionsString.slice(1, -1);
+					})
+					.error(function (error) {
+					});				
+				
 			})
 			.error(function (error) {
 				console.log("Error retrieving experiment " + id + ": ", error);
 			});
-		}
+	}
+	
 	Init = function() {
 		if ($scope.experiment.rescheduleID >= 0)
 			$scope.retrieveExperiment($scope.experiment.rescheduleID);
