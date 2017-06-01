@@ -679,6 +679,10 @@ angular.module("monroe")
 						delete data.deployment_options["storage"];
 						delete data.deployment_options["traffic"];
 						delete data.deployment_options["nodes"];
+						var optionsSSH = data.deployment_options["ssh"];
+						delete data.deployment_options["ssh"];
+						var optionsSSHPublic = data.deployment_options["ssh.public"];
+						delete data.deployment_options["ssh.public"];
 						console.log("2", data.deployment_options);
 						var optionsString = JSON.stringify(data.deployment_options);
 						if (optionsString.length > 0)
