@@ -681,7 +681,6 @@ angular.module("monroe")
 						delete data.deployment_options["nodes"];
 						var optionsSSH = data.deployment_options["ssh"];
 						delete data.deployment_options["ssh"];
-						var optionsSSHPublic = data.deployment_options["ssh.public"];
 						delete data.deployment_options["ssh.public"];
 						console.log("2", data.deployment_options);
 						var optionsString = JSON.stringify(data.deployment_options);
@@ -692,10 +691,6 @@ angular.module("monroe")
 							$scope.experiment.requiresSSH = true;
 							$scope.experiment.sshPublicKey = optionsSSH["client.public"];
 						}
-											
-						
-						
-						
 					})
 					.error(function (error) {
 					});				
