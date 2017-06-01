@@ -280,14 +280,9 @@ angular.module("monroe")
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
-    /*$scope.experiment.useInterface1 = true;
-    $scope.experiment.useInterface2 = true;
-    $scope.experiment.useInterface3 = true;
-    $scope.experiment.interfacesCount = 0;*/
     $scope.experiment.activeQuota = 1048576;
 	$scope.experiment.deploymentQuota = 128;
 	$scope.experiment.additionalOptions = "";
-    $scope.experiment.totalActiveQuota = $scope.experiment.activeQuota; //0;
     $scope.experiment.showSuccessPanel = false;
     $scope.experiment.showFailurePanel = false;
 	$scope.experiment.recurrence = false;
@@ -436,15 +431,7 @@ angular.module("monroe")
 				experiment.showAvailabilityProgress = false;
     	    })
     }
-    
-    /******* Track parameters *******/
-    $scope.InterfacesCount = function(experiment) {
-		// Modified to send quota per interface, not total.
-        //experiment.interfacesCount = experiment.useInterface1 + experiment.useInterface2 + experiment.useInterface3;
-        //experiment.totalActiveQuota = experiment.activeQuota * experiment.interfacesCount;
-		experiment.totalActiveQuota = experiment.activeQuota;
-    }
-    
+       
     /******* Verify schedule validity *******/
     verifyExperiment = function(experiment) {
     	var res = true;
@@ -549,7 +536,7 @@ angular.module("monroe")
 		
 		//// Options
     	request.options = {};
-    	anumber = Number(experiment.totalActiveQuota);
+    	anumber = Number(experiment.activeQuota);
     	if (isFinite(anumber))
     	    request.options["traffic"] = anumber;
     	
