@@ -135,11 +135,15 @@
 						</div>
 						<div class="row">
 							<div class="col-md-5">
-								<select multiple class="form-control" ng-model="experiment.countryFilter" ng-change="CheckCountryFilter(experiment);" ng-disabled="experiment.disableNodeFilters">
-									<option value="no">Norway</option>
-									<option value="se">Sweden</option>
-									<option value="it">Italy</option>
-									<option value="es">Spain</option>
+								<select multiple size=8 class="form-control" ng-model="experiment.projectFilter" ng-change="CheckProjectFilter(experiment);" ng-disabled="experiment.disableNodeFilters">
+									<option value="norway">Norway</option>
+									<option value="nsb">Norway-NSB (trains)</option>
+									<option value="sweden">Sweden</option>
+									<option value="vtab">Sweden-VTAB (buses)</option>
+									<option value="italy">Italy</option>
+									<option value="gtt">Italy-GTT (buses)</option>
+									<option value="wsys">Italy-WSYS (trucks)</option>
+									<option value="spain">Spain</option>
 								</select>
 							</div>
 							<div class="col-md-3">

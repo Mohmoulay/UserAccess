@@ -80,10 +80,12 @@
 				<div class="col-md-3">
 					<select multiple class="form-control" size=9 ng-model="locationFilter" ng-change="FilterNodes()">
 						<option value="norway">Norway</option>
-						<option value="nsb">Norway-NSB</option>
+						<option value="nsb">Norway-NSB (trains)</option>
 						<option value="sweden">Sweden</option>
-						<option value="torino">Torino</option>
-						<option value="pisa">Pisa</option>
+						<option value="vtab">Sweden-VTAB (buses)</option>
+						<option value="it">Italy</option>
+						<option value="gtt">Italy-GTT (buses)</option>
+						<option value="wsys">Italy-WSYS (trucks)</option>
 						<option value="spain">Spain</option>
 						<option disabled>────────────</option>
 						<option value="flex">Flex</option>
@@ -181,7 +183,7 @@
 						<td>{{node.model}}</td>
 						<td ng-if="(node.latitude != undefined) && (node.longitude != undefined)"><a target="_tab" ng-href="http://maps.google.com/?q={{node.latitude}},{{node.longitude}}">Maps</a></td>
 						<td ng-if="(node.latitude == undefined) || (node.longitude == undefined)">n/a</td>
-						<td ng-if="node.countryVisz != undefined"><a target="_tab" ng-href="http://visual.monroe-system.eu/#/testbed/periodic?country={{node.countryVisz}}&site={{node.site}}&nodeid={{node.id}}">Visz</a></td>
+						<td ng-if="node.countryVisz != undefined"><a target="_tab" ng-href="http://visual.monroe-system.eu/#/testbed/periodic?country={{node.countryVisz}}&project={{node.site}}&nodeid={{node.id}}">Visz</a></td>
 						<td ng-if="node.countryVisz == undefined">n/a</td>
 						<td ng-repeat="iface in node.interfaces">{{iface["mccmnc"]}} ({{iface["operator"]}}) {{CalcRemainingQuota(iface)}}</td>
 					</tr>

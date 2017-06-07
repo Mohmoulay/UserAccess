@@ -298,7 +298,7 @@ angular.module("monroe")
 	$scope.experiment.disableNodeFilters = false;
 	
 	ResetNodeFilters = function() {
-		$scope.experiment.countryFilter = [];
+		$scope.experiment.projectFilter = [];
 		$scope.experiment.nodeType = "type:deployed";
 		$scope.experiment.nodeModel = "apu2d4";
 		$scope.experiment.interfaceCount = "one";
@@ -334,11 +334,11 @@ angular.module("monroe")
    
     PrepareNodeFilters = function(experiment, request) {
 		if (!experiment.disableNodeFilters) {
-			// Join countries in an OR:
-			request.nodetypes = experiment.countryFilter.join('|country:');
+			// Join projects in an OR:
+			request.nodetypes = experiment.projectFilter.join('|project:');
 			// Add node type with an AND (comma):
 			if (request.nodetypes != "")
-				request.nodetypes = "country:" + request.nodetypes + "," + experiment.nodeType;
+				request.nodetypes = "project:" + request.nodetypes + "," + experiment.nodeType;
 			else
 				request.nodetypes = experiment.nodeType;
 		
@@ -623,7 +623,6 @@ angular.module("monroe")
 		var experimentURL = ExperimentDetailsURLa + id + ExperimentDetailsURLb;
 		$http.get(experimentURL, {withCredentials: true})
 			.success(function (data) {
-				console.log(data);
 				if (data.name)	$scope.experiment.name = data.name;
 				if (data.script)	$scope.experiment.script = data.script;
 				if (data.nodecount)	$scope.experiment.nodeCount = data.nodecount;
@@ -645,15 +644,9 @@ angular.module("monroe")
 						$scope.UpdateRepeatUntil($scope.experiment);
 					}
 				}
-				// It's in the individual schedules.
-				/*if (data.options["ssh"]) {
-					$scope.experiment.requiresSSH = true;
-					if (data.options["ssh.client.public"])	$scope.experiment.sshPublicKey = data.options["ssh.client.public"];
-				}*/
 				
 				//  To calculate the number of nodes used by the experiment (and their IDs), we have
 				// to traverse the list of schedules and identify the distinct nodes.
-				// Note: To get SSH, we would need to pick each schedule, not the experiment summary :-(
 				var schedID; // We overwrite, but we need just one, any.
 				if (data.schedules) {
 					var nodes = {};	// Count distinct nodeIds for all schedules.
@@ -669,6 +662,7 @@ angular.module("monroe")
 				$scope.ActivateNodeList();
 				
 				// Pick one schedule, retrieve it and populate "additional parameters". (All schedules have the same ones)
+				// Extract also SSH parameters (if used).
 				var scheduleURL = ScheduleDetailsURL + schedID;
 				$http.get(scheduleURL, {withCredentials: true})
 					.success(function (data) {
@@ -765,7 +759,7 @@ angular.module("monroe")
 					node.interfaces = node.interfaces.filter(function(a){return (a['heartbeat'] > 0) && (a['status'] == 'current');});
 					node.hasRecentHeartbeat = node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > $scope.currentTime;
 					node.canScheduleExperiments = (node.status=='active') && node.hasRecentHeartbeat && ((node.type == 'testing') || (node.type == 'deployed'));
-					node.countryVisz = node.project == 'norway' ? 'no' : node.project == 'nsb' ? 'no' : node.project == 'sweden' ? 'se' : node.project == 'torino' ? 'it' : node.project == 'pisa' ? 'it' : node.project == 'spain' ? 'es' : undefined;
+					node.countryVisz = node.project == 'norway' ? 'no' : node.project == 'nsb' ? 'no' : node.project == 'sweden' ? 'se' : node.project == 'vtab' ? 'se' : node.project == 'italy' ? 'it' : node.project == 'gtt' ? 'it' : node.project == 'wsys' ? 'it' : node.project == 'spain' ? 'es' : undefined;
 				}
 				$scope.FilterNodes();
 			})
