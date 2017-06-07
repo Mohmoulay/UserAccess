@@ -132,6 +132,7 @@
 						<div class="row" id="colSep">
 							<label class="control-label col-md-5" style="text-align:left">Countries (select to restrict):</label>
 							<label class="control-label col-md-3" style="text-align:left">Node type:</label>
+							<label class="control-label col-md-3" style="text-align:left">Node mobility:</label>
 						</div>
 						<div class="row">
 							<div class="col-md-5">
@@ -145,8 +146,13 @@
 							<div class="col-md-3">
 								<select class="form-control col-md-2" ng-model="experiment.nodeType" ng-disabled="experiment.disableNodeFilters">
 									<option value="type:deployed" selected>Deployed</option>
-									<!--<option value="mobile">Mobile</option>-->
 									<option value="type:testing">Testing</option>
+								</select>
+							</div>
+							<div class="col-md-3">
+								<select class="form-control" ng-model="experiment.nodeMobility" ng-disabled="experiment.disableNodeFilters">
+									<option value="mobility:static" selected>Static</option>
+									<option value="mobility:mobile">Mobile</option>
 								</select>
 							</div>
 						</div>

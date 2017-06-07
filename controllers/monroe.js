@@ -300,6 +300,7 @@ angular.module("monroe")
 	ResetNodeFilters = function() {
 		$scope.experiment.countryFilter = [];
 		$scope.experiment.nodeType = "type:deployed";
+		$scope.experiment.nodeMobility = "mobility:static";
 		$scope.experiment.nodeModel = "apu2d4";
 		$scope.experiment.interfaceCount = "one";
 	}
@@ -338,9 +339,9 @@ angular.module("monroe")
 			request.nodetypes = experiment.countryFilter.join('|country:');
 			// Add node type with an AND (comma):
 			if (request.nodetypes != "")
-				request.nodetypes = "country:" + request.nodetypes + "," + experiment.nodeType;
+				request.nodetypes = "country:" + request.nodetypes + "," + experiment.nodeType + "," + experiment.nodeMobility;
 			else
-				request.nodetypes = experiment.nodeType;
+				request.nodetypes = experiment.nodeType + "," + experiment.nodeMobility;
 		
 			request.nodetypes = request.nodetypes + ",model:" + experiment.nodeModel;
 			if (experiment.nodeModel == "apu2d4") {
