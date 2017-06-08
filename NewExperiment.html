@@ -247,7 +247,7 @@
 		    <label class="col-md-6">Date and time in YOUR local time-zone:</label>
 		</div>
 		<div class="row">
-		    <div class="col-md-3"><input type="datetime-local" step="1" ng-model="experiment.startDate" id="startDate" ng-model-options="{ timezone: 'utc' }" ng-change="UpdateConfirmStartDate(experiment);" ng-disabled="experiment.startASAP" required /><label class="control-label" style="padding-left:.1cm">UTC</label></div>
+		    <div class="col-md-3"><input type="datetime-local" step="1" ng-model="experiment.startDate" id="startDate" ng-model-options="{ timezone: 'utc' }" ng-change="UpdateConfirmStartDate(experiment);" ng-disabled="experiment.startASAP" required /><label class="control-label" style="padding-left:.1cm">UTC <button type="submit" class="btn btn-primary btn-xs" ng-click="SetStartDateToNow(experiment)" data-toggle="tooltip" title="Set date to now">Now</button></label></div>
 			<span class="control-label col-md-6" style="text-align:left">{{experiment.confirmStartDate}}</span>
 		</div>
 		<div class="row">
@@ -257,9 +257,11 @@
 		<span class="help-block">
 		    <dl>
 			    <dt><span style="color:blue" class="glyphicon glyphicon-info-sign"></span> Tips:</dt>
-				<dd style="padding-left:.25cm">- Input a date and press "Check availability" to verify if the schedule is possible,</dd>
+				<dd style="padding-left:.25cm">- Input a date and press "Check availability" to verify if the schedule is possible <em>at that date</em>,</dd>
 				<dd style="padding-left:.25cm">- or mark "As soon as possible" and press "Check availability" to know the earliest possible starting time.</dd>
 				<dd style="padding-left:.25cm">- Input a valid starting date and leave "As soon as possible" unchecked to submit the experiment.</dd>
+				<dd style="padding-left:.25cm">- "As soon as possible" discards the entered date.</dd>
+				<dd style="padding-left:.25cm">- "Checking availavility with a date starts checking <em>after</em> that date.</dd>
 			</dl>
 		</span>
 		

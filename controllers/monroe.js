@@ -331,6 +331,11 @@ angular.module("monroe")
     // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
 	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
 	$scope.experiment.startASAP = false;
+	
+	$scope.SetStartDateToNow = function(experiment) {
+		experiment.startDate = new Date( (new Date()).toUTCString() );
+		experiment.startASAP = false;
+	}
    
     PrepareNodeFilters = function(experiment, request) {
 		if (!experiment.disableNodeFilters) {
