@@ -377,6 +377,7 @@ angular.module("monroe")
 	$scope.UseProposedSchedule = function(experiment) {
 		experiment.startDate = new Date( (new Date(experiment.checkAvailabilityStartTimestamp + PROPOSED_SCHEDULE_BUFFER_TIME)).toUTCString() );
 		$scope.UpdateConfirmStartDate(experiment);
+		$scope.experiment.startASAP = false;
 	}
 	
     /************* Check schedule **********/
