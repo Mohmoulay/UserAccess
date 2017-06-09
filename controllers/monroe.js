@@ -58,7 +58,26 @@ angular.module("monroe")
 	$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
 	
 	$scope.TimestampToString = function(timestamp) {
-		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '');
+	}
+	
+	$scope.Bytes2FriendlyString = function(aNumber) {
+		if (aNumber < 0)
+			return "";
+		else if (aNumber == 1)
+			return "1 byte";
+		else if (aNumber < 1024)
+			return aNumber + " bytes";
+		else if (aNumber < 1048576)
+			return (aNumber/1024).toFixed(2) + " KiB";
+		else if (aNumber < 1073741824)
+			return (aNumber/1048576).toFixed(2) + " MiB";
+		else if (aNumber < 1099511627776)
+			return (aNumber/1073741824).toFixed(2) + " GiB";
+		else if (aNumber < 1125899906842624)
+			return (aNumber/1099511627776).toFixed(2) + " TiB";
+		else
+			return (aNumber/1125899906842624).toFixed(2) + " PiB";
 	}
 	
 	$scope.GetExperimentState = function(experiment) {
@@ -282,7 +301,7 @@ angular.module("monroe")
     $scope.experiment = new Object();
     $scope.experiment.nodeCount = 1;
     $scope.experiment.duration = 300;
-    $scope.experiment.activeQuota = 1048576;
+    $scope.experiment.activeQuota = 10;
 	$scope.experiment.deploymentQuota = 128;
 	$scope.experiment.additionalOptions = "";
     $scope.experiment.showSuccessPanel = false;
@@ -335,6 +354,7 @@ angular.module("monroe")
 	$scope.SetStartDateToNow = function(experiment) {
 		experiment.startDate = new Date( (new Date()).toUTCString() );
 		experiment.startASAP = false;
+		$scope.UpdateConfirmStartDate(experiment);
 	}
    
     PrepareNodeFilters = function(experiment, request) {
@@ -359,7 +379,7 @@ angular.module("monroe")
 
     $scope.UpdateConfirmStartDate = function (experiment) {
 		if ( (experiment.startDate != null) && (experiment.startDate != undefined) )
-            experiment.confirmStartDate = experiment.startDate.toString();
+            experiment.confirmStartDate = experiment.startDate.toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '');
 		else
 			experiment.confirmStartDate = "--/--/--- --:--:--";
 		//experiment.checkAvailabilityShow = false;
@@ -376,7 +396,7 @@ angular.module("monroe")
     }
 
     TimestampToString = function(timestamp) {
-		return (new Date(timestamp * 1000)).toUTCString(); // toLocaleString() / toUTCString()
+		return (new Date(timestamp * 1000)).toUTCString().replace(' (Romance Daylight Time)', ''); // toLocaleString() / toUTCString()
 	}
 	
 	$scope.UseProposedSchedule = function(experiment) {
@@ -546,7 +566,7 @@ angular.module("monroe")
     	request.options = {};
     	anumber = Number(experiment.activeQuota);
     	if (isFinite(anumber))
-    	    request.options["traffic"] = anumber;
+    	    request.options["traffic"] = anumber * 1024*1024;
     	
     	anumber = Number(experiment.deploymentQuota);
     	if (isFinite(anumber))
@@ -639,7 +659,7 @@ angular.module("monroe")
 						$scope.experiment.duration = data.stop - data.start;
 				}
 				$scope.experiment.startASAP = false;
-				if (data.options["traffic"])	$scope.experiment.activeQuota = data.options["traffic"];
+				if (data.options["traffic"])	$scope.experiment.activeQuota = data.options["traffic"] / (1024*1024.0);
 				if (data.options["storage"])	$scope.experiment.deploymentQuota = data.options["storage"] / (1024*1024.0);
 				if (data.options["recurrence"]) {
 					$scope.experiment.recurrence = true;
@@ -738,7 +758,7 @@ angular.module("monroe")
 	setTimeout($scope.refresh, 30000);
 	
 	$scope.TimestampToString = function(timestamp) {
-		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '');
 	}
 	
 	// Get the user ID.
@@ -904,7 +924,7 @@ angular.module("monroe")
 	$scope.GetUserID($scope);
 
 	$scope.TimestampToString = function(timestamp) {
-		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString();
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '');
 	}
 	
 	// Show all the journal entries of this user.

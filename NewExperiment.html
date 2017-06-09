@@ -207,13 +207,13 @@
 			<div class="panel-body">
 				<div class="row">
 					<label class="control-label col-md-4" style="text-align:left" for="activeQuota">Active-data quota:</label>
-					<div class="col-md-3"><input type="number" min="0" class="form-control" id="activeQuota" placeholder="(bytes)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
-					<label class="control-label" style="text-align:left">(per interface)</label>
+					<div class="col-md-2"><input type="number" min="0" class="form-control" id="activeQuota" placeholder="(MiB)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
+					<label class="control-label" style="text-align:left">(MiB, per interface)</label>
 				</div>
 				<div class="row" id="colSep">
 					<label class="control-label col-md-4" style="text-align:left" for="storageQuota">Deployment-storage quota:</label>
-					<div class="col-md-3"><input type="number" min="0" class="form-control" id="storageQuota" placeholder="(MB)" ng-model="experiment.deploymentQuota"></div>
-					<label class="control-label" style="text-align:left">(MB)</label>
+					<div class="col-md-2"><input type="number" min="0" class="form-control" id="storageQuota" placeholder="(MiB)" ng-model="experiment.deploymentQuota"></div>
+					<label class="control-label" style="text-align:left">(MiB)</label>
 				</div>
 			</div>
 		</div>
