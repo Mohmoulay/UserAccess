@@ -207,12 +207,12 @@
 			<div class="panel-body">
 				<div class="row">
 					<label class="control-label col-md-4" style="text-align:left" for="activeQuota">Active-data quota:</label>
-					<div class="col-md-2"><input type="number" min="0" class="form-control" id="activeQuota" placeholder="(MiB)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
+					<div class="col-md-2"><input type="text" class="form-control" id="activeQuota" placeholder="(MiB)" ng-model="experiment.activeQuota" ng-change="InterfacesCount(experiment)"></div>
 					<label class="control-label" style="text-align:left">(MiB, per interface)</label>
 				</div>
 				<div class="row" id="colSep">
 					<label class="control-label col-md-4" style="text-align:left" for="storageQuota">Deployment-storage quota:</label>
-					<div class="col-md-2"><input type="number" min="0" class="form-control" id="storageQuota" placeholder="(MiB)" ng-model="experiment.deploymentQuota"></div>
+					<div class="col-md-2"><input type="text" class="form-control" id="storageQuota" placeholder="(MiB)" ng-model="experiment.deploymentQuota"></div>
 					<label class="control-label" style="text-align:left">(MiB)</label>
 				</div>
 			</div>
@@ -317,7 +317,10 @@
 					<strong>ERROR VALIDATING FORM DATA:</strong> If recurrence is selected, a valid ending date must be provided.
 				</div>
 				<div ng-if="showWarningMaxStorageQuota" class="col-md-8 alert alert-danger fade in" role="alert">
-					<strong>ERROR VALIDATING FORM DATA:</strong> The maximum allowed storage quota is 1024 MB.
+					<strong>ERROR VALIDATING FORM DATA:</strong> The storage quota must be an integer in (0, 1024] MiB.
+				</div>
+				<div ng-if="showWarningActiveQuota" class="col-md-8 alert alert-danger fade in" role="alert">
+					<strong>ERROR VALIDATING FORM DATA:</strong> The active data quota must be a positive integer number of MiB.
 				</div>
 				<div ng-if="showWarningSSHNotRecurrence" class="col-md-8 alert alert-danger fade in" role="alert">
 					<strong>ERROR VALIDATING FORM DATA:</strong> SSH tunnel cannot be requested with recurrent experiments.

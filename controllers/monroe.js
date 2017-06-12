@@ -333,6 +333,7 @@ angular.module("monroe")
 		$scope.showWarningRecurrenceEndingTime = false;
 		$scope.showWarningMaxStorageQuota = false;
 		$scope.showWarningNotEvenNodesForDualExperiment = false;
+		$scope.showWarningActiveQuota = false;
 	}
 	
 	ResetAvailability = function() {
@@ -488,9 +489,16 @@ angular.module("monroe")
 		
 		if (res) {
 			anumber = Number(experiment.deploymentQuota);
-			res = isFinite(anumber) && (anumber <= 1024);
+			res = isFinite(anumber) && (Math.floor(anumber) == anumber) && (anumber > 0) && (anumber <= 1024);
 			if (!res)
 				$scope.showWarningMaxStorageQuota = true;
+		}
+		
+		if (res) {
+			anumber = Number(experiment.activeQuota);
+			res = isFinite(anumber) && (Math.floor(anumber) == anumber) && (anumber > 0);
+			if (!res)
+				$scope.showWarningActiveQuota = true;
 		}
 		
 		if (res && experiment.requiresSSH && !experiment.disableNodeFilters) {
@@ -609,7 +617,7 @@ angular.module("monroe")
 		experiment.showSuccessPanel = false;
 		experiment.showFailurePanel = false;
 		experiment.showSubmitProgress = true;
-        $http.post(newExperimentURL, request, {withCredentials: true})
+        /*$http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 experiment.schedID = data.experiment;
                 experiment.schedNumScheds = data.intervals;
@@ -629,7 +637,7 @@ angular.module("monroe")
 				experiment.showSubmitProgress = false;
 				// Scroll to bottom of page.
 				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
-            });
+            });*/
     }
     
 	$scope.ClearNodeList = function() {
@@ -659,8 +667,8 @@ angular.module("monroe")
 						$scope.experiment.duration = data.stop - data.start;
 				}
 				$scope.experiment.startASAP = false;
-				if (data.options["traffic"])	$scope.experiment.activeQuota = data.options["traffic"] / (1024*1024.0);
-				if (data.options["storage"])	$scope.experiment.deploymentQuota = data.options["storage"] / (1024*1024.0);
+				if (data.options["traffic"])	$scope.experiment.activeQuota = Math.round(data.options["traffic"] / (1024*1024.0));
+				if (data.options["storage"])	$scope.experiment.deploymentQuota = Math.round(data.options["storage"] / (1024*1024.0));
 				if (data.options["recurrence"]) {
 					$scope.experiment.recurrence = true;
 					if (data.options["period"])
