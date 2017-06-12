@@ -617,7 +617,7 @@ angular.module("monroe")
 		experiment.showSuccessPanel = false;
 		experiment.showFailurePanel = false;
 		experiment.showSubmitProgress = true;
-        /*$http.post(newExperimentURL, request, {withCredentials: true})
+        $http.post(newExperimentURL, request, {withCredentials: true})
             .success(function(data) {
                 experiment.schedID = data.experiment;
                 experiment.schedNumScheds = data.intervals;
@@ -637,7 +637,7 @@ angular.module("monroe")
 				experiment.showSubmitProgress = false;
 				// Scroll to bottom of page.
 				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
-            });*/
+            });
     }
     
 	$scope.ClearNodeList = function() {
