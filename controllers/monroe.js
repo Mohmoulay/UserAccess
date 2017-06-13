@@ -974,7 +974,7 @@ angular.module("monroe")
 	CreateScheduleTable();
 	
 	$scope.Occupation2Color = function(occupation) {
-		return occupation == "busy" ? "#ff0000" : occupation == "free" ? "#00ff00" : "#000000";
+		return occupation == "busy" ? "#ff4040" : occupation == "free" ? "#40ff40" : "#000000";
 	}
 	
 	$scope.MakeTooltip = function(occupation, time) {
