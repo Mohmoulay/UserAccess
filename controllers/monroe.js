@@ -743,12 +743,17 @@ angular.module("monroe")
 /////////////////////////////// resourcesCtrl /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+// listSchedules() uses the list of filtered nodes ($scope.nodes), so it must 
+// be run after listNodes() has completed (and every time it's completed).
+// Thus, it's called directly from FilterNodes(), so that it never gets missed.
+
 angular.module("monroe")
 	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
 	.constant("ResourcesURL", "https://scheduler.monroe-system.eu/v1/resources/")
+	.constant("SchedulePlanURL", "https://scheduler.monroe-system.eu/v1/schedules/")
 	.constant("GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS", 300)
     .controller("resourcesCtrl", function($scope, $http, $location,
-									ResourcesURL, AuthURL, GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS) {
+									ResourcesURL, AuthURL, SchedulePlanURL, GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS) {
 	$scope.userID = -1;
 	$scope.nodes = [];
 	$scope.showOnlyActive = false; // If true, show only nodes that can currently execute experiments.
@@ -758,6 +763,7 @@ angular.module("monroe")
 	$scope.currentTime = 2147483647;
 	$scope.rangeResources = []; // A range with all the indexes in the array of resources, for ng-repeat.
 	$scope.countShownNodes = 0; // Count of nodes that are shown after applying filters.
+	$scope.scheduleTable = {};
 
 	$scope.refresh = function() {
 		$scope.listNodes();
@@ -801,6 +807,18 @@ angular.module("monroe")
 				$scope.error = error;
 			});		
 	}
+	
+	// Retrieve all the programmed schedules.
+	$scope.listSchedules = function() {
+		$http.get(SchedulePlanURL, {withCredentials: true})
+			.success(function(data) {
+				//$scope.schedules = data;
+				CreateScheduleTable(data);
+			})
+			.error(function(error) {
+				$scope.error = error;
+			});		
+	}
 
 	$scope.Capitalize = function(theString) {		
 		if (angular.isString(theString))
@@ -839,6 +857,7 @@ angular.module("monroe")
 			if (node.isVisible)
 				$scope.countShownNodes = $scope.countShownNodes + 1;
 		}
+		$scope.listSchedules();
 	}
 	
 	$scope.Bytes2FriendlyString = function(aNumber) {
@@ -889,6 +908,75 @@ angular.module("monroe")
 			//return $scope.Bytes2FriendlyString(interfaceQuota - iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(interfaceQuota);
 			//return $scope.Bytes2FriendlyString(iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(iface["quota_reset_value"]);
 			return $scope.Bytes2FriendlyString(iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(interfaceQuota);
+	}
+	
+	DateToHour = function(date) {
+		return (Number(date) / 1000|0) - date.getSeconds() - date.getMinutes() * 60;
+	}
+	TimestampToHour = function(timestamp) {
+		var date = new Date( (new Date(timestamp*1000)).toUTCString() )
+		return DateToHour(date);
+	}
+	
+	CreateScheduleTable = function(schedules) {
+		/*var schedules = [];
+		schedules.push({nodeid:45, start:1497290400, stop: 1497290400+20*3600});
+		schedules.push({nodeid:60, start:1497290400+5*3600, stop: 1497290400+10*3600});*/
+		// The array has 7*24*3600 columns and as many rows as different nodeids in schedules.
+		// Each entry, which corresponds to a node-hour, is a boolean that says if the node is busy.
+		$scope.scheduleTable = {};
+		
+		var startTime = DateToHour(new Date( (new Date()).toUTCString() ));
+		var endTime = startTime + 7*24*3600;
+		var stepTime = 3600;
+		
+		// Create free entries for all visible nodes.
+		for (var node in $scope.nodes) {
+			var itNode = $scope.nodes[node];
+			if (itNode.isVisible) {
+				$scope.scheduleTable[itNode.id] = {};
+				for (var hh = startTime; hh < endTime; hh += stepTime)
+					$scope.scheduleTable[itNode.id][hh] = "free";
+			}
+		}
+		
+		for (var it in schedules) {
+			var sched = schedules[it];
+			//if ($scope.nodes[sched.nodeid].isVisible) {
+				// Insert busy time for the node.
+				var schedStart = TimestampToHour(schedules[it].start);
+				var schedEnd = TimestampToHour(schedules[it].stop);
+				// TODO: Fix this to implement scheds shorter than one hour, inside one hour.
+				if (schedEnd == schedStart)
+					schedEnd += 1*3600;
+				// Check if starting hour is sharp or partial.
+				// Do the complete hours in between
+				if (sched.nodeid == 440)
+					console.log ("440: ", schedStart, schedEnd);
+				for (var hh = schedStart; hh < schedEnd; hh += stepTime) {
+					if ( (hh >= startTime) && (hh < endTime) )
+						$scope.scheduleTable[sched.nodeid][hh] = "busy";
+				}
+			//}
+			// Check if finishing hour is sharp or partial. --->>>> Nop! Hay que construir los intervalos e ir rellenando. Una hora puede cubrirse con varios experimentos.
+		}
+
+		// Example of accessing the table for one node.
+		/*var dbg = "";
+		sched.nodeid = 45;
+		for (var hh = startTime; hh < endTime; hh += stepTime)
+			dbg = dbg + hh + ":" + $scope.scheduleTable[sched.nodeid][hh] + ",";
+		console.log(dbg);*/
+	}
+	CreateScheduleTable();
+	
+	$scope.Occupation2Color = function(occupation) {
+		return occupation == "busy" ? "#ff0000" : occupation == "free" ? "#00ff00" : "#000000";
+	}
+	
+	$scope.MakeTooltip = function(occupation, time) {
+		var theDate = (new Date( (new Date(time*1000)).toUTCString() )).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '');
+		return theDate + (occupation == "busy" ? " - Busy" : occupation == "free" ? " - Free" : " - Unknown");
 	}
 });
 
