@@ -938,6 +938,11 @@ angular.module("monroe")
 				for (var hh = startTime; hh < endTime; hh += stepTime)
 					$scope.scheduleTable[itNode.id][hh] = "free";
 			}
+			else {
+				for (var itSched in schedules)
+					if (schedules[itSched].nodeid == itNode.id)
+						delete schedules[itSched];
+			}
 		}
 		
 		for (var it in schedules) {
@@ -951,8 +956,6 @@ angular.module("monroe")
 					schedEnd += 1*3600;
 				// Check if starting hour is sharp or partial.
 				// Do the complete hours in between
-				if (sched.nodeid == 440)
-					console.log ("440: ", schedStart, schedEnd);
 				for (var hh = schedStart; hh < schedEnd; hh += stepTime) {
 					if ( (hh >= startTime) && (hh < endTime) )
 						$scope.scheduleTable[sched.nodeid][hh] = "busy";
