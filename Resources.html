@@ -247,25 +247,17 @@
 	</div> <!-- panel -->
 
 	<!-- ****************************************************************** -->
-    <!-- Node scheduling occupation -->
-    <div class="panel panel-info">
+	<!-- Node scheduling occupation -->
+	
+	<div class="panel panel-info">
 		<div class="panel-heading">
 			<h3>Node occupation</h3>
 		</div> <!-- panel-heading -->
 
 		<div class="panel-body">
-			<table style="border-collapse: collapse">
-				<tr ng-repeat="(inode, ischeds) in scheduleTable">
-					<td style="height:10px;background-color:#ffffff;border:0px">{{inode}}</td>
-					<td ng-repeat="(istartTime, istate) in ischeds" style="height:10px;width:10px;background-color:{{Occupation2Color(istate)}};border:1px solid #000000;text-align:left;padding:0px;" title="{{MakeTooltip(istate, istartTime)}}">
-					<!--pepe {{inode}}, {{istartTime}}, {{istate}}-->
-					<!--{{istartTime}}:{{istate}} - -->
-					</td>
-				</tr>
-			</table>
+			<canvas id="calendarCanvas" width="{{canvasWidth}}" height="{{canvasHeight}}" style="border:0px solid #ffffff;"></canvas>
 		</div> <!-- panel-body -->
-		
-	</div> <!-- panel -->
+	</div>
 
 
 </body>

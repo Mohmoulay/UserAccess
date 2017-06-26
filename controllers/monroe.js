@@ -58,7 +58,7 @@ angular.module("monroe")
 	$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
 	
 	$scope.TimestampToString = function(timestamp) {
-		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '');
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 	}
 	
 	$scope.Bytes2FriendlyString = function(aNumber) {
@@ -380,7 +380,7 @@ angular.module("monroe")
 
     $scope.UpdateConfirmStartDate = function (experiment) {
 		if ( (experiment.startDate != null) && (experiment.startDate != undefined) )
-            experiment.confirmStartDate = experiment.startDate.toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '');
+            experiment.confirmStartDate = experiment.startDate.toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 		else
 			experiment.confirmStartDate = "--/--/--- --:--:--";
 		//experiment.checkAvailabilityShow = false;
@@ -397,7 +397,7 @@ angular.module("monroe")
     }
 
     TimestampToString = function(timestamp) {
-		return (new Date(timestamp * 1000)).toUTCString().replace(' (Romance Daylight Time)', ''); // toLocaleString() / toUTCString()
+		return (new Date(timestamp * 1000)).toUTCString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', ''); // toLocaleString() / toUTCString()
 	}
 	
 	$scope.UseProposedSchedule = function(experiment) {
@@ -746,6 +746,9 @@ angular.module("monroe")
 // listSchedules() uses the list of filtered nodes ($scope.nodes), so it must 
 // be run after listNodes() has completed (and every time it's completed).
 // Thus, it's called directly from FilterNodes(), so that it never gets missed.
+// listNodes() --> FilterNodes() --> listSchedules() --> CreateSchedulesTable() --> DrawSchedules()
+// user modifies filters --> FilterNodes() --> listSchedules() --> CreateSchedulesTable() --> DrawSchedules()
+// Todo: Check if we can save the call to listSchedules and run it only after listNodes.
 
 angular.module("monroe")
 	.constant("AuthURL", "https://scheduler.monroe-system.eu/v1/backend/auth")
@@ -764,6 +767,12 @@ angular.module("monroe")
 	$scope.rangeResources = []; // A range with all the indexes in the array of resources, for ng-repeat.
 	$scope.countShownNodes = 0; // Count of nodes that are shown after applying filters.
 	$scope.scheduleTable = {};
+	
+	$scope.canvas = document.getElementById("calendarCanvas");
+	$scope.canvasWidth = 0;
+	$scope.canvasHeight = 0;	
+	$scope.canvasSchedLeftMargin = 20;
+	$scope.canvasSchedTopMargin = 190;
 
 	$scope.refresh = function() {
 		$scope.listNodes();
@@ -772,7 +781,7 @@ angular.module("monroe")
 	setTimeout($scope.refresh, 30000);
 	
 	$scope.TimestampToString = function(timestamp) {
-		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '');
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 	}
 	
 	// Get the user ID.
@@ -918,6 +927,78 @@ angular.module("monroe")
 		return DateToHour(date);
 	}
 	
+	//  Given two timestamps, returns (x1, x2) as the corresponding coordinates on the canvas.
+	Time2Coords = function(startTime, endTime) {
+		var x1, x2;
+		
+		var ratio = ($scope.schedulesEndTime - $scope.schedulesStartTime) / ($scope.canvasWidth - $scope.canvasSchedLeftMargin*2);
+		x1 = Math.round((startTime - $scope.schedulesStartTime) / ratio);
+		x2 = Math.round((endTime - $scope.schedulesStartTime) / ratio);
+		
+		//console.log("Converting (", startTime, ",", endTime, ") to (", x1, ",", x2, ");");
+		return [x1, x2];
+	}
+	
+	$scope.DrawSchedules = function() {
+		var shownNodes = $scope.countShownNodes;
+		$scope.canvasWidth = 1700;
+		$scope.canvasHeight = 20 + 250 * 10 + $scope.canvasSchedTopMargin;
+		var ctx = $scope.canvas.getContext("2d");
+		var topMargin = 10;
+		
+		ctx.clearRect(0, 0, $scope.canvasWidth, $scope.canvasHeight);
+			
+		var y = 0; // Node count
+		for (var iNode in $scope.scheduleTable) {
+			// Label the schedule with the node ids
+			ctx.font = "10px sans-serif";
+			ctx.fillStyle = "#000000";
+			ctx.fillText(iNode, 0, topMargin + 8 + y*10 + $scope.canvasSchedTopMargin, $scope.canvasSchedLeftMargin);
+			
+			// First paint green for the node.
+			ctx.fillStyle = "#00ff00";
+			ctx.fillRect($scope.canvasSchedLeftMargin, topMargin + y*10 + $scope.canvasSchedTopMargin, $scope.canvasWidth - $scope.canvasSchedLeftMargin*2, 9);
+			ctx.stroke();
+
+			// Then, paint in read the interval for each schedule.
+			ctx.fillStyle = "#ff0000";
+			for (var iSched in $scope.scheduleTable[iNode]) {
+				var coords = Time2Coords($scope.scheduleTable[iNode][iSched][0], $scope.scheduleTable[iNode][iSched][1]);
+				ctx.fillRect($scope.canvasSchedLeftMargin + coords[0], topMargin + y*10 + $scope.canvasSchedTopMargin, coords[1] - coords[0], 9);
+				ctx.stroke();
+			}
+			
+			y += 1;
+		}
+		
+		// Plot grid of hours.
+		ctx.translate(-0.5, 0);
+		for (var xx = $scope.schedulesStartTime; xx < $scope.schedulesEndTime; xx += $scope.schedulesStepTime) {
+			var xxpx = Time2Coords(xx, xx+1)[0] + $scope.canvasSchedLeftMargin;
+			ctx.lineWidth = 1;
+			ctx.strokeStyle = "#808080";
+			ctx.beginPath();
+			ctx.moveTo(xxpx, 5 + $scope.canvasSchedTopMargin);
+			ctx.lineTo(xxpx, 10 + $scope.countShownNodes * 10 + $scope.canvasSchedTopMargin);
+			ctx.stroke();
+		}
+		ctx.translate(0.5, 0);
+			
+		// Plot x labels.
+		ctx.fillStyle = "#000000";
+		ctx.font = "10px sans-serif";
+		ctx.save();
+		ctx.translate($scope.canvasWidth/2, $scope.canvasHeight/2);
+		ctx.rotate(-Math.PI/2);
+		for (var xx = $scope.schedulesStartTime; xx < $scope.schedulesEndTime; xx += $scope.schedulesStepTime * 6) {
+			var xxpx = Time2Coords(xx, xx + 1)[0] + $scope.canvasSchedLeftMargin + 8;
+			var theDate = (new Date( (new Date(xx*1000)).toUTCString() )).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
+			ctx.fillText(theDate, $scope.canvasHeight/2 - $scope.canvasSchedTopMargin, -$scope.canvasWidth/2 + xxpx);
+			ctx.stroke();
+		}
+		ctx.restore();
+	}
+	
 	CreateScheduleTable = function(schedules) {
 		/*var schedules = [];
 		schedules.push({nodeid:45, start:1497290400, stop: 1497290400+20*3600});
@@ -926,17 +1007,15 @@ angular.module("monroe")
 		// Each entry, which corresponds to a node-hour, is a boolean that says if the node is busy.
 		$scope.scheduleTable = {};
 		
-		var startTime = DateToHour(new Date( (new Date()).toUTCString() ));
-		var endTime = startTime + 7*24*3600;
-		var stepTime = 3600;
+		$scope.schedulesStartTime = DateToHour(new Date( (new Date()).toUTCString() ));
+		$scope.schedulesEndTime = $scope.schedulesStartTime + 7*24*3600;
+		$scope.schedulesStepTime = 3600;
 		
 		// Create free entries for all visible nodes.
 		for (var node in $scope.nodes) {
 			var itNode = $scope.nodes[node];
 			if (itNode.isVisible) {
-				$scope.scheduleTable[itNode.id] = {};
-				for (var hh = startTime; hh < endTime; hh += stepTime)
-					$scope.scheduleTable[itNode.id][hh] = "free";
+				$scope.scheduleTable[itNode.id] = [];
 			}
 			else {
 				for (var itSched in schedules)
@@ -947,29 +1026,17 @@ angular.module("monroe")
 		
 		for (var it in schedules) {
 			var sched = schedules[it];
-			//if ($scope.nodes[sched.nodeid].isVisible) {
-				// Insert busy time for the node.
-				var schedStart = TimestampToHour(schedules[it].start);
-				var schedEnd = TimestampToHour(schedules[it].stop);
-				// TODO: Fix this to implement scheds shorter than one hour, inside one hour.
-				if (schedEnd == schedStart)
-					schedEnd += 1*3600;
-				// Check if starting hour is sharp or partial.
-				// Do the complete hours in between
-				for (var hh = schedStart; hh < schedEnd; hh += stepTime) {
-					if ( (hh >= startTime) && (hh < endTime) )
-						$scope.scheduleTable[sched.nodeid][hh] = "busy";
-				}
-			//}
-			// Check if finishing hour is sharp or partial. --->>>> Nop! Hay que construir los intervalos e ir rellenando. Una hora puede cubrirse con varios experimentos.
+			if (sched.stop > $scope.schedulesStartTime) {
+				if (sched.start < $scope.schedulesStartTime)
+					sched.start = $scope.schedulesStartTime;
+				if (sched.stop > $scope.schedulesEndTime)
+					sched.stop = $scope.schedulesEndTime;
+				$scope.scheduleTable[sched.nodeid].push( [sched.start, sched.stop] );
+			}
 		}
-
-		// Example of accessing the table for one node.
-		/*var dbg = "";
-		sched.nodeid = 45;
-		for (var hh = startTime; hh < endTime; hh += stepTime)
-			dbg = dbg + hh + ":" + $scope.scheduleTable[sched.nodeid][hh] + ",";
-		console.log(dbg);*/
+		//console.log($scope.scheduleTable);
+	
+		$scope.DrawSchedules();
 	}
 	CreateScheduleTable();
 	
@@ -978,7 +1045,7 @@ angular.module("monroe")
 	}
 	
 	$scope.MakeTooltip = function(occupation, time) {
-		var theDate = (new Date( (new Date(time*1000)).toUTCString() )).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '');
+		var theDate = (new Date( (new Date(time*1000)).toUTCString() )).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 		return theDate + (occupation == "busy" ? " - Busy" : occupation == "free" ? " - Free" : " - Unknown");
 	}
 });
@@ -1023,7 +1090,7 @@ angular.module("monroe")
 	$scope.GetUserID($scope);
 
 	$scope.TimestampToString = function(timestamp) {
-		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '');
+		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 	}
 	
 	// Show all the journal entries of this user.
