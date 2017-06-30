@@ -1007,15 +1007,38 @@ angular.module("monroe")
 		// Each entry, which corresponds to a node-hour, is a boolean that says if the node is busy.
 		$scope.scheduleTable = {};
 		
-		$scope.schedulesStartTime = DateToHour(new Date( (new Date()).toUTCString() ));
+		var starting = new Date();
+		var firstMaintenance = 0;
+		$scope.schedulesStartTime = DateToHour(new Date( starting.toUTCString() ));
 		$scope.schedulesEndTime = $scope.schedulesStartTime + 7*24*3600;
 		$scope.schedulesStepTime = 3600;
 		
+		// Calculate the first maintenance point.
+		starting = new Date(starting.getTime());
+		var maintenanceDate = new Date(starting);
+		maintenanceDate.setUTCHours(9);
+		maintenanceDate.setUTCMinutes(30);
+		maintenanceDate.setUTCSeconds(0);
+		maintenanceDate.setUTCMilliseconds(0);
+		if ( (maintenanceDate.getTime() < starting.getTime()) && (maintenanceDate.getUTCHours() < starting.getUTCHours()) ) {
+			maintenanceDate.setUTCHours(21);
+			if ( (maintenanceDate.getTime() < starting.getTime()) && (maintenanceDate.getUTCHours() < starting.getUTCHours()) ) {
+				// We are after 21:30 UTC, advance 1 day.
+				maintenanceDate = new Date(maintenanceDate.getTime() + 3600000*3); // Advance 1 day.
+				maintenanceDate.setUTCHours(9);
+			}
+		}
+		firstMaintenance = maintenanceDate.getTime()/1000|0;
+			
 		// Create free entries for all visible nodes.
 		for (var node in $scope.nodes) {
 			var itNode = $scope.nodes[node];
 			if (itNode.isVisible) {
 				$scope.scheduleTable[itNode.id] = [];
+				// Add maintenance hours.
+				for (var maintenance = firstMaintenance; maintenance < $scope.schedulesEndTime; maintenance += 12*3600) {
+					$scope.scheduleTable[itNode.id].push([maintenance < $scope.schedulesStartTime ? $scope.schedulesStartTime : maintenance, (maintenance + 1800) > $scope.schedulesEndTime ? $scope.schedulesEndTime : (maintenance + 1800)]);
+				}
 			}
 			else {
 				for (var itSched in schedules)
