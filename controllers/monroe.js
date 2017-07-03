@@ -769,10 +769,10 @@ angular.module("monroe")
 	$scope.scheduleTable = {};
 	
 	$scope.canvas = document.getElementById("calendarCanvas");
-	$scope.canvasWidth = 0;
-	$scope.canvasHeight = 0;	
 	$scope.canvasSchedLeftMargin = 20;
 	$scope.canvasSchedTopMargin = 190;
+	$scope.canvasWidth = 1700;
+	$scope.canvasHeight = 20 + 250 * 10 + $scope.canvasSchedTopMargin;
 
 	$scope.refresh = function() {
 		$scope.listNodes();
@@ -866,6 +866,7 @@ angular.module("monroe")
 			if (node.isVisible)
 				$scope.countShownNodes = $scope.countShownNodes + 1;
 		}
+		$scope.ClearSchedules();
 		$scope.listSchedules();
 	}
 	
@@ -939,14 +940,19 @@ angular.module("monroe")
 		return [x1, x2];
 	}
 	
+	$scope.ClearSchedules = function() {
+		var ctx = $scope.canvas.getContext("2d");
+		ctx.beginPath(); // Probably a bug in Chrome (?)
+		ctx.clearRect(0, 0, $scope.canvas.width, $scope.canvas.height);
+		ctx.stroke();
+	}
+	
 	$scope.DrawSchedules = function() {
 		var shownNodes = $scope.countShownNodes;
-		$scope.canvasWidth = 1700;
-		$scope.canvasHeight = 20 + 250 * 10 + $scope.canvasSchedTopMargin;
 		var ctx = $scope.canvas.getContext("2d");
 		var topMargin = 10;
 		
-		ctx.clearRect(0, 0, $scope.canvasWidth, $scope.canvasHeight);
+		$scope.ClearSchedules();
 			
 		var y = 0; // Node count
 		for (var iNode in $scope.scheduleTable) {
@@ -960,7 +966,7 @@ angular.module("monroe")
 			ctx.fillRect($scope.canvasSchedLeftMargin, topMargin + y*10 + $scope.canvasSchedTopMargin, $scope.canvasWidth - $scope.canvasSchedLeftMargin*2, 9);
 			ctx.stroke();
 
-			// Then, paint in read the interval for each schedule.
+			// Then, paint in red the interval for each schedule.
 			ctx.fillStyle = "#ff0000";
 			for (var iSched in $scope.scheduleTable[iNode]) {
 				var coords = Time2Coords($scope.scheduleTable[iNode][iSched][0], $scope.scheduleTable[iNode][iSched][1]);
@@ -973,13 +979,15 @@ angular.module("monroe")
 		
 		// Plot grid of hours.
 		ctx.translate(-0.5, 0);
-		for (var xx = $scope.schedulesStartTime; xx < $scope.schedulesEndTime; xx += $scope.schedulesStepTime) {
+		for (var xx = $scope.schedulesStartTime; xx <= $scope.schedulesEndTime; xx += $scope.schedulesStepTime) {
 			var xxpx = Time2Coords(xx, xx+1)[0] + $scope.canvasSchedLeftMargin;
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = "#808080";
 			ctx.beginPath();
-			ctx.moveTo(xxpx, 5 + $scope.canvasSchedTopMargin);
-			ctx.lineTo(xxpx, 10 + $scope.countShownNodes * 10 + $scope.canvasSchedTopMargin);
+			var y1 = 5 + $scope.canvasSchedTopMargin;
+			var y2 = 10 + shownNodes * 10 + $scope.canvasSchedTopMargin;
+			ctx.moveTo(xxpx, y1);
+			ctx.lineTo(xxpx, y2);
 			ctx.stroke();
 		}
 		ctx.translate(0.5, 0);
@@ -1041,6 +1049,10 @@ angular.module("monroe")
 				}
 			}
 			else {
+				//  We have to do this part here (which is quadratic) because we cannot 
+				// add a simple test in the next loop to test if nodes[sched.nodeid].isVisible, 
+				// as the nodes are an array that is not indexed by nodeid...
+				// An alternative would be to generate all the schedules for all the nodes, and check if visible while painting.
 				for (var itSched in schedules)
 					if (schedules[itSched].nodeid == itNode.id)
 						delete schedules[itSched];
@@ -1049,7 +1061,7 @@ angular.module("monroe")
 		
 		for (var it in schedules) {
 			var sched = schedules[it];
-			if (sched.stop > $scope.schedulesStartTime) {
+			if ( (sched.start <= $scope.schedulesEndTime) && (sched.stop >= $scope.schedulesStartTime)) {
 				if (sched.start < $scope.schedulesStartTime)
 					sched.start = $scope.schedulesStartTime;
 				if (sched.stop > $scope.schedulesEndTime)
