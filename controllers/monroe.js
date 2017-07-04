@@ -776,9 +776,9 @@ angular.module("monroe")
 
 	$scope.refresh = function() {
 		$scope.listNodes();
-		setTimeout($scope.refresh, 30000);
+		setTimeout($scope.refresh, 300000);
 	}
-	setTimeout($scope.refresh, 30000);
+	setTimeout($scope.refresh, 300000);
 	
 	$scope.TimestampToString = function(timestamp) {
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
