@@ -14,7 +14,7 @@ angular.module("monroe")
     .controller("statusExperimentCtrl", function($scope, $http, $location,
 											myExperimentsURLa, myExperimentsURLb,
 											newExperimentURL,
-											AuthURL, DeleteExperimentURL, 
+											AuthURL, DeleteExperimentURL,
 											ExperimentSchedulesURLa, ExperimentSchedulesURLb, rescheduleExperimentURL) {
 	$scope.userID = -1;
 	$scope.userName = new String;
@@ -25,7 +25,7 @@ angular.module("monroe")
 	$scope.hideOngoing = false;
 	$scope.hideFailed = false;
 	$scope.showHidden = false; // If false, show normal experiments. If true, ask the scheduler also for hidden experiments.
-	
+
 	$scope.EXPERIMENT_STATES = {
 		ALL_DEFINED : {value: 4},
 		ONGOING: {value: 1},
@@ -35,32 +35,32 @@ angular.module("monroe")
 	$scope.HasUnfinishedTasks = function(experiment) {
 		return (experiment.state == $scope.EXPERIMENT_STATES.ALL_DEFINED) || (experiment.state == $scope.EXPERIMENT_STATES.ONGOING);
 	}
-	
+
 	$scope.selectedExperiment.executions = {};
 	$scope.ResetExecutionCounters = function(executions) {
 		executions.total = 0;
-		
+
 		executions.defined = 0;	// Ongoing states
 		executions.requested = 0;
 		executions.deployed = 0;
 		executions.delayed = 0;
 		executions.started = 0;
 		executions.restarted = 0;
-		
+
 		executions.finished = 0; // Final states
 		executions.stopped = 0;
 		executions.failed = 0;
 		executions.canceled = 0;
-		executions.aborted = 0;	
-		
+		executions.aborted = 0;
+
 		executions.remaining = 0;
 	}
 	$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
-	
+
 	$scope.TimestampToString = function(timestamp) {
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 	}
-	
+
 	$scope.Bytes2FriendlyString = function(aNumber) {
 		if (aNumber < 0)
 			return "";
@@ -79,7 +79,7 @@ angular.module("monroe")
 		else
 			return (aNumber/1125899906842624).toFixed(2) + " PiB";
 	}
-	
+
 	$scope.GetExperimentState = function(experiment) {
 		executions = {};
 		$scope.CountExperimentSchedules(experiment, executions);
@@ -92,7 +92,7 @@ angular.module("monroe")
 		else
 			return $scope.EXPERIMENT_STATES.FINISHED_OK;
 	}
-		
+
 	$scope.GetExperimentByID = function(experiments, id) {
 		for (var it in experiments) {
 			var exp = experiments[it];
@@ -101,7 +101,7 @@ angular.module("monroe")
 		}
 		return undefined;
 	}
-	
+
 	// Get the user ID.
 	$scope.GetUserID = function($scope) {
         $http.get(AuthURL, {withCredentials: true})
@@ -133,7 +133,7 @@ angular.module("monroe")
 			})
 			.error(function(error) {
 				$scope.error = error;
-			});		
+			});
 	}
 
 	/*$scope.StatusCodeToText = function(code) {
@@ -141,20 +141,20 @@ angular.module("monroe")
 		var table = {"defined": "Defined", "deployed": "Deployed", "started": "Started", "stopped": "Stopped", "canceled": "Canceled", "aborted": "Aborted", "failed": "Failed"};
 		return table[code];
 	}*/
-	
-	$scope.Capitalize = function(theString) {		
+
+	$scope.Capitalize = function(theString) {
 		if (angular.isString(theString))
 			return theString[0].toLocaleUpperCase() + theString.slice(1);
 	}
-	
+
 	$scope.CreateResultsURL = function(schedId) {
 		return 'https://www.monroe-system.eu/user/' + schedId + '/';
 	}
-	
+
 	$scope.CountExperimentSchedules = function(experiment, executions) {
 		var tmp;
 		$scope.ResetExecutionCounters(executions);
-		
+
 		// Several states share prefixes and should be accumulated, e.g., "failed; no container" and "failed; node in maintenance".
 		for (var state in experiment.summary) {
 			if (state.startsWith("stopped"))
@@ -181,22 +181,22 @@ angular.module("monroe")
 				executions.restarted = executions.restarted + experiment.summary[state];
 		}
 
-        executions.total = executions.stopped + executions.finished + executions.canceled + executions.aborted + executions.failed + 
-							executions.defined + executions.requested + executions.deployed + executions.delayed + executions.started + 
+        executions.total = executions.stopped + executions.finished + executions.canceled + executions.aborted + executions.failed +
+							executions.defined + executions.requested + executions.deployed + executions.delayed + executions.started +
 							executions.restarted;
 		executions.remaining = executions.total - executions.finished - executions.stopped - executions.canceled - executions.aborted - executions.failed;
 	}
-		
+
     // View the details of an experiment.
     $scope.viewExperiment = function() {
 		var selectedExperiment = this.iExperiment;
-        //$scope.selectedExperiment.experiment = this.iExperiment;		
-		
+        //$scope.selectedExperiment.experiment = this.iExperiment;
+
 		if (selectedExperiment.hideDetails) {
 			selectedExperiment.hideDetails = false
 			$scope.CountExperimentSchedules(selectedExperiment, selectedExperiment.executions);
 			selectedExperiment.schedules = [];
-			
+
 			// Get the full details of the experiment schedules.
 			var schedulesURL = ExperimentSchedulesURLa + selectedExperiment.id + ExperimentSchedulesURLb;
 			$http.get(schedulesURL, {withCredentials: true})
@@ -209,13 +209,13 @@ angular.module("monroe")
 				})
 				.error(function (error) {
 					console.log("Error: ", error);
-				});		
+				});
 		}
 		else {
 			selectedExperiment.hideDetails = true;
 		}
     }
-	
+
 	// Deletes a completed experiment or cancels and deletes an incomplete one.
 	$scope.DeleteExperiment = function(experiment, event) {
 		var action = (experiment.state == $scope.EXPERIMENT_STATES.ALL_DEFINED) ? "DELETE" : (experiment.state == $scope.EXPERIMENT_STATES.ONGOING) ? "CANCEL" : "REMOVE";
@@ -234,9 +234,9 @@ angular.module("monroe")
 				});
 		}
 
-		event.stopPropagation(); // Stop the event before reaching the list controller that would try to show a non-existent experiment.		
+		event.stopPropagation(); // Stop the event before reaching the list controller that would try to show a non-existent experiment.
 	}
-	
+
 	$scope.ShowHidden = function(event) {
 		// event.target.checked should be equivalent to $scope.showHidden
 		$scope.listExperiments(); // Call for Angular to reload the results.
@@ -244,13 +244,13 @@ angular.module("monroe")
 		delete $scope.selectedExperiment.schedules;
 		$scope.ResetExecutionCounters($scope.selectedExperiment.executions);
 	}
-	
+
 	// Loads the new experiment page and signals to reload the schedule parameters.
 	$scope.RescheduleExperiment = function(experiment, event) {
 		window.location.replace(rescheduleExperimentURL + experiment.id);
-		event.stopPropagation(); // Stop the event before reaching the list controller that would try to show a non-existent experiment.		
+		event.stopPropagation(); // Stop the event before reaching the list controller that would try to show a non-existent experiment.
 	}
-	
+
 	$scope.AvoidHiding = function(event) {
 		event.stopPropagation();
 	}
@@ -279,8 +279,8 @@ angular.module("monroe")
                 window.location.replace("ErrorServer.html");
             });
 });
-  
-  
+
+
 ///////////////////////////////////////////////////////////////////////////////
 /////////////////////////// newExperimentCtrl /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -315,7 +315,7 @@ angular.module("monroe")
 	$scope.experiment.showSubmitProgress = false;
 	$scope.experiment.showAvailabilityProgress = false;
 	$scope.experiment.disableNodeFilters = false;
-	
+
 	ResetNodeFilters = function() {
 		$scope.experiment.projectFilter = [];
 		$scope.experiment.nodeType = "type:deployed";
@@ -323,7 +323,7 @@ angular.module("monroe")
 		$scope.experiment.interfaceCount = "one";
 	}
 	ResetNodeFilters();
-	
+
 	ResetWarningPanels = function() {
 		$scope.showWarningPublicSSHKeyMissing = false;
 		$scope.showWarningSSHOnlyTesting = false;
@@ -335,7 +335,7 @@ angular.module("monroe")
 		$scope.showWarningNotEvenNodesForDualExperiment = false;
 		$scope.showWarningActiveQuota = false;
 	}
-	
+
 	ResetAvailability = function() {
 		$scope.experiment.checkAvailabilityStart = "";
 		$scope.experiment.checkAvailabilityStop = "";
@@ -346,18 +346,18 @@ angular.module("monroe")
 		$scope.experiment.checkAvailabilityShowUseSlot = false;
 	}
 	ResetAvailability();
-		
 
-    // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.    
+
+    // This turn-around is needed to avoid a date string with milliseconds, which can't be later parsed automatically.
 	$scope.experiment.startDate = new Date( (new Date()).toUTCString() );
 	$scope.experiment.startASAP = false;
-	
+
 	$scope.SetStartDateToNow = function(experiment) {
 		experiment.startDate = new Date( (new Date()).toUTCString() );
 		experiment.startASAP = false;
 		$scope.UpdateConfirmStartDate(experiment);
 	}
-   
+
     PrepareNodeFilters = function(experiment, request) {
 		if (!experiment.disableNodeFilters) {
 			// Join projects in an OR:
@@ -367,7 +367,7 @@ angular.module("monroe")
 				request.nodetypes = "project:" + request.nodetypes + "," + experiment.nodeType;
 			else
 				request.nodetypes = experiment.nodeType;
-		
+
 			request.nodetypes = request.nodetypes + ",model:" + experiment.nodeModel;
 			if (experiment.nodeModel == "apu2d4") {
 				request.interfaceCount = experiment.interfaceCount == "one" ? 1 : experiment.interfaceCount == "two" ? 2 : 3;
@@ -399,19 +399,19 @@ angular.module("monroe")
     TimestampToString = function(timestamp) {
 		return (new Date(timestamp * 1000)).toUTCString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', ''); // toLocaleString() / toUTCString()
 	}
-	
+
 	$scope.UseProposedSchedule = function(experiment) {
 		experiment.startDate = new Date( (new Date(experiment.checkAvailabilityStartTimestamp + PROPOSED_SCHEDULE_BUFFER_TIME)).toUTCString() );
 		$scope.UpdateConfirmStartDate(experiment);
 		$scope.experiment.startASAP = false;
 	}
-	
+
     /************* Check schedule **********/
     $scope.checkSchedule = function(experiment) {
     	// Add options.nodes="xxx" if the user specifies them, so the check takes the node requirements into account.
     	var request = new Object;
     	var anumber;
-    	
+
     	anumber = Number(experiment.nodeCount);
     	if (isFinite(anumber))    request.nodecount = anumber;
     	anumber = Number(experiment.duration);
@@ -421,13 +421,13 @@ angular.module("monroe")
 		}
 		else {
     	    anumber = Number(experiment.startDate) / 1000|0;
-    	    if (isFinite(anumber))    request.start = anumber;		
+    	    if (isFinite(anumber))    request.start = anumber;
 		}
 		PrepareNodeFilters(experiment, request);
 
 		if (experiment.specificNodes)
 			request.nodes = experiment.specificNodes;
-		
+
 		ResetAvailability();
 
 		experiment.showAvailabilityProgress = true;
@@ -460,59 +460,59 @@ angular.module("monroe")
 				experiment.showAvailabilityProgress = false;
     	    })
     }
-       
+
     /******* Verify schedule validity *******/
     verifyExperiment = function(experiment) {
     	var res = true;
     	var anumber;
-		
+
 		ResetWarningPanels();
-    	
+
     	if (experiment.recurrence) {
     		anumber = Number(experiment.period);
     		res = res && isFinite(anumber) && (anumber >= 3600);
     		if (!res)
     		    $scope.showWarningMinimumRecurrencePeriod = true;
-			
+
 			if (res) {
 				res = (experiment.repeatUntil != null) && (experiment.repeatUntil != undefined) && isFinite(Number(experiment.repeatUntil));
 				if (!res)
 					$scope.showWarningRecurrenceEndingTime = true;
 			}
-			
+
 			if (res) {
 				res = !experiment.requiresSSH;
 				if (!res)
 					$scope.showWarningSSHNotRecurrence = true;
 			}
     	}
-		
+
 		if (res) {
 			anumber = Number(experiment.deploymentQuota);
 			res = isFinite(anumber) && (Math.floor(anumber) == anumber) && (anumber > 0) && (anumber <= 1024);
 			if (!res)
 				$scope.showWarningMaxStorageQuota = true;
 		}
-		
+
 		if (res) {
 			anumber = Number(experiment.activeQuota);
 			res = isFinite(anumber) && (Math.floor(anumber) == anumber) && (anumber > 0);
 			if (!res)
 				$scope.showWarningActiveQuota = true;
 		}
-		
+
 		if (res && experiment.requiresSSH && !experiment.disableNodeFilters) {
 			res = (experiment.nodeType == "type:testing");
 			if (!res)
 				$scope.showWarningSSHOnlyTesting = true;
-			
+
 			if (res) {
 				res = (experiment.sshPublicKey.length > 0);
 				if (!res)
 					$scope.showWarningPublicSSHKeyMissing = true;
 			}
 		}
-    	
+
 		if (res) {
 			try {
 				JSON.parse("{" + experiment.additionalOptions + "}");
@@ -522,7 +522,7 @@ angular.module("monroe")
 				res = false;
 			}
 		}
-		
+
 		// The scheduler considers pairs if interfaceCount=3, but nodeCount must be even.
 		if (res) {
 			if ( (experiment.nodeModel == "apu2d4") && (experiment.interfaceCount == "three") && !experiment.disableNodeFilters ) {
@@ -538,50 +538,50 @@ angular.module("monroe")
 
     	return res
     }
-    
+
 	/************* New Experiment **********/
     $scope.newExperiment = function(experiment) {
 		ResetWarningPanels();
     	if (!verifyExperiment(experiment))
     	    return;
-    	    
+
     	var request = new Object;
         var anumber;
-    	
+
     	request.name = experiment.name;
     	request.script = experiment.script;
     	anumber = Number(experiment.nodeCount);
-    	if (isFinite(anumber))    request.nodecount = anumber; 	
+    	if (isFinite(anumber))    request.nodecount = anumber;
 		if (experiment.startASAP) {
 			request.start = 0;
 		}
 		else {
     	    anumber = Number(experiment.startDate) / 1000|0;
-    	    if (isFinite(anumber))    request.start = anumber;		
+    	    if (isFinite(anumber))    request.start = anumber;
 		}
     	anumber = Number(experiment.duration);
     	if (isFinite(anumber) && ('start' in request))    request.stop = request.start + anumber;
-    	  	
+
     	/*request.interfaces = "";
     	if ($scope.experiment.useInterface1)    request.interfaces += "iface1";
     	if (experiment.useInterface2)    request.interfaces += (request.interfaces == "") ? "iface2" : ",iface2";
     	if (experiment.useInterface3)    request.interfaces += (request.interfaces == "") ? "iface3" : ",iface3";
     	if (request.interfaces == "")            delete request.interfaces;*/
-		
+
 		PrepareNodeFilters(experiment, request);
-		
+
 		//// Options
     	request.options = {};
     	anumber = Number(experiment.activeQuota);
     	if (isFinite(anumber))
     	    request.options["traffic"] = anumber * 1024*1024;
-    	
+
     	anumber = Number(experiment.deploymentQuota);
     	if (isFinite(anumber))
 				request.options["storage"] = anumber * 1024*1024;
-    	
+
     	request.options["shared"] = 0;
-    	
+
     	if (experiment.recurrence)
     	{
     	    request.options["recurrence"] = 'simple';
@@ -590,14 +590,14 @@ angular.module("monroe")
     	    anumber = Number(experiment.repeatUntil) / 1000|0;
     	    if (isFinite(anumber))    request.options["until"] = anumber;
         }
-        
+
         if (experiment.specificNodes)
 			request.options["nodes"] = experiment.specificNodes;
-        
+
     	//// Deployment options
     	//request.deployment_options = new Object;
     	//request.deployment_options["restart"] = 1;
-		
+
 		// SSH options.
 		if ($scope.experiment.requiresSSH) {
 			request.options["ssh"] = {};
@@ -605,13 +605,13 @@ angular.module("monroe")
 			request.options.ssh["server.port"] = 29999;
 			request.options.ssh["server.user"] = "tunnel";
 			request.options.ssh["client.public"] = $scope.experiment.sshPublicKey;
-		}		
+		}
 
 		// Convert JSON-stile request options to a string.
         request.options = JSON.stringify(request.options);
 		if (experiment.additionalOptions.length > 0)
 			request.options = request.options.slice(0, -1) + "," + experiment.additionalOptions + "}";
-        
+
 		console.log(request);
 		$scope.showWarningPublicSSHKeyMissing = false;
 		experiment.showSuccessPanel = false;
@@ -626,7 +626,7 @@ angular.module("monroe")
                 experiment.showFailurePanel = false;
 				experiment.showSubmitProgress = false;
 				// Scroll to bottom of page.
-				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
+				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");
             })
             .error(function(error) {
                 console.log("Error submitting experiment: ", error);
@@ -636,21 +636,21 @@ angular.module("monroe")
                 experiment.showFailurePanel = true;
 				experiment.showSubmitProgress = false;
 				// Scroll to bottom of page.
-				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");			
+				$('html,body').animate({scrollTop: document.body.scrollHeight},"fast");
             });
     }
-    
+
 	$scope.ClearNodeList = function() {
 		$scope.experiment.specificNodes = "";
 		$scope.ActivateNodeList();
 	}
-	
+
 	$scope.ActivateNodeList = function() {
 		$scope.experiment.disableNodeFilters = ($scope.experiment.specificNodes.length > 0);
 		/*if ($scope.experiment.disableNodeFilters)
 			ResetNodeFilters();*/
 	}
-	
+
 	// Retrieve the details of an experiment by ID.
     $scope.retrieveExperiment = function(id) {
 		// Get the full details of the experiment schedules.
@@ -678,7 +678,7 @@ angular.module("monroe")
 						$scope.UpdateRepeatUntil($scope.experiment);
 					}
 				}
-				
+
 				//  To calculate the number of nodes used by the experiment (and their IDs), we have
 				// to traverse the list of schedules and identify the distinct nodes.
 				var schedID; // We overwrite, but we need just one, any.
@@ -694,7 +694,7 @@ angular.module("monroe")
 				}
 				//$scope.experiment.disableNodeFilters = ($scope.experiment.specificNodes.length > 0);
 				$scope.ActivateNodeList();
-				
+
 				// Pick one schedule, retrieve it and populate "additional parameters". (All schedules have the same ones)
 				// Extract also SSH parameters (if used).
 				var scheduleURL = ScheduleDetailsURL + schedID;
@@ -714,25 +714,25 @@ angular.module("monroe")
 						var optionsString = JSON.stringify(data.deployment_options);
 						if (optionsString.length > 0)
 							$scope.experiment.additionalOptions = optionsString.slice(1, -1);
-						
+
 						if (optionsSSH != undefined) {
 							$scope.experiment.requiresSSH = true;
 							$scope.experiment.sshPublicKey = optionsSSH["client.public"];
 						}
 					})
 					.error(function (error) {
-					});				
-				
+					});
+
 			})
 			.error(function (error) {
 				console.log("Error retrieving experiment " + id + ": ", error);
 			});
 	}
-	
+
 	Init = function() {
 		if ($scope.experiment.rescheduleID >= 0)
 			$scope.retrieveExperiment($scope.experiment.rescheduleID);
-		
+
 		ResetWarningPanels();
 	}
 	Init();
@@ -743,7 +743,7 @@ angular.module("monroe")
 /////////////////////////////// resourcesCtrl /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-// listSchedules() uses the list of filtered nodes ($scope.nodes), so it must 
+// listSchedules() uses the list of filtered nodes ($scope.nodes), so it must
 // be run after listNodes() has completed (and every time it's completed).
 // Thus, it's called directly from FilterNodes(), so that it never gets missed.
 // listNodes() --> FilterNodes() --> listSchedules() --> CreateSchedulesTable() --> DrawSchedules()
@@ -767,7 +767,7 @@ angular.module("monroe")
 	$scope.rangeResources = []; // A range with all the indexes in the array of resources, for ng-repeat.
 	$scope.countShownNodes = 0; // Count of nodes that are shown after applying filters.
 	$scope.scheduleTable = {};
-	
+
 	$scope.canvas = document.getElementById("calendarCanvas");
 	$scope.canvasSchedLeftMargin = 20;
 	$scope.canvasSchedTopMargin = 190;
@@ -779,11 +779,11 @@ angular.module("monroe")
 		setTimeout($scope.refresh, 300000);
 	}
 	setTimeout($scope.refresh, 300000);
-	
+
 	$scope.TimestampToString = function(timestamp) {
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 	}
-	
+
 	// Get the user ID.
 	$scope.GetUserID = function($scope) {
         $http.get(AuthURL, {withCredentials: true})
@@ -814,9 +814,9 @@ angular.module("monroe")
 			})
 			.error(function(error) {
 				$scope.error = error;
-			});		
+			});
 	}
-	
+
 	// Retrieve all the programmed schedules.
 	$scope.listSchedules = function() {
 		$http.get(SchedulePlanURL, {withCredentials: true})
@@ -826,14 +826,14 @@ angular.module("monroe")
 			})
 			.error(function(error) {
 				$scope.error = error;
-			});		
+			});
 	}
 
-	$scope.Capitalize = function(theString) {		
+	$scope.Capitalize = function(theString) {
 		if (angular.isString(theString))
 			return theString[0].toLocaleUpperCase() + theString.slice(1);
 	}
-	
+
 	$scope.ClearLocationFilter = function() {
 		$scope.locationFilter = [];
 		$scope.FilterNodes();
@@ -852,7 +852,7 @@ angular.module("monroe")
 			if (arr[i] == obj) return true;
 		}
 	}
-	
+
 	$scope.FilterNodes = function() {
 		$scope.rangeResources = [];
 		$scope.countShownNodes = 0;
@@ -869,7 +869,7 @@ angular.module("monroe")
 		$scope.ClearSchedules();
 		$scope.listSchedules();
 	}
-	
+
 	$scope.Bytes2FriendlyString = function(aNumber) {
 		if (aNumber < 0)
 			return "";
@@ -888,27 +888,27 @@ angular.module("monroe")
 		else
 			return (aNumber/1125899906842624).toFixed(2) + " PiB";
 	}
-	
+
 	$scope.CalcRemainingQuota = function(iface) {
 		var Quotas = {
 			"24202": 50*(1024*1024*1024),	// Telia Norge (NO)
 			"24201": 50*(1024*1024*1024),	// Telenor (NO)
 			//"24001": *(1024*1024*1024),	// Telia Mobile (NO)
 			"24214": Infinity,				// ICE Nordisk (NO)
-			
+
 			"22201": 20*(1024*1024*1024),	// TIM (IT)
 			"22210": 30*(1024*1024*1024),	// Vodafone (IT)
 			"22288": 25*(1024*1024*1024),	// WIND (Blu)
-			
+
 			"24002": 100*(1024*1024*1024),	// H3G Access AB / Tre / Three / 3 (SE)
 			"24008": 100*(1024*1024*1024),	// Telenor (Vodafone) (SE)
 			"24001": 200*(1024*1024*1024),	// Telia Mobile (SE)
-			
+
 			"21404": 20*(1024*1024*1024),	// Yoigo (ES)
 			"21403": 10*(1024*1024*1024),	// Orange (ES)
 			"22210": 30*(1024*1024*1024)	// Vodafone (ES)
 			};
-		
+
 		var interfaceQuota = Quotas[iface["mccmnc"]];
 		if (interfaceQuota == undefined)
 			return "";
@@ -919,7 +919,7 @@ angular.module("monroe")
 			//return $scope.Bytes2FriendlyString(iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(iface["quota_reset_value"]);
 			return $scope.Bytes2FriendlyString(iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(interfaceQuota);
 	}
-	
+
 	DateToHour = function(date) {
 		return (Number(date) / 1000|0) - date.getSeconds() - date.getMinutes() * 60;
 	}
@@ -927,56 +927,62 @@ angular.module("monroe")
 		var date = new Date( (new Date(timestamp*1000)).toUTCString() )
 		return DateToHour(date);
 	}
-	
+
 	//  Given two timestamps, returns (x1, x2) as the corresponding coordinates on the canvas.
 	Time2Coords = function(startTime, endTime) {
 		var x1, x2;
-		
+
 		var ratio = ($scope.schedulesEndTime - $scope.schedulesStartTime) / ($scope.canvasWidth - $scope.canvasSchedLeftMargin*2);
 		x1 = Math.round((startTime - $scope.schedulesStartTime) / ratio);
 		x2 = Math.round((endTime - $scope.schedulesStartTime) / ratio);
-		
+
 		//console.log("Converting (", startTime, ",", endTime, ") to (", x1, ",", x2, ");");
 		return [x1, x2];
 	}
-	
+
 	$scope.ClearSchedules = function() {
 		var ctx = $scope.canvas.getContext("2d");
 		ctx.beginPath(); // Probably a bug in Chrome (?)
 		ctx.clearRect(0, 0, $scope.canvas.width, $scope.canvas.height);
 		ctx.stroke();
 	}
-	
+
 	$scope.DrawSchedules = function() {
 		var shownNodes = $scope.countShownNodes;
 		var ctx = $scope.canvas.getContext("2d");
 		var topMargin = 10;
-		
+
 		$scope.ClearSchedules();
-			
+
 		var y = 0; // Node count
 		for (var iNode in $scope.scheduleTable) {
 			// Label the schedule with the node ids
 			ctx.font = "10px sans-serif";
 			ctx.fillStyle = "#000000";
 			ctx.fillText(iNode, 0, topMargin + 8 + y*10 + $scope.canvasSchedTopMargin, $scope.canvasSchedLeftMargin);
-			
+
 			// First paint green for the node.
-			ctx.fillStyle = "#00ff00";
+			ctx.fillStyle = "#80ff80";
 			ctx.fillRect($scope.canvasSchedLeftMargin, topMargin + y*10 + $scope.canvasSchedTopMargin, $scope.canvasWidth - $scope.canvasSchedLeftMargin*2, 9);
 			ctx.stroke();
 
 			// Then, paint in red the interval for each schedule.
-			ctx.fillStyle = "#ff0000";
 			for (var iSched in $scope.scheduleTable[iNode]) {
+        if ($scope.scheduleTable[iNode][iSched][2] == -1) {
+  			  ctx.fillStyle = "#c0c0c0";
+        } else if ($scope.scheduleTable[iNode][iSched][2] == $scope.userID) {
+  			  ctx.fillStyle = "#404040";
+        } else {
+  			  ctx.fillStyle = "#ff8000";
+        }
 				var coords = Time2Coords($scope.scheduleTable[iNode][iSched][0], $scope.scheduleTable[iNode][iSched][1]);
 				ctx.fillRect($scope.canvasSchedLeftMargin + coords[0], topMargin + y*10 + $scope.canvasSchedTopMargin, coords[1] - coords[0], 9);
 				ctx.stroke();
 			}
-			
+
 			y += 1;
 		}
-		
+
 		// Plot grid of hours.
 		ctx.translate(-0.5, 0);
 		for (var xx = $scope.schedulesStartTime; xx <= $scope.schedulesEndTime; xx += $scope.schedulesStepTime) {
@@ -991,7 +997,7 @@ angular.module("monroe")
 			ctx.stroke();
 		}
 		ctx.translate(0.5, 0);
-			
+
 		// Plot x labels.
 		ctx.fillStyle = "#000000";
 		ctx.font = "10px sans-serif";
@@ -1006,7 +1012,7 @@ angular.module("monroe")
 		}
 		ctx.restore();
 	}
-	
+
 	CreateScheduleTable = function(schedules) {
 		/*var schedules = [];
 		schedules.push({nodeid:45, start:1497290400, stop: 1497290400+20*3600});
@@ -1014,13 +1020,13 @@ angular.module("monroe")
 		// The array has 7*24*3600 columns and as many rows as different nodeids in schedules.
 		// Each entry, which corresponds to a node-hour, is a boolean that says if the node is busy.
 		$scope.scheduleTable = {};
-		
+
 		var starting = new Date();
 		var firstMaintenance = 0;
 		$scope.schedulesStartTime = DateToHour(new Date( starting.toUTCString() ));
 		$scope.schedulesEndTime = $scope.schedulesStartTime + 7*24*3600;
 		$scope.schedulesStepTime = 3600;
-		
+
 		// Calculate the first maintenance point.
 		starting = new Date(starting.getTime());
 		var maintenanceDate = new Date(starting);
@@ -1037,7 +1043,7 @@ angular.module("monroe")
 			}
 		}
 		firstMaintenance = maintenanceDate.getTime()/1000|0;
-			
+
 		// Create free entries for all visible nodes.
 		for (var node in $scope.nodes) {
 			var itNode = $scope.nodes[node];
@@ -1045,12 +1051,12 @@ angular.module("monroe")
 				$scope.scheduleTable[itNode.id] = [];
 				// Add maintenance hours.
 				for (var maintenance = firstMaintenance; maintenance < $scope.schedulesEndTime; maintenance += 12*3600) {
-					$scope.scheduleTable[itNode.id].push([maintenance < $scope.schedulesStartTime ? $scope.schedulesStartTime : maintenance, (maintenance + 1800) > $scope.schedulesEndTime ? $scope.schedulesEndTime : (maintenance + 1800)]);
+					$scope.scheduleTable[itNode.id].push([maintenance < $scope.schedulesStartTime ? $scope.schedulesStartTime : maintenance, (maintenance + 1800) > $scope.schedulesEndTime ? $scope.schedulesEndTime : (maintenance + 1800), -1]);
 				}
 			}
 			else {
-				//  We have to do this part here (which is quadratic) because we cannot 
-				// add a simple test in the next loop to test if nodes[sched.nodeid].isVisible, 
+				//  We have to do this part here (which is quadratic) because we cannot
+				// add a simple test in the next loop to test if nodes[sched.nodeid].isVisible,
 				// as the nodes are an array that is not indexed by nodeid...
 				// An alternative would be to generate all the schedules for all the nodes, and check if visible while painting.
 				for (var itSched in schedules)
@@ -1058,7 +1064,7 @@ angular.module("monroe")
 						delete schedules[itSched];
 			}
 		}
-		
+
 		for (var it in schedules) {
 			var sched = schedules[it];
 			if ( (sched.start <= $scope.schedulesEndTime) && (sched.stop >= $scope.schedulesStartTime)) {
@@ -1066,19 +1072,19 @@ angular.module("monroe")
 					sched.start = $scope.schedulesStartTime;
 				if (sched.stop > $scope.schedulesEndTime)
 					sched.stop = $scope.schedulesEndTime;
-				$scope.scheduleTable[sched.nodeid].push( [sched.start, sched.stop] );
+				$scope.scheduleTable[sched.nodeid].push( [sched.start, sched.stop, sched.ownerid] );
 			}
 		}
 		//console.log($scope.scheduleTable);
-	
+
 		$scope.DrawSchedules();
 	}
 	CreateScheduleTable();
-	
+
 	$scope.Occupation2Color = function(occupation) {
 		return occupation == "busy" ? "#ff4040" : occupation == "free" ? "#40ff40" : "#000000";
 	}
-	
+
 	$scope.MakeTooltip = function(occupation, time) {
 		var theDate = (new Date( (new Date(time*1000)).toUTCString() )).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 		return theDate + (occupation == "busy" ? " - Busy" : occupation == "free" ? " - Free" : " - Unknown");
@@ -1127,7 +1133,7 @@ angular.module("monroe")
 	$scope.TimestampToString = function(timestamp) {
 		return (new Date((new Date(timestamp * 1000)).toUTCString())).toString().replace(' (Romance Daylight Time)', '').replace(' (Romance Standard Time)', '').replace(' (Central Europe Daylight Time)', '');
 	}
-	
+
 	// Show all the journal entries of this user.
 	$scope.listJournal = function() {
 		var userURL = JournalsURLa + $scope.userID + JournalsURLb;
@@ -1137,14 +1143,14 @@ angular.module("monroe")
 			})
 			.error(function(error) {
 				$scope.error = error;
-			});		
+			});
 	}
 
-	$scope.Capitalize = function(theString) {		
+	$scope.Capitalize = function(theString) {
 		if (angular.isString(theString))
 			return theString[0].toLocaleUpperCase() + theString.slice(1);
 	}
-	
+
 	$scope.Bytes2FriendlyString = function(aNumber) {
 		if (aNumber < 0)
 			return "";
@@ -1163,7 +1169,7 @@ angular.module("monroe")
 		else
 			return (aNumber/1125899906842624).toFixed(2) + " PiB";
 	}
-	
+
 	$scope.UnifyJournal = function(data) {
 		IdentifyAndUpdateQuota = function(quota_key, value, time, storage, data) {
 			if (quota_key.startsWith("quota_owner_time"))
@@ -1174,7 +1180,7 @@ angular.module("monroe")
 				storage = value;
 			return [time, storage, data]; // Because JS does not support pass-by-reference.
 		}
-		
+
 		var lastTime = 0, lastStorage = 0, lastData = 0, lastTimestamp = 0;
 		var lastReason = [];
 		var entry = data.shift();
@@ -1182,7 +1188,7 @@ angular.module("monroe")
 		lastTimestamp = entry.timestamp;
 		lastReason.push($scope.Capitalize(entry.reason));
 		[lastTime, lastStorage, lastData] = IdentifyAndUpdateQuota(entry.quota, entry.new_value, lastTime, lastStorage, lastData);
-		
+
 		for (var it in data) {
 			var entry = data[it];
 			if (entry.timestamp != lastTimestamp) {
