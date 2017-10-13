@@ -1072,7 +1072,9 @@ angular.module("monroe")
 					sched.start = $scope.schedulesStartTime;
 				if (sched.stop > $scope.schedulesEndTime)
 					sched.stop = $scope.schedulesEndTime;
-				$scope.scheduleTable[sched.nodeid].push( [sched.start, sched.stop, sched.ownerid] );
+        if (sched.nodeid in $scope.scheduleTable) {
+  				$scope.scheduleTable[sched.nodeid].push( [sched.start, sched.stop, sched.ownerid] );
+        }
 			}
 		}
 		//console.log($scope.scheduleTable);
