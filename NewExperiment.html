@@ -85,7 +85,15 @@
     <div class="panel-body">
         <div class="row">
             <label style="text-align:left" class="control-label col-md-1" for="experimentName"><span class="glyphicon glyphicon-asterisk" style="color:crimson"></span> Name:</label>
-            <div class="col-md-11"><input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.name"></div>
+            <div class="col-md-7"><input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.name"></div>
+			<label style="text-align:left" class="col-md-1" for="template">Templates:</label>
+			<div class="col-md-2">
+				<select class="form-control" ng-model="experiment.template" id="template" ng-change="SelectExperimentTemplate(experiment);">
+					<option value="" selected></option>
+					<option value="webworks">WebWorks</option>
+					<option value="nettest">Nettest</option>
+				</select>
+			</div>
         </div>
 
         <div class="row" id="colSep">
