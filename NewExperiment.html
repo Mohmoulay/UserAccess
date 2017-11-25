@@ -85,7 +85,7 @@
         <div class="row">
             <label style="text-align:left" class="control-label col-md-1" for="experimentName"><span class="glyphicon glyphicon-asterisk" style="color:crimson"></span> Name:</label>
             <div class="col-md-11"><input type="text" class="form-control" id="experimentName" placeholder="Name of the experiment" ng-model="experiment.name"></div>
-		</div>
+			</div>
 
 
         <div class="row" id="colSep">
@@ -100,8 +100,9 @@
                 <option value="nettest">Nettest</option>
               </select>
             </div>
-        </div>
-        
+              <a class="control-label col-md-1" style="text-align:left" target="_tab" ng-href="{{experiment.templateReadmeURL}}" ng-hide="!experiment.showTemplateReadme">README</a>
+            </div>
+
 
 		<div class="row" id="colSep">
 			<label style="text-align:left" class="control-label col-md-1" for="userOptions">Parameters:</label>
