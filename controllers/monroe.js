@@ -739,12 +739,12 @@ angular.module("monroe")
 	
 	$scope.SelectExperimentTemplate = function (experiment) {
 		if (experiment.template == "webworks") {
-			experiment.script = "mraj/http2measurements";
+			experiment.script = "docker.monroe-system.eu/monroe/monroe-web/image";
 			experiment.name = "WebWork (This experiment evaluates the performance of different http protocols (HTTP1.1, HTTP1.1/TLS, HTTP2) using the headless firefox browser)";
 			experiment.additionalOptions = '"urls":[["facebook.com/telia/","facebook.com/LeoMessi/","facebook.com/Cristiano/","facebook.com/intrepidtravel","facebook.com/threadless","facebook.com/Nutella","facebook.com/zappos","facebook.com/toughmudder","facebook.com/stjude","facebook.com/Adobe/"],["en.wikipedia.org/wiki/Timeline_of_the_far_future","en.wikipedia.org/wiki/As_Slow_as_Possible","en.wikipedia.org/wiki/List_of_political_catchphrases","en.wikipedia.org/wiki/1958_Lituya_Bay_megatsunami","en.wikipedia.org/wiki/Yonaguni_Monument#Interpretations","en.wikipedia.org/wiki/Crypt_of_Civilization","en.wikipedia.org/wiki/Mad_scientist","en.wikipedia.org/wiki/London_Stone","en.wikipedia.org/wiki/Internet","en.wikipedia.org/wiki/Stream_Control_Transmission_Protocol"],["google.com/search?q=Pok%C3%A9mon+Go","google.com/search?q=iPhone+7","google.com/search?q=Brexit","google.com/#q=stockholm,+sweden","google.com/#q=game+of+thrones","google.com/#q=Oslo","google.com/#q=Paris","google.com/#q=Madrid","google.com/#q=Rome","google.com/#q=the+revenant"]]';
 		}
 		else if (experiment.template == "nettest") {
-			experiment.script = "lwimmer/monroe-nettest";
+			experiment.script = "docker.monroe-system.eu/monroe/monroe-nettest/image";
 			experiment.name = "Nettest (This experiment will run the nettest client for throughput measurements)";
 			experiment.additionalOptions = '"cnf_server_host":"engerjordet.nntb.no","cnf_server_port":10080';
 		}
