@@ -362,6 +362,8 @@ angular.module("monroe")
 	}
 
     PrepareNodeFilters = function(experiment, request) {
+		var excludedProjects = "-project:allbesmart|project:cosmote|project:flex|project:membrane|project:nimbus|project:nor_lab|project:roaming|project:uma,";
+		
 		if (!experiment.disableNodeFilters) {
 			// Join projects in an OR:
 			request.nodetypes = experiment.projectFilter.join('|project:');
@@ -369,7 +371,7 @@ angular.module("monroe")
 			if (request.nodetypes != "")
 				request.nodetypes = "project:" + request.nodetypes + "," + experiment.nodeType;
 			else
-				request.nodetypes = experiment.nodeType;
+				request.nodetypes = excludedProjects + experiment.nodeType;
 
 			request.nodetypes = request.nodetypes + ",model:" + experiment.nodeModel;
 			if (experiment.nodeModel == "apu2d4") {
