@@ -135,7 +135,7 @@
 				Select nodes either using filters or providing a list of IDs:
 			</div>
 			<div class="panel-body">
-				<div class="panel panel-default col-md-6">
+				<div class="panel panel-default col-md-5">
 					<div class="panel-heading">
 						Node filters:
 					</div>
@@ -167,18 +167,11 @@
 						</div>
 
 						<div class="row" id="colSep">
-							<label class="control-label col-md-5" style="text-align:left">Node model:</label>
 							<label class="control-label col-md-7" style="text-align:left" ng-hide="experiment.nodeModel != 'apu2d4'">Number of interfaces:</label>
 						</div>
 
 						<div class="row">
-							<div class="col-md-5">
-								<select class="form-control" ng-model="experiment.nodeModel" ng-disabled="experiment.disableNodeFilters">
-									<option value="apu2d4" selected>New</option>
-									<option value="apu1d4">Old</option>
-								</select>
-							</div>
-							<div class="col-md-7" ng-hide="experiment.nodeModel != 'apu2d4'">
+						  <div class="col-md-8" ng-hide="experiment.nodeModel != 'apu2d4'">
 								<select class="form-control col-md-2" ng-model="experiment.interfaceCount" ng-disabled="experiment.disableNodeFilters">
 									<option value="one" selected>One</option>
 									<option value="two">Two</option>
