@@ -322,7 +322,6 @@ angular.module("monroe")
 	ResetNodeFilters = function() {
 		$scope.experiment.projectFilter = [];
 		$scope.experiment.nodeType = "type:deployed";
-		$scope.experiment.nodeModel = "apu2d4";
 		$scope.experiment.interfaceCount = "one";
 	}
 	ResetNodeFilters();
@@ -363,7 +362,7 @@ angular.module("monroe")
 
     PrepareNodeFilters = function(experiment, request) {
 		var excludedProjects = "-project:allbesmart|project:cosmote|project:flex|project:membrane|project:nimbus|project:nor_lab|project:roaming|project:uma,";
-		
+
 		if (!experiment.disableNodeFilters) {
 			// Join projects in an OR:
 			request.nodetypes = experiment.projectFilter.join('|project:');
@@ -372,11 +371,8 @@ angular.module("monroe")
 				request.nodetypes = "project:" + request.nodetypes + "," + experiment.nodeType;
 			else
 				request.nodetypes = excludedProjects + experiment.nodeType;
+        request.interfaceCount = experiment.interfaceCount == "one" ? 1 : experiment.interfaceCount == "two" ? 2 : 3;
 
-			request.nodetypes = request.nodetypes + ",model:" + experiment.nodeModel;
-			if (experiment.nodeModel == "apu2d4") {
-				request.interfaceCount = experiment.interfaceCount == "one" ? 1 : experiment.interfaceCount == "two" ? 2 : 3;
-			}
 		}
 		else {
 			request.nodetypes = "";
@@ -530,7 +526,7 @@ angular.module("monroe")
 
 		// The scheduler considers pairs if interfaceCount=3, but nodeCount must be even.
 		if (res) {
-			if ( (experiment.nodeModel == "apu2d4") && (experiment.interfaceCount == "three") && !experiment.disableNodeFilters ) {
+			if ( (experiment.nodeModel == "") && (experiment.interfaceCount == "three") && !experiment.disableNodeFilters ) {
 				anumber = Number(experiment.nodeCount);
 				res = isFinite(anumber) && (anumber % 2 == 0);
 				if (!res)
