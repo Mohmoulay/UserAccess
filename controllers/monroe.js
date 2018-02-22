@@ -916,6 +916,7 @@ angular.module("monroe")
 			return (aNumber/1125899906842624).toFixed(2) + " PiB";
 	}
 
+
 	$scope.CalcRemainingQuota = function(iface) {
 		var Quotas = {
 			"24202": 50*(1024*1024*1024),	// Telia Norge (NO)
@@ -946,6 +947,26 @@ angular.module("monroe")
 			//return $scope.Bytes2FriendlyString(iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(iface["quota_reset_value"]);
 			return $scope.Bytes2FriendlyString(iface["quota_current"]) + " / " + $scope.Bytes2FriendlyString(interfaceQuota);
 	}
+
+  $scope.InterfaceOp = function(iface) {
+
+
+		if (iface["iccid"] != "")
+			return "(" + iface["operator"] + ")";
+		else return "";
+
+    }
+  $scope.InterfaceEthwlan = function(iface) {
+
+		if (iface["iccid"] == "")
+			return iface["interface"];
+		else return "";
+
+    }
+
+
+
+
 
 	DateToHour = function(date) {
 		return (Number(date) / 1000|0) - date.getSeconds() - date.getMinutes() * 60;

@@ -6,7 +6,7 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <title>Monroe Experimenters Portal</title>
 
-    <!-- Include Bootstrap and AngularJS --> 
+    <!-- Include Bootstrap and AngularJS -->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" crossorigin="anonymous">
@@ -69,7 +69,7 @@
 			<div class="checkbox-inline">
 				<label><input type="checkbox" data-toggle="tooltip" title="Shows only nodes that users can currently use to schedule experiments: Active, testing or deployed types, and with recent heartbeat" ng-model="showOnlyActive">Show only nodes that can execute experiments</label>
 			</div>
-	
+
 			<div class="row" id="colSep">
 				<label class="control-label col-md-3" style="text-align:left">Locations:</label>
 				<label class="control-label col-md-2" style="text-align:left">Node types:</label>
@@ -94,7 +94,7 @@
 					</select>
 					<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearLocationFilter()">Clear</button>
 				</div>
-		
+
 				<div class="col-md-2">
 					<select multiple class="form-control" ng-model="nodeTypeFilter" ng-change="FilterNodes()">
 						<option value="deployed">Deployed</option>
@@ -102,7 +102,7 @@
 					</select>
 					<p></p><button type="submit" class="btn btn-primary btn-xs" ng-click="ClearNodeTypeFilter()">Clear</button>
 				</div>
-		
+
 				<div class="col-md-2">
 					<select multiple class="form-control" ng-model="nodeModelFilter" ng-change="FilterNodes()">
 						<option value="apu1d4" selected>apu1d4</option>
@@ -141,7 +141,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 			<div>
 				<div class="row">
 					<div class="col-md-3"></div>
@@ -186,7 +186,7 @@
 						<td ng-if="(node.latitude == undefined) || (node.longitude == undefined)">n/a</td>
 						<td ng-if="node.countryVisz != undefined"><a target="_tab" ng-href="http://visual.monroe-system.eu/#/testbed/periodic?country={{node.countryVisz}}&site={{node.site}}&nodeid={{node.id}}">Visz</a></td>
 						<td ng-if="node.countryVisz == undefined">n/a</td>
-						<td ng-repeat="iface in node.interfaces">{{iface["mccmnc"]}} ({{iface["operator"]}}) {{CalcRemainingQuota(iface)}}</td>
+						<td ng-repeat="iface in node.interfaces">{{iface["mccmnc"]}} {{InterfaceOp(iface)}} {{InterfaceEthwlan(iface)}}  {{CalcRemainingQuota(iface)}} </td>
 					</tr>
 				</tbody>
 			</table>
@@ -232,7 +232,7 @@
 				</span>
 			</div>
 		</div> <!-- panel-body -->
-		
+
 		<div class="panel-footer">
 			<h4>Legend: </h4>
 			<span class="btn btn-warning btn-xs" style="width:3cm">Maintenance</span>
@@ -245,12 +245,12 @@
 			<!--<span class="glyphicon glyphicon-lock" style="color:Black">&nbsp;&nbsp;Node in storage</span><br>
 			<span class="glyphicon glyphicon-cog" style="color:Black">&nbsp;&nbsp;Development node (private)</span><br>-->
 		</div> <!-- panel-footer -->
-		
+
 	</div> <!-- panel -->
 
 	<!-- ****************************************************************** -->
 	<!-- Node scheduling occupation -->
-	
+
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<h3>Node occupation</h3>
