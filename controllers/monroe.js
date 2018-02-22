@@ -526,7 +526,7 @@ angular.module("monroe")
 
 		// The scheduler considers pairs if interfaceCount=3, but nodeCount must be even.
 		if (res) {
-			if ( (experiment.nodeModel == "") && (experiment.interfaceCount == "three") && !experiment.disableNodeFilters ) {
+			if ( (experiment.interfaceCount == "three") && !experiment.disableNodeFilters ) {
 				anumber = Number(experiment.nodeCount);
 				res = isFinite(anumber) && (anumber % 2 == 0);
 				if (!res)
