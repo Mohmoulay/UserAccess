@@ -751,7 +751,7 @@ angular.module("monroe")
 			experiment.script = "docker.monroe-system.eu/monroe/monroe-nettest/image";
 			experiment.name = "Nettest (This experiment will run the nettest client for throughput measurements)";
 			experiment.additionalOptions = '"cnf_server_host":"bulk.se.monroe-system.eu","cnf_server_port":10080,"cnf_dl_duration_s":2,"cnf_ul_duration_s":2';
-			experiment.templateReadmeURL = "https://github.com/MONROE-PROJECT/Experiments/blob/master/experiments/nettest/readme.md";
+			experiment.templateReadmeURL = "https://github.com/MONROE-PROJECT/Experiments/blob/master/experiments/nettest/nettest-client/readme.md";
 			experiment.showTemplateReadme = true;
 		}
 		else {
