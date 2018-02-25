@@ -889,8 +889,13 @@ angular.module("monroe")
 			node.isVisible = node.isVisible && (($scope.locationFilter.length == 0) || ArrayIncludes($scope.locationFilter, node.project));
 			node.isVisible = node.isVisible && (($scope.nodeTypeFilter.length == 0) || ArrayIncludes($scope.nodeTypeFilter, node.type));
 			node.isVisible = node.isVisible && (($scope.nodeModelFilter.length == 0) || ArrayIncludes($scope.nodeModelFilter, node.model));
+      node.isShown = node.isVisible;
+      node.isShown = node.isShown && ((node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > $scope.currentTime ) || ArrayIncludes( $scope.currentTime, node.hasRecentHeartbeat));
+      //node.isVisible = node.isVisible && ((node.heartbeat + GOOD_HEARTBEAT_TIMEOUT_IN_SECONDS > $scope.currentTime ) || ArrayIncludes( $scope.currentTime, node.hasRecentHeartbeat));
+
+
 			$scope.rangeResources.push(it); // Needed for ng-repeat.
-			if (node.isVisible)
+			if (node.isShown)
 				$scope.countShownNodes = $scope.countShownNodes + 1;
 		}
 		$scope.ClearSchedules();
